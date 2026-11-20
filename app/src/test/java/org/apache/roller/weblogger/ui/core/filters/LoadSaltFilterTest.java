@@ -163,6 +163,42 @@ public class LoadSaltFilterTest {
     }
 
     @Test
+    void staticFilesGetNoSessionAndNoSalt() throws Exception {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            for (String path : new String[] {"/roller-ui/styles/roller.css", "/roller-ui/scripts/date-fields.js",
+                    "/roller-ui/images/feather.svg", "/roller-ui/theme/tan/menutab-sel.gif"}) {
+                when(request.getServletPath()).thenReturn(path);
+                filter.doFilter(request, response, chain);
+            }
+
+            verify(request, never()).getSession(true);
+            verify(request, never()).getSession();
+            verify(request, never()).setAttribute(eq("salt"), anyString());
+            verify(saltCache, never()).put(anyString(), anyString());
+            verify(chain, times(4)).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void pathsThatOnlyStartLikeAStaticDirectoryStillGetASalt() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            // A path that only starts with the same letters is not a static file path.
+            when(request.getServletPath()).thenReturn("/roller-ui/styles-settings.rol");
+
+            filter.doFilter(request, response, chain);
+
+            verify(request).getSession(true);
+            verify(request).setAttribute(eq("salt"), anyString());
+            verify(chain).doFilter(request, response);
+        }
+    }
+
+    @Test
     void otherRollerUiPathsStillGetASalt() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {

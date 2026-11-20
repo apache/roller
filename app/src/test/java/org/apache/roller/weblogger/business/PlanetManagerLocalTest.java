@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -148,7 +149,11 @@ public class PlanetManagerLocalTest  {
             config.when(() -> WebloggerConfig.getBooleanProperty("planet.aggregator.enabled"))
                     .thenReturn(true);
             PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
-            
+
+            // the planet tasks store links to local weblogs, so they wait
+            // until the site URL is set
+            setSiteUrl("https://blog.example.org/roller");
+
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
             syncTask.init();
@@ -171,6 +176,21 @@ public class PlanetManagerLocalTest  {
             e.printStackTrace();
             fail();
         }
+        finally {
+            try {
+                setSiteUrl("");
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+    }
+
+    private static void setSiteUrl(String url) throws Exception {
+        PropertiesManager properties = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty prop = properties.getProperty("site.absoluteurl");
+        prop.setValue(url);
+        properties.saveProperty(prop);
+        TestUtils.endSession(true);
     }
 
 }

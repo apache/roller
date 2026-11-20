@@ -71,9 +71,7 @@ public class StrutsParameterAnnotationTest {
      * Forms whose target cannot be read from the JSP, keyed by JSP path and
      * form id. An empty list skips the form.
      */
-    private static final Map<String, List<String>> FORM_TARGETS = Map.of(
-            // popup that is not reachable from any page
-            "editor/MediaFileAddExternalInclude.jsp#entry", List.of());
+    private static final Map<String, List<String>> FORM_TARGETS = Map.of();
 
     private static final Pattern STRUTS_TAG = Pattern.compile(
             "<(/?)s:(\\w+)((?:[^>\"']|\"[^\"]*\"|'[^']*')*)>");

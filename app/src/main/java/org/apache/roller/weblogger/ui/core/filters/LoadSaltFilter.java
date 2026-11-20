@@ -35,12 +35,16 @@ public class LoadSaltFilter implements Filter {
 
     static final String RENDERING_PATH = "/roller-ui/rendering/";
 
+    /** Roller UI static files, which never hold a form. */
+    static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/",
+        "/roller-ui/theme/"};
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
-        if (isRenderingRequest(httpReq)) {
+        if (isRenderingRequest(httpReq) || isStaticFile(httpReq)) {
             chain.doFilter(request, response);
             return;
         }
@@ -69,6 +73,20 @@ public class LoadSaltFilter implements Filter {
     static boolean isRenderingRequest(HttpServletRequest request) {
         String path = request.getServletPath();
         return path != null && path.startsWith(RENDERING_PATH);
+    }
+
+    /** Stylesheets, scripts and images get no session and no salt. */
+    static boolean isStaticFile(HttpServletRequest request) {
+        String path = request.getServletPath();
+        if (path == null) {
+            return false;
+        }
+        for (String prefix : STATIC_PATHS) {
+            if (path.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

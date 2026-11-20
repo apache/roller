@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -98,8 +99,9 @@ public final class PlanetCache {
     
     
     public Object get(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -116,8 +118,9 @@ public final class PlanetCache {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -127,8 +130,9 @@ public final class PlanetCache {
     
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         

@@ -97,6 +97,7 @@ class NewUserJourneyIT extends BaseIT {
     private static final String GLOBAL_CONFIG_PAGE = "roller-ui/admin/globalConfig.rol";
     private static final String UPLOADS_ENABLED = "input[name='uploads.enabled']";
     private static final String GLOBAL_CONFIG_SAVE = "#saveButton";
+    private static final String HTML_SUBSET_PLUGIN = "input[name='commentPlugins'][value='HTMLSubset']";
 
     // media file upload form
     private static final String MEDIA_UPLOAD_PAGE = "roller-ui/authoring/mediaFileAdd.rol?weblog=" + BLOG_HANDLE;
@@ -258,9 +259,13 @@ class NewUserJourneyIT extends BaseIT {
 
     private void enableUploads() {
         goTo(GLOBAL_CONFIG_PAGE);
+        // HTMLSubset is the default comment plugin, and saving the page must
+        // keep it enabled
+        assertThat(page.locator(HTML_SUBSET_PLUGIN)).isChecked();
         page.locator(UPLOADS_ENABLED).check();
         page.locator(GLOBAL_CONFIG_SAVE).click();
         assertThat(page.locator(UPLOADS_ENABLED)).isChecked();
+        assertThat(page.locator(HTML_SUBSET_PLUGIN)).isChecked();
     }
 
     private void uploadMediaFile() {

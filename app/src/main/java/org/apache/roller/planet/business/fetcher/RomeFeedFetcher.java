@@ -29,24 +29,35 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Flow;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
-
-import static java.net.http.HttpResponse.BodyHandlers.ofInputStream;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -62,11 +73,27 @@ public class RomeFeedFetcher implements FeedFetcher {
                                 .header("User-Agent", "RollerPlanetAggregator");
     
     private final HttpClient client;
+
+    // limits on a fetched feed's size and total download time, so a feed
+    // that is huge or arrives slowly can't hold up the feed updater
+    private final long maxBytes;
+    private final Duration maxTime;
     
     public RomeFeedFetcher() {
+        this(positiveProperty("planet.aggregator.fetch.maxBytes", 5 * 1024 * 1024),
+                Duration.ofSeconds(positiveProperty("planet.aggregator.fetch.maxSeconds", 30)));
+    }
+
+    RomeFeedFetcher(long maxBytes, Duration maxTime) {
         // immutable + thread safe, prefers HTTP/2, no redirects
-        this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3)).build();
+        this(maxBytes, maxTime, HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3)).build());
+    }
+
+    RomeFeedFetcher(long maxBytes, Duration maxTime, HttpClient client) {
+        this.maxBytes = maxBytes;
+        this.maxTime = maxTime;
+        this.client = client;
     }
     
     /**
@@ -88,12 +115,23 @@ public class RomeFeedFetcher implements FeedFetcher {
             throw new IllegalArgumentException("feed url cannot be null");
         }
         
+        // only fetch over http and https
+        String scheme = feedURL.contains(":")
+                ? feedURL.substring(0, feedURL.indexOf(':')) : "";
+        if(!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+            throw new FetcherException("Feed URL must start with http or https - "+feedURL);
+        }
+        
         // fetch the feed
         log.debug("Fetching feed: "+feedURL);
         SyndFeed feed;
         try {
             feed = fetchFeed(feedURL);
-        } catch (FeedException | IOException | InterruptedException ex) {
+        } catch (InterruptedException ex) {
+            // let the caller see that it was asked to stop
+            Thread.currentThread().interrupt();
+            throw new FetcherException("Interrupted fetching subscription - "+feedURL, ex);
+        } catch (FeedException | IOException ex) {
             throw new FetcherException("Error fetching subscription - "+feedURL, ex);
         }
         
@@ -251,12 +289,162 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     private SyndFeed fetchFeed(String url) throws IOException, InterruptedException, FeedException {
         
-        HttpRequest request = requestBuilder.copy().uri(URI.create(url)).build();
+        HttpRequest request;
+        try {
+            request = requestBuilder.copy().uri(URI.create(url)).build();
+        } catch (IllegalArgumentException e) {
+            // not chained, so that this message is the one the admin sees
+            throw new IOException("Feed URL is not valid - " + url);
+        }
         
-        try(XmlReader reader = new XmlReader(client.send(request, ofInputStream()).body())) {
+        // don't start a request the caller was already asked to give up on
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        
+        // the request timeout only covers the response headers, so bound the
+        // whole download, including the body, here
+        AtomicBoolean abandoned = new AtomicBoolean();
+        AtomicReference<LimitedBodySubscriber> subscriber = new AtomicReference<>();
+        CompletableFuture<HttpResponse<byte[]>> response = client.sendAsync(request,
+                info -> {
+                    LimitedBodySubscriber s = new LimitedBodySubscriber(maxBytes,
+                            info.headers().firstValueAsLong("Content-Length").orElse(-1),
+                            info.statusCode(), abandoned);
+                    subscriber.set(s);
+                    return s;
+                });
+        byte[] body;
+        try {
+            body = response.get(maxTime.toMillis(), TimeUnit.MILLISECONDS).body();
+        } catch (TimeoutException e) {
+            abandon(response, abandoned, subscriber);
+            throw new IOException("Feed was not received within "
+                    + maxTime.toSeconds() + " seconds");
+        } catch (InterruptedException e) {
+            abandon(response, abandoned, subscriber);
+            throw e;
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof IOException io) {
+                throw io;
+            }
+            throw new IOException(e.getCause());
+        }
+        
+        try(XmlReader reader = new XmlReader(new ByteArrayInputStream(body))) {
             return new SyndFeedInput().build(reader);
         }
        
+    }
+    
+    
+    // stops a download we no longer wait for. On Java 11, cancelling the
+    // future doesn't stop the exchange, so the body subscriber also cancels
+    // its subscription, which closes the connection.
+    private static void abandon(CompletableFuture<?> response, AtomicBoolean abandoned,
+            AtomicReference<LimitedBodySubscriber> subscriber) {
+        abandoned.set(true);
+        LimitedBodySubscriber s = subscriber.get();
+        if (s != null) {
+            s.cancel(new IOException("Feed download abandoned"));
+        }
+        response.cancel(true);
+    }
+    
+    
+    // a property from roller.properties, or the default if it isn't positive
+    private static int positiveProperty(String name, int defaultValue) {
+        try {
+            int value = WebloggerConfig.getIntProperty(name, defaultValue);
+            return value > 0 ? value : defaultValue;
+        } catch (NumberFormatException e) {
+            log.warn("Invalid value for " + name + ", using " + defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    
+    // collects a successful response's body, failing once it grows past
+    // maxBytes or once the fetcher stops waiting for it
+    static final class LimitedBodySubscriber
+            implements HttpResponse.BodySubscriber<byte[]> {
+        
+        private final CompletableFuture<byte[]> result = new CompletableFuture<>();
+        private final ByteArrayOutputStream body = new ByteArrayOutputStream();
+        private final long maxBytes;
+        private final long contentLength;
+        private final int statusCode;
+        private final AtomicBoolean abandoned;
+        private Flow.Subscription subscription;
+        private boolean cancelled;
+        
+        LimitedBodySubscriber(long maxBytes, long contentLength, int statusCode,
+                AtomicBoolean abandoned) {
+            this.maxBytes = maxBytes;
+            this.contentLength = contentLength;
+            this.statusCode = statusCode;
+            this.abandoned = abandoned;
+        }
+        
+        @Override
+        public synchronized void onSubscribe(Flow.Subscription subscription) {
+            this.subscription = subscription;
+            if (abandoned.get()) {
+                cancel(new IOException("Feed download abandoned"));
+            } else if (statusCode < 200 || statusCode > 299) {
+                cancel(new IOException("Feed request returned HTTP status " + statusCode));
+            } else if (contentLength > maxBytes) {
+                tooLarge();
+            } else {
+                subscription.request(Long.MAX_VALUE);
+            }
+        }
+        
+        @Override
+        public synchronized void onNext(List<ByteBuffer> buffers) {
+            if (cancelled || result.isDone()) {
+                return;
+            }
+            for (ByteBuffer buffer : buffers) {
+                if (body.size() + (long) buffer.remaining() > maxBytes) {
+                    tooLarge();
+                    return;
+                }
+                byte[] bytes = new byte[buffer.remaining()];
+                buffer.get(bytes);
+                body.writeBytes(bytes);
+            }
+        }
+        
+        @Override
+        public void onError(Throwable throwable) {
+            result.completeExceptionally(throwable);
+        }
+        
+        @Override
+        public void onComplete() {
+            result.complete(body.toByteArray());
+        }
+        
+        @Override
+        public CompletionStage<byte[]> getBody() {
+            return result;
+        }
+        
+        private void tooLarge() {
+            cancel(new IOException("Feed is larger than " + maxBytes + " bytes"));
+        }
+        
+        // stops reading the body; safe to call from any thread
+        synchronized void cancel(IOException reason) {
+            // record the reason first: cancelling can make the client
+            // report an error of its own, and the first one reported wins
+            result.completeExceptionally(reason);
+            if (!cancelled && subscription != null) {
+                cancelled = true;
+                subscription.cancel();
+            }
+        }
     }
     
 }
