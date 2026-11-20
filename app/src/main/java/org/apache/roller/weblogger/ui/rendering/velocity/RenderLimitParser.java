@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Map;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.context.InternalContextAdapter;
@@ -275,8 +273,7 @@ public class RenderLimitParser extends StandardParser {
         if (session == null) {
             return 0;
         }
-        if (value instanceof CharSequence || value instanceof Collection
-                || value instanceof Map) {
+        if (value instanceof CharSequence || ValueLimits.holdsValues(value)) {
             return ValueLimits.textLength(value, session.getMaxOutputChars());
         }
         return 0;

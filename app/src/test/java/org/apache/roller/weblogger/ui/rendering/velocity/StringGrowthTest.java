@@ -284,6 +284,19 @@ class StringGrowthTest {
                 new Object[] {"a.a", "", "xyzw"}));
     }
 
+    /** A list appended as an Object is printed in full, so it counts as its text. */
+    @Test
+    void appendingAListCountsItsText() {
+        java.util.List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            list.add(i);
+        }
+        StringBuilder b = new StringBuilder("x");
+        long bound = StringGrowth.maxResultLength(b, "append", new Object[] {list});
+        assertTrue(bound >= 1 + list.toString().length(), "bound was " + bound);
+        assertTrue(StringGrowth.maxResultLength(b, "append", new Object[] {null}) >= 5);
+    }
+
     @Test
     void builderGrowthIsBounded() {
         StringBuilder b = new StringBuilder("abc");

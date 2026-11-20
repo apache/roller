@@ -379,8 +379,8 @@ final class StringGrowth {
             case "replace": {
                 long total = len;
                 for (Object arg : a) {
-                    total = add(total, arg instanceof CharSequence || arg instanceof char[]
-                            ? length(arg) : SCALAR_LENGTH);
+                    // a list or map appended as an Object is printed in full
+                    total = add(total, arg == null ? "null".length() : length(arg));
                 }
                 return total;
             }
@@ -418,7 +418,7 @@ final class StringGrowth {
         if (value instanceof char[]) {
             return ((char[]) value).length;
         }
-        if (value instanceof java.util.Collection || value instanceof java.util.Map) {
+        if (ValueLimits.holdsValues(value)) {
             RenderSession session = RenderSession.current();
             return ValueLimits.textLength(value,
                     session == null ? Long.MAX_VALUE : session.getMaxOutputChars());

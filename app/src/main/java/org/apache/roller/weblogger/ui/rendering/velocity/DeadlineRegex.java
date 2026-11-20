@@ -231,9 +231,7 @@ final class DeadlineRegex {
      * empty followed by a quantifier, or a group with two alternatives that
      * can. Matching such an expression can try exponentially many ways
      * without reading a character, so DeadlineText never gets to check the
-     * deadline. Whether a part can match empty is tried with Pattern itself,
-     * on a few short texts; a part that doesn't compile on its own counts as
-     * one that can.
+     * deadline. See canMatchEmpty for how a part is tried.
      */
     static void checkPattern(String regex) {
         // for each open group: where its body and its current alternative
@@ -289,25 +287,82 @@ final class DeadlineRegex {
         }
     }
 
-    /** Short texts to try whether part of an expression can match empty in them. */
-    private static final String[] EMPTY_MATCH_TEXTS = {"", "a", "a b", "\n", "0_"};
-
+    /**
+     * @return true if part of an expression can match an empty string.
+     *         Lookarounds, anchors and boundaries match empty somewhere
+     *         whatever they test, so they are taken out first, and the part
+     *         is tried with and without comments mode, which an inline (?x)
+     *         may have turned on. A part that doesn't compile on its own
+     *         counts as one that can.
+     */
     private static boolean canMatchEmpty(String part) {
-        Pattern p;
+        String rest = withoutZeroWidth(part);
         try {
-            p = Pattern.compile(part);
+            return Pattern.compile(rest).matcher("").matches()
+                    || Pattern.compile(rest, Pattern.COMMENTS).matcher("").matches();
         } catch (RuntimeException ex) {
             return true;
         }
-        for (String text : EMPTY_MATCH_TEXTS) {
-            Matcher m = p.matcher(text).useTransparentBounds(true).useAnchoringBounds(false);
-            for (int at = 0; at <= text.length(); at++) {
-                if (m.region(at, at).matches()) {
-                    return true;
+    }
+
+    /** @return the part with its lookarounds, anchors and boundaries taken out */
+    private static String withoutZeroWidth(String part) {
+        StringBuilder out = new StringBuilder();
+        int n = part.length();
+        int i = 0;
+        while (i < n) {
+            char c = part.charAt(i);
+            if (c == '\\') {
+                char e = i + 1 < n ? part.charAt(i + 1) : 0;
+                int end = e == 'Q' ? skipEscape(part, i) : Math.min(i + 2, n);
+                if ("bBAGzZ".indexOf(e) < 0 || e == 0) {
+                    out.append(part, i, end);
                 }
+                i = end;
+            } else if (c == '[') {
+                int end = skipClass(part, i);
+                out.append(part, i, end);
+                i = end;
+            } else if (c == '^' || c == '$') {
+                i++;
+            } else if (c == '(' && isLookaround(part, i)) {
+                out.append("(?:)");
+                i = closingParen(part, i) + 1;
+            } else {
+                out.append(c);
+                i++;
             }
         }
-        return false;
+        return out.toString();
+    }
+
+    private static boolean isLookaround(String regex, int i) {
+        return regex.startsWith("(?=", i) || regex.startsWith("(?!", i)
+                || regex.startsWith("(?<=", i) || regex.startsWith("(?<!", i);
+    }
+
+    /** @return the index of the ')' closing the group that opens at start, or the last index */
+    private static int closingParen(String regex, int start) {
+        int depth = 0;
+        int i = start;
+        while (i < regex.length()) {
+            char c = regex.charAt(i);
+            if (c == '\\') {
+                i = regex.startsWith("\\Q", i) ? skipEscape(regex, i) : i + 2;
+                continue;
+            }
+            if (c == '[') {
+                i = skipClass(regex, i);
+                continue;
+            }
+            if (c == '(') {
+                depth++;
+            } else if (c == ')' && --depth == 0) {
+                return i;
+            }
+            i++;
+        }
+        return regex.length() - 1;
     }
 
     /**
