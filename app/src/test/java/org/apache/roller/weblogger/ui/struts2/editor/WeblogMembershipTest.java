@@ -330,6 +330,30 @@ class WeblogMembershipTest {
     }
 
     @Test
+    void membersPageReportsNoChangesWhenSavingFails() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+        // a weblog whose memberships can be read but not changed
+        Weblog unsaved = new Weblog();
+        unsaved.setId("membershiptest-unsaved");
+        unsaved.setHandle(handle);
+
+        Members action = spy(new Members());
+        stubText(action);
+        action.setAuthenticatedUser(user(ownerName));
+        action.setActionWeblog(unsaved);
+        doAnswer(call -> null).when(action).getParameter(anyString());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + permission(ownerName).getId());
+        doAnswer(call -> "-1").when(action).getParameter("perm-" + permission(memberName).getId());
+        action.save();
+        TestUtils.endSession(false);
+
+        assertTrue(action.hasActionErrors());
+        assertFalse(action.hasActionMessages(), () -> action.getActionMessages().toString());
+        assertNotNull(permission(memberName), "nothing was saved");
+    }
+
+    @Test
     void membersPageSavesWhenAMemberIsDisabled() throws Exception {
         users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
         disable(memberName);

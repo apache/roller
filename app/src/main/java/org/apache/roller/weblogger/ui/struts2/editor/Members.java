@@ -157,6 +157,9 @@ public class Members extends UIAction implements ParametersAware {
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);
             addError("memberPermissions.saveError");
+            // nothing was saved
+            removed = 0;
+            changed = 0;
         }
         
         if (removed > 0) {
