@@ -51,9 +51,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
@@ -201,7 +199,6 @@ class PasswordChangeSessionTest {
 
     @Test
     void oidcProfileEditKeepsTheUsersOtherSessions() throws Exception {
-        useHashedPasswords();
         linkOpenId(userName, "https://idp.example.com/sessionuser");
         Browser a = new Browser(userName);
         Browser b = new Browser(userName);
@@ -232,7 +229,6 @@ class PasswordChangeSessionTest {
 
     @Test
     void adminEditOfAnOidcUserKeepsTheirSessions() throws Exception {
-        useHashedPasswords();
         linkOpenId(userName, "https://idp.example.com/sessionuser");
         Browser admin = new Browser(adminName);
         Browser b = new Browser(userName);
@@ -254,7 +250,6 @@ class PasswordChangeSessionTest {
 
     @Test
     void switchingToOidcReplacesTheStoredPassword() throws Exception {
-        useHashedPasswords();
         Browser admin = new Browser(adminName);
         Browser b = new Browser(userName);
         admin.request();
@@ -271,16 +266,6 @@ class PasswordChangeSessionTest {
 
         assertNotEquals(storedPassword, user(userName).getPassword());
         b.assertLoggedOut();
-    }
-
-    /**
-     * The test configuration stores passwords in plain text, and a generated
-     * 255-character password doesn't fit the column that way. tearDown puts
-     * the configured encoder back.
-     */
-    private static void useHashedPasswords() throws Exception {
-        swapEncoder(new DelegatingPasswordEncoder("pbkdf2",
-                Map.of("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8())));
     }
 
     private static void linkOpenId(String name, String openIdUrl) throws Exception {
@@ -596,7 +581,6 @@ class PasswordChangeSessionTest {
 
     @Test
     void oidcProfileEditKeepsSessionsWhenTheStoredUrlEndsWithASlash() throws Exception {
-        useHashedPasswords();
         linkOpenId(userName, "https://idp.example.com/sessionuser/");
         Browser a = new Browser(userName);
         Browser b = new Browser(userName);
@@ -626,7 +610,6 @@ class PasswordChangeSessionTest {
 
     @Test
     void adminEditKeepsSessionsWhenOnlyATrailingSlashIsAdded() throws Exception {
-        useHashedPasswords();
         linkOpenId(userName, "https://idp.example.com/sessionuser");
         Browser admin = new Browser(adminName);
         Browser b = new Browser(userName);
