@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 
 /**
  * An abstract implementation of a WeblogEntriesPager.
@@ -111,6 +112,15 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    /**
+     * True if there are more entries and the next page number is one the page
+     * request parser accepts, so the next link doesn't lead back here.
+     */
+    protected boolean hasNextPage(boolean more) {
+        return more && page < WeblogRequest.MAX_PAGE_NUM;
+    }
+    
+    
     @Override
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
@@ -125,7 +135,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     @Override
     public String getNextLink() {
-        if (hasMoreEntries()) {
+        if (hasNextPage(hasMoreEntries())) {
             return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
         }
         return null;
@@ -134,7 +144,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     @Override
     public String getNextName() {
-        if (hasMoreEntries()) {
+        if (hasNextPage(hasMoreEntries())) {
             return messageUtils.getString("weblogEntriesPager.latest.next");
         }
         return null;

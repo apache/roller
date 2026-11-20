@@ -50,7 +50,7 @@
                 </td>
 
                 <td>
-                    <a href="javascript: void(0);" onclick="confirmDelete('<s:property value="#group.handle"/>')">
+                    <a href="javascript: void(0);" class="delete-group" data-group-handle="<s:property value="#group.handle"/>">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
                         <s:text name="generic.delete"/>
                     </a>
@@ -69,6 +69,10 @@
     </s:form>
 
     <script>
+        $(".delete-group").on("click", function () {
+            confirmDelete($(this).attr("data-group-handle"));
+        });
+
         function confirmDelete(groupHandle) {
             if (window.confirm('<s:text name="planetGroups.delete.confirm" />')) {
                 var form = $("#deleteForm");

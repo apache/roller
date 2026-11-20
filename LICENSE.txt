@@ -295,8 +295,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 This product bundles jQuery and jQuery plugins, which are available under a "MIT" license.
 For details, see
-roller-ui/scripts/jquery-2.1.1.min.js.
-roller-ui/jquery-ui-1.11.0/jquery-ui.min.js
+themes/gaurav/js/jquery.js
+roller-ui/styles/jquery.mobile-theme/
+/webjars/jquery/3.7.1/jquery.min.js
+/webjars/jquery-ui/1.14.2/jquery-ui.min.js
+/webjars/jquery-validation/1.21.0/jquery.validate.min.js
+https://jquery.org/license/
 
 -------------------------------------------------------------------------------
 
