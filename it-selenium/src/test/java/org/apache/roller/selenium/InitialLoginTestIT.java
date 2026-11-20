@@ -37,14 +37,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.support.ui.Select;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InitialLoginTestIT {
@@ -104,6 +109,71 @@ public class InitialLoginTestIT {
         System.out.println("title/text: " + sbep.getBlogTitle() + " / " + sbep.getBlogText());
         assertEquals(blogEntryTitle, sbep.getBlogTitle());
         assertEquals(blogEntryContent, sbep.getBlogText());
+
+        editEntryInTheHtmlTextarea();
+    }
+
+    /**
+     * Publishes an entry with HTML the rich editor would run or drop, then
+     * switches the weblog to the rich editor, where the entry opens in the
+     * HTML textarea. Checks that the page warns before leaving once the
+     * textarea is edited: while the author is still typing in it, and after a
+     * media file is inserted.
+     */
+    private void editEntryInTheHtmlTextarea() {
+        driver.get(baseUrl + "roller-ui/authoring/entryAdd.rol?weblog=bobsblog");
+        EntryAddPage eap = new EntryAddPage(driver);
+        eap.setTitle("An entry with a click handler");
+        eap.setText("<p onclick=\"void 0\">Click me</p>");
+        eap.postBlogEntry();
+        String editPage = baseUrl + "roller-ui/authoring/entryEdit.rol?weblog=bobsblog&bean.id="
+                + driver.findElement(By.name("bean.id")).getAttribute("value");
+        // Summernote kept the id of the Xinha editor it replaced
+        setWeblogEditor("editor-xinha.jsp");
+
+        driver.get(editPage);
+        assertTrue(driver.findElement(By.id("edit_content_html_notice")).isDisplayed());
+        assertFalse("an unedited entry should not warn before leaving", warnsBeforeLeaving());
+        WebElement text = driver.findElement(By.id("edit_content"));
+        text.click();
+        text.sendKeys(" more");
+        assertTrue("typing in the HTML textarea should warn before leaving", warnsBeforeLeaving());
+        stopWarningBeforeLeaving();
+
+        // what the media file chooser calls with the chosen file
+        driver.get(editPage);
+        js("insertMediaFile('<a href=\"/x.png\">x.png</a>');");
+        assertTrue(driver.findElement(By.id("edit_content")).getAttribute("value").contains("x.png"));
+        assertTrue("inserting a media file in the HTML textarea should warn before leaving",
+                warnsBeforeLeaving());
+        stopWarningBeforeLeaving();
+
+        setWeblogEditor("editor-text.jsp");
+    }
+
+    /** Picks the weblog's entry editor on its settings page. */
+    private void setWeblogEditor(String editor) {
+        driver.get(baseUrl + "roller-ui/authoring/weblogConfig.rol?weblog=bobsblog");
+        new Select(driver.findElement(By.name("bean.editorPage"))).selectByValue(editor);
+        driver.findElement(By.cssSelector("form[action*='weblogConfig'] input.btn-success")).click();
+        assertTrue(driver.findElement(By.id("messages")).isDisplayed());
+    }
+
+    private Object js(String code, Object... args) {
+        return ((JavascriptExecutor) driver).executeScript(code, args);
+    }
+
+    /** Whether leaving the page now would ask the author to confirm. */
+    private boolean warnsBeforeLeaving() {
+        return (Boolean) js("var event = document.createEvent('BeforeUnloadEvent');"
+                + "event.initEvent('beforeunload', false, true);"
+                + "window.dispatchEvent(event);"
+                + "return event.defaultPrevented || !!event.returnValue;");
+    }
+
+    /** Removes the leave-page warning, so the next navigation isn't held up. */
+    private void stopWarningBeforeLeaving() {
+        js("$(window).off('beforeunload');");
     }
 
 

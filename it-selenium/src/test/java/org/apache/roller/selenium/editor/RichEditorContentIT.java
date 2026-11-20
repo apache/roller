@@ -74,6 +74,7 @@ public class RichEditorContentIT {
         "<noembed><img src=x onerror=go()></noembed>",
         "<title><img src=x onerror=go()></title>",
         "<form><math><mtext></form><form><mglyph><style></math><img src onerror=go()>",
+        "<math><mtext><table><mglyph><style><img src=x onerror=go()></style></mglyph></table></mtext></math>",
         // markup that parses differently once serialized and parsed again,
         // as the rich editor does for undo and code view
         "<form><div></form><form><p>x</p>",
