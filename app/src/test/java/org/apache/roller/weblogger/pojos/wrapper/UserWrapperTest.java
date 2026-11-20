@@ -67,6 +67,9 @@ class UserWrapperTest {
         withUntrustedAdmins(true, () -> assertNames(
                 "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O'Brien",
                 "Tom & &quot;Jerry&quot; &lt;b&gt; O&#39;Brien"));
+
+        // a non-breaking space, which jsoup writes as &nbsp;: escaped once
+        withUntrustedAdmins(true, () -> assertNames("Tom&nbsp;Jerry", "Tom&nbsp;Jerry"));
     }
 
     /**
