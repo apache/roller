@@ -193,6 +193,24 @@ public class UtilitiesTest  {
                 Utilities.sanitizeToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
     }
 
+    @Test
+    public void testHtmlSubsetShowsAmpersandsAsTyped() {
+        // an ampersand that doesn't start a complete reference is text, even
+        // when an entity name follows it
+        String url = "http://example.com/?id=1&region=us&copy=2&times=6&para";
+        String encoded = url.replace("&", "&amp;");
+        assertEquals(encoded, Utilities.sanitizeToHTMLSubset(url));
+        assertEquals("<a href=\"" + encoded + "\">x</a>",
+                Utilities.sanitizeToHTMLSubset("<a href=\"" + url + "\">x</a>"));
+        assertEquals("AT&amp;T &amp; &amp;# &amp;#x; &amp;;",
+                Utilities.sanitizeToHTMLSubset("AT&T & &# &#x; &;"));
+        assertEquals(encoded, htmlSubset(url));
+
+        // complete references are still read
+        assertEquals("© ~ ~ &amp; &amp;bogus;",
+                Utilities.sanitizeToHTMLSubset("&copy; &#126; &#x7e; &amp; &bogus;"));
+    }
+
     private String htmlSubset(String text) {
         return Utilities.transformToHTMLSubset(Utilities.escapeHTML(text));
     }
