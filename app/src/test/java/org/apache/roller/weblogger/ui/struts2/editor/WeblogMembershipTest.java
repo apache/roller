@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -290,6 +291,42 @@ class WeblogMembershipTest {
 
         assertTrue(permission(ownerName).hasAction(WeblogPermission.ADMIN), "nothing was changed");
         assertNull(permission(memberName));
+    }
+
+    @Test
+    void membershipUpdateForANonMemberDoesNotWaitForAnotherUpdate() throws Exception {
+        CountDownLatch updating = new CountDownLatch(1);
+        CountDownLatch finish = new CountDownLatch(1);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
+        try {
+            // an update that has started and not yet finished
+            Future<?> update = pool.submit(() -> {
+                try {
+                    users().updateWeblogMembership(weblog(),
+                            Map.of(ownerName, List.of(WeblogPermission.ADMIN)));
+                    updating.countDown();
+                    return finish.await(60, TimeUnit.SECONDS);
+                } finally {
+                    WebloggerFactory.getWeblogger().release();
+                }
+            });
+            assertTrue(updating.await(30, TimeUnit.SECONDS));
+
+            Future<?> refused = pool.submit(() -> {
+                try {
+                    return assertThrows(WebloggerException.class, () -> users().updateWeblogMembership(
+                            weblog(), Collections.singletonMap(memberName, null)));
+                } finally {
+                    WebloggerFactory.getWeblogger().release();
+                }
+            });
+            refused.get(10, TimeUnit.SECONDS);
+            finish.countDown();
+            update.get(30, TimeUnit.SECONDS);
+        } finally {
+            finish.countDown();
+            pool.shutdownNow();
+        }
     }
 
     @Test
