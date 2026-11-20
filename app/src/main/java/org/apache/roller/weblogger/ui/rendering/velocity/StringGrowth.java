@@ -43,9 +43,14 @@ import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
  */
 final class StringGrowth {
 
-    /** String methods that are not offered to templates. */
+    /**
+     * String methods that are not offered to templates: those that build a
+     * string whose length can't be worked out from the call, and those that
+     * run a regular expression or return a piece for every line, which
+     * DeadlineRegex doesn't run for them.
+     */
     private static final Set<String> REFUSED_STRING_METHODS = Set.of(
-            "repeat", "format", "formatted", "join", "indent");
+            "repeat", "format", "formatted", "join", "indent", "splitWithDelimiters", "lines");
 
     /** String methods whose result is never longer than the receiver or an argument. */
     private static final Set<String> NON_GROWING_STRING_METHODS = Set.of(
@@ -180,8 +185,8 @@ final class StringGrowth {
     }
 
     private static long forUtilities(String methodName, Object[] a) {
-        // Velocity converts arguments to the method's parameter types after
-        // this sees them, so a number passed for a string is counted as one
+        // the arguments already have the method's parameter types: Velocity
+        // finds no method for a call whose arguments don't fit
         CharSequence s = a.length > 0 ? text(a[0]) : null;
         switch (methodName) {
             case "replace": {

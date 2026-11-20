@@ -249,7 +249,7 @@ class StringGrowthTest {
             assertEquals(text.length(), StringGrowth.maxResultLength(utils, name,
                     new Object[] {text}), name);
         }
-        // Velocity converts a number to the string the method takes
+        // a value that isn't a string is counted by its text
         assertTrue(StringGrowth.maxResultLength(utils, "escapeHTML", new Object[] {12345}) <= 5);
         assertTrue(StringGrowth.maxResultLength(utils, "escapeHTML",
                 new Object[] {new StringBuilder("<<<ab")}) >= "&lt;&lt;&lt;ab".length());
