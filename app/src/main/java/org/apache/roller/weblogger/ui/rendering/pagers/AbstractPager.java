@@ -19,8 +19,10 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 
@@ -58,9 +60,9 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     @Override
     public String getNextLink() {
-        if(hasMoreItems()) {
+        if(hasNextPage()) {
             int nextPage = page + 1;
-            return createURL(url, Map.of("page", ""+nextPage));
+            return createURL(url, pageParams(nextPage));
         }
         return null;
     }
@@ -68,7 +70,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     @Override
     public String getNextName() {
-        if(hasMoreItems()) {
+        if(hasNextPage()) {
             return "Next";
         }
         return null;
@@ -79,7 +81,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
-            return createURL(url, Map.of("page", ""+prevPage));
+            return createURL(url, pageParams(prevPage));
         }
         return null;
     }
@@ -96,6 +98,23 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     public boolean hasMoreItems() {
         return false;
+    }
+    
+    
+    /**
+     * True if there are more items and the next page number is one the page
+     * request parser accepts, so the next link doesn't lead back here.
+     */
+    protected boolean hasNextPage() {
+        return hasMoreItems() && page < WeblogRequest.MAX_PAGE_NUM;
+    }
+    
+    
+    // a mutable map, because subclasses add their own params in createURL()
+    private static Map<String, String> pageParams(int pageNum) {
+        Map<String, String> params = new HashMap<>();
+        params.put("page", ""+pageNum);
+        return params;
     }
     
     

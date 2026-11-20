@@ -589,6 +589,11 @@ This product bundles webjars-locator-lite 1.1.4, which is available under a
 https://github.com/webjars/webjars-locator-lite/blob/main/LICENSE.md
 
 -------------------------------------------------------------------------------
+This product bundles jsoup 1.24.1, which is available under a "MIT" license.
+For details, see
+https://jsoup.org/license
+
+-------------------------------------------------------------------------------
 This product bundles ASM 9.11.1 (asm, asm-commons, asm-tree), which is
 available under a "BSD 3-clause" license. For details, see
 https://asm.ow2.io/license.html

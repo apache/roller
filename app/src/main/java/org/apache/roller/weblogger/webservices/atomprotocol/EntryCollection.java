@@ -29,6 +29,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -235,6 +236,13 @@ public class EntryCollection {
                 }
                 if (RollerAtomHandler.canEdit(user, rollerEntry)) {
 
+                    // a Limited member may edit a draft but not publish it
+                    if (!entry.isDraft()
+                            && !RollerAtomHandler.canEdit(user, rollerEntry.getWebsite())) {
+                        throw new AtomNotAuthorizedException(
+                                "ERROR not authorized to publish entry");
+                    }
+
                     RollerAtomHandler.oneSecondThrottle();
 
                     WeblogEntryManager mgr = roller.getWeblogEntryManager();
@@ -312,7 +320,10 @@ public class EntryCollection {
         User creator = entry.getCreator();
         AtomPerson author = new AtomPerson();
         author.setName(         creator.getUserName());
-        author.setEmail(        creator.getEmailAddress());
+        // other weblog members see the creator's user name, not their email
+        if (user != null && creator.getUserName().equals(user.getUserName())) {
+            author.setEmail(    creator.getEmailAddress());
+        }
         atomEntry.setAuthors(new ArrayList<>(Collections.singletonList(author)));
 
         // Add Atom category for Weblogger category, using category scheme
@@ -346,7 +357,8 @@ public class EntryCollection {
         links.add(editlink);
         atomEntry.setLinks(links);
 
-        atomEntry.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
+        atomEntry.setDraft(!entry.isPublished()
+                && !WeblogEntry.PubStatus.SCHEDULED.equals(entry.getStatus()));
         atomEntry.setEdited(entry.getUpdateTime());
 
         return atomEntry;
@@ -360,8 +372,16 @@ public class EntryCollection {
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
         Timestamp updateTime = current;
+        PubStatus oldStatus = rollerEntry.getStatus();
         if (entry.getPublished() != null) {
             pubTime = new Timestamp( entry.getPublished().getTime() );
+        } else if (rollerEntry.getPubTime() != null
+                && (PubStatus.PUBLISHED.equals(oldStatus)
+                    || PubStatus.SCHEDULED.equals(oldStatus))) {
+            // an update that names no publish time keeps the one a published
+            // or scheduled entry already has, so the entry is neither
+            // re-dated nor published early
+            pubTime = rollerEntry.getPubTime();
         }
         if (entry.getUpdated() != null) {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
@@ -376,10 +396,20 @@ public class EntryCollection {
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
 
+        boolean wasPublished = PubStatus.PUBLISHED.equals(oldStatus);
         if (entry.isDraft()) {
+            // like Save as Draft in the entry editor and publish=false in
+            // XML-RPC, this also takes an entry out of the review queue
             rollerEntry.setStatus(PubStatus.DRAFT);
+        } else if (pubTime.after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+            // like the entry editor, a publish time more than a minute ahead schedules the entry
+            rollerEntry.setStatus(PubStatus.SCHEDULED);
         } else {
             rollerEntry.setStatus(PubStatus.PUBLISHED);
+        }
+        if (wasPublished != rollerEntry.isPublished()) {
+            // the entry's tags enter or leave the weblog's tag counts
+            rollerEntry.setRefreshAggregates(true);
         }
 
         // Process incoming categories:

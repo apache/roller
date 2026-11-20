@@ -18,11 +18,11 @@
  */
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
@@ -109,7 +109,7 @@ public class Profile extends UIAction {
             // User.password does not allow null, so generate one
             if (authMethod.equals(AuthMethod.OIDC) ||
                     (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
-                String randomString = RandomStringUtils.randomAlphanumeric(255);
+                String randomString = RollerPasswordEncoders.randomUnusedPassword();
                 existingUser.resetPassword(randomString);
             }
 
@@ -135,6 +135,10 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        // the external-login marker never matches at login
+        if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             // check that passwords match if they were specified (w/StringUtils.equals, null == null)
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
