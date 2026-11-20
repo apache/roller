@@ -19,6 +19,9 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.apache.velocity.context.Context;
 
@@ -32,8 +35,12 @@ public class RenderLimitInsertionHandler implements ReferenceInsertionEventHandl
     @Override
     public Object referenceInsert(Context context, String reference, Object value) {
         RenderSession.checkDeadline();
+        RenderSession session = RenderSession.current();
         if (value instanceof CharSequence) {
             RenderSession.checkLength(((CharSequence) value).length());
+        } else if (session != null && (value instanceof Collection || value instanceof Map)) {
+            // a list or map is written as text, built in full before it is written
+            RenderSession.checkLength(ValueLimits.textLength(value, session.getMaxOutputChars()));
         }
         return value;
     }

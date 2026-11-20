@@ -21,6 +21,8 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
@@ -31,8 +33,16 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * (the resource loader, the output writer, #foreach, introspection and
  * reference insertion) check the current session rather than trusting the
  * template. Outside a session those hooks apply no limits.
+ *
+ * <p>Besides the output and time limits, a render has a budget for what it
+ * builds in memory: the characters of the strings it makes, and the items it
+ * adds to lists and maps. A template that keeps many strings or a long list
+ * never writes them, so the output limit alone doesn't stop it. A session
+ * started inside another one shares that one's time and budget.
  */
 final class RenderSession {
+
+    private static final Log LOG = LogFactory.getLog(RenderSession.class);
 
     /** Most characters one render may write, or put in one string. */
     static final String MAX_OUTPUT_CHARS = "rendering.maxOutputChars";
@@ -43,25 +53,59 @@ final class RenderSession {
     private static final int DEFAULT_MAX_OUTPUT_CHARS = 10 * 1024 * 1024;
     private static final int DEFAULT_MAX_RENDER_SECONDS = 30;
 
+    /** The characters of strings one render may build, as a multiple of the output limit. */
+    static final int BUILT_CHARS_PER_OUTPUT_CHAR = 10;
+
+    /** Most items one render may add to lists and maps, or get from split calls. */
+    static final long MAX_ITEMS = 1_000_000;
+
     private static final ThreadLocal<RenderSession> CURRENT = new ThreadLocal<>();
 
     private final String weblogId;
-    private final long maxOutputChars;
-    private final int maxRenderSeconds;
-    private final long deadline;
+    private final Budget budget;
     private final RenderSession previous;
+
+    /** What one render may use, shared by the sessions started inside it. */
+    private static final class Budget {
+        final long maxOutputChars;
+        final int maxRenderSeconds;
+        final long deadline;
+        final long maxBuiltChars;
+        final long maxItems;
+        long builtChars = 0;
+        long items = 0;
+
+        Budget() {
+            int chars = intProperty(MAX_OUTPUT_CHARS, DEFAULT_MAX_OUTPUT_CHARS);
+            maxOutputChars = chars > 0 ? chars : Long.MAX_VALUE;
+            maxBuiltChars = chars > 0 ? (long) chars * BUILT_CHARS_PER_OUTPUT_CHAR
+                    : Long.MAX_VALUE;
+            maxItems = chars > 0 ? MAX_ITEMS : Long.MAX_VALUE;
+            maxRenderSeconds = intProperty(MAX_RENDER_SECONDS, DEFAULT_MAX_RENDER_SECONDS);
+            deadline = maxRenderSeconds > 0
+                    ? System.nanoTime() + TimeUnit.SECONDS.toNanos(maxRenderSeconds)
+                    : 0;
+        }
+    }
 
     private RenderSession(String weblogId, RenderSession previous) {
         this.weblogId = weblogId;
         this.previous = previous;
-        int chars = WebloggerConfig.getIntProperty(MAX_OUTPUT_CHARS,
-                DEFAULT_MAX_OUTPUT_CHARS);
-        this.maxOutputChars = chars > 0 ? chars : Long.MAX_VALUE;
-        this.maxRenderSeconds = WebloggerConfig.getIntProperty(MAX_RENDER_SECONDS,
-                DEFAULT_MAX_RENDER_SECONDS);
-        this.deadline = maxRenderSeconds > 0
-                ? System.nanoTime() + TimeUnit.SECONDS.toNanos(maxRenderSeconds)
-                : 0;
+        this.budget = previous != null ? previous.budget : new Budget();
+    }
+
+    /** @return the property's value, or the default when it isn't a number */
+    private static int intProperty(String name, int defaultValue) {
+        String value = WebloggerConfig.getProperty(name);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException ex) {
+            LOG.warn(name + " is not a number, using " + defaultValue + ": " + value);
+            return defaultValue;
+        }
     }
 
     /**
@@ -95,25 +139,68 @@ final class RenderSession {
     }
 
     long getMaxOutputChars() {
-        return maxOutputChars;
+        return budget.maxOutputChars;
     }
 
     /** Throws once the current render has used up its time. */
     static void checkDeadline() {
         RenderSession session = CURRENT.get();
-        if (session != null && session.maxRenderSeconds > 0
-                && System.nanoTime() - session.deadline > 0) {
+        if (session != null && session.budget.maxRenderSeconds > 0
+                && System.nanoTime() - session.budget.deadline > 0) {
             throw new RenderLimitException("rendering took longer than "
-                    + session.maxRenderSeconds + " seconds");
+                    + session.budget.maxRenderSeconds + " seconds");
         }
     }
 
-    /** Throws if a value is longer than one render may write. */
+    /** Throws if one string would be longer than one render may write. */
     static void checkLength(long length) {
         RenderSession session = CURRENT.get();
-        if (session != null && length > session.maxOutputChars) {
-            throw new RenderLimitException("rendering produced more than "
-                    + session.maxOutputChars + " characters");
+        if (session != null && length > session.budget.maxOutputChars) {
+            throw new RenderLimitException("a string would be longer than "
+                    + session.budget.maxOutputChars + " characters");
         }
+    }
+
+    /** Counts the characters of a string the render built. */
+    static void chargeBuilt(long chars) {
+        RenderSession session = CURRENT.get();
+        if (session != null && chars > 0) {
+            Budget b = session.budget;
+            b.builtChars = add(b.builtChars, chars);
+            if (b.builtChars > b.maxBuiltChars) {
+                throw new RenderLimitException("rendering built more than "
+                        + b.maxBuiltChars + " characters of strings");
+            }
+        }
+    }
+
+    /** Throws, without counting them, if this many more items would be over the budget. */
+    static void checkItems(long count) {
+        RenderSession session = CURRENT.get();
+        if (session != null && add(session.budget.items, count) > session.budget.maxItems) {
+            throw itemsException(session.budget);
+        }
+    }
+
+    /** Counts items the render added to a list or map, or got from a split. */
+    static void chargeItems(long count) {
+        RenderSession session = CURRENT.get();
+        if (session != null && count > 0) {
+            Budget b = session.budget;
+            b.items = add(b.items, count);
+            if (b.items > b.maxItems) {
+                throw itemsException(b);
+            }
+        }
+    }
+
+    private static RenderLimitException itemsException(Budget b) {
+        return new RenderLimitException("rendering added more than "
+                + b.maxItems + " items to lists and maps");
+    }
+
+    private static long add(long a, long b) {
+        long sum = a + b;
+        return sum < 0 ? Long.MAX_VALUE : sum;
     }
 }

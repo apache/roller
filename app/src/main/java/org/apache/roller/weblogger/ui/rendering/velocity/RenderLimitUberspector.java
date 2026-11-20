@@ -21,10 +21,13 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.util.introspection.AbstractChainableUberspector;
 import org.apache.velocity.util.introspection.Info;
 import org.apache.velocity.util.introspection.VelMethod;
@@ -88,17 +91,55 @@ public class RenderLimitUberspector extends AbstractChainableUberspector {
         public Object invoke(Object o, Object[] params)
                 throws IllegalAccessException, InvocationTargetException {
             RenderSession.checkDeadline();
-            if (RenderSession.current() != null) {
-                RenderSession.checkLength(StringGrowth.maxResultLength(
-                        o, method.getMethodName(), params));
-                if (o instanceof String) {
-                    Object result = DeadlineRegex.invoke((String) o, method.getMethodName(), params);
-                    if (result != DeadlineRegex.NOT_HANDLED) {
-                        return checked(result);
-                    }
+            RenderSession session = RenderSession.current();
+            if (session == null) {
+                return method.invoke(o, params);
+            }
+            String name = method.getMethodName();
+            Object[] args = params == null ? new Object[0] : params;
+
+            // before the call: what it can build or take has to fit
+            RenderSession.checkLength(StringGrowth.maxResultLength(o, name, args));
+            StringGrowth.checkPieces(o, name, args);
+            ValueLimits.checkNumberCall(o, name, args);
+            boolean container = o instanceof Collection || o instanceof Map;
+            if (container) {
+                ValueLimits.checkContainerCall(o, name, args, session.getMaxOutputChars());
+            }
+            long sizeBefore = ValueLimits.size(o);
+            boolean builder = o instanceof StringBuilder || o instanceof StringBuffer;
+            long lengthBefore = builder ? ((CharSequence) o).length() : 0;
+
+            Object result = DeadlineRegex.NOT_HANDLED;
+            if (o instanceof String) {
+                try {
+                    result = DeadlineRegex.invoke((String) o, name, args);
+                } catch (RenderLimitException ex) {
+                    throw ex;
+                } catch (RuntimeException ex) {
+                    // reported as a template error, as the String method's own is
+                    throw new InvocationTargetException(ex);
                 }
             }
-            return checked(method.invoke(o, params));
+            if (result == DeadlineRegex.NOT_HANDLED) {
+                result = method.invoke(o, params);
+            }
+
+            // after the call: count what it built toward the render's budget
+            checked(result);
+            ValueLimits.checkResult(result);
+            if (container) {
+                RenderSession.chargeItems(ValueLimits.size(o) - sizeBefore);
+            } else if (builder) {
+                RenderSession.chargeBuilt(((CharSequence) o).length() - lengthBefore);
+            } else if (o instanceof String || o instanceof UtilitiesModel) {
+                if (result instanceof CharSequence && result != o) {
+                    RenderSession.chargeBuilt(((CharSequence) result).length());
+                } else if (result instanceof Object[]) {
+                    RenderSession.chargeItems(((Object[]) result).length);
+                }
+            }
+            return result;
         }
 
         @Override

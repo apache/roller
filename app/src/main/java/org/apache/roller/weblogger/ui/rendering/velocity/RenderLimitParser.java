@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.context.InternalContextAdapter;
@@ -32,6 +34,9 @@ import org.apache.velocity.runtime.parser.Parser;
 import org.apache.velocity.runtime.parser.StandardParser;
 import org.apache.velocity.runtime.parser.node.ASTAddNode;
 import org.apache.velocity.runtime.parser.node.ASTBlock;
+import org.apache.velocity.runtime.parser.node.ASTEQNode;
+import org.apache.velocity.runtime.parser.node.ASTMulNode;
+import org.apache.velocity.runtime.parser.node.ASTNENode;
 import org.apache.velocity.runtime.parser.node.ASTprocess;
 import org.apache.velocity.runtime.parser.node.Node;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
@@ -47,8 +52,13 @@ import org.apache.velocity.runtime.parser.node.SimpleNode;
  * <li>a template's root node and every block (the body of #if, #foreach,
  * #define, #macro and so on) count what they write into any writer that isn't
  * already counted, such as the buffer of a string literal;</li>
- * <li>+ checks the length of two strings before joining them.</li>
+ * <li>+ checks the length of two strings before joining them;</li>
+ * <li>== and != check the length of a list or map before comparing it with
+ * a string as text;</li>
+ * <li>* checks the size of two big numbers before multiplying them.</li>
  * </ul>
+ *
+ * <p>The strings they build count toward the render's budget (RenderSession).
  *
  * <p>The nodes keep no state of their own between renders, so a parsed
  * template is still safe to share between threads.
@@ -79,6 +89,12 @@ public class RenderLimitParser extends StandardParser {
                 limited = new LimitedBlock(this, (ASTBlock) child);
             } else if (child.getClass() == ASTAddNode.class) {
                 limited = new LimitedAddNode(this, (ASTAddNode) child);
+            } else if (child.getClass() == ASTEQNode.class) {
+                limited = new LimitedEQNode(this, (ASTEQNode) child);
+            } else if (child.getClass() == ASTNENode.class) {
+                limited = new LimitedNENode(this, (ASTNENode) child);
+            } else if (child.getClass() == ASTMulNode.class) {
+                limited = new LimitedMulNode(this, (ASTMulNode) child);
             }
             if (limited != child) {
                 node.jjtAddChild(limited, i);
@@ -135,6 +151,7 @@ public class RenderLimitParser extends StandardParser {
         private void count(long len) {
             written += len;
             RenderSession.checkLength(written);
+            RenderSession.chargeBuilt(len);
             RenderSession.checkDeadline();
         }
 
@@ -229,15 +246,96 @@ public class RenderLimitParser extends StandardParser {
 
         @Override
         protected Object handleSpecial(Object left, Object right, InternalContextAdapter context) {
-            if (left instanceof CharSequence && right instanceof CharSequence) {
-                RenderSession.checkLength((long) ((CharSequence) left).length()
-                        + ((CharSequence) right).length());
+            if (left instanceof CharSequence || right instanceof CharSequence) {
+                RenderSession.checkLength(textLength(left) + textLength(right));
             }
             Object result = super.handleSpecial(left, right, context);
             if (result instanceof CharSequence) {
                 RenderSession.checkLength(((CharSequence) result).length());
+                RenderSession.chargeBuilt(((CharSequence) result).length());
             }
             return result;
+        }
+
+        @Override
+        public Number perform(Number left, Number right, InternalContextAdapter context) {
+            Number result = super.perform(left, right, context);
+            ValueLimits.checkResult(result);
+            return result;
+        }
+    }
+
+    /**
+     * @return the length of a string, or of the text of a list or map, that
+     *         Velocity is about to build; 0 for other values, whose text is
+     *         short or checked once it is built
+     */
+    private static long textLength(Object value) {
+        RenderSession session = RenderSession.current();
+        if (session == null) {
+            return 0;
+        }
+        if (value instanceof CharSequence || value instanceof Collection
+                || value instanceof Map) {
+            return ValueLimits.textLength(value, session.getMaxOutputChars());
+        }
+        return 0;
+    }
+
+    /** Checks the text of a list or map before == compares it with a string. */
+    private static void checkComparedText(Object left, Object right) {
+        if (!left.getClass().isAssignableFrom(right.getClass())
+                && !right.getClass().isAssignableFrom(left.getClass())) {
+            RenderSession.checkLength(textLength(left));
+            RenderSession.checkLength(textLength(right));
+        }
+    }
+
+    static final class LimitedEQNode extends ASTEQNode {
+
+        LimitedEQNode(Parser parser, ASTEQNode from) {
+            super(parser, from.getType());
+            moveChildren(from, this);
+            this.last = from.getLastToken();
+            this.template = from.getTemplate();
+        }
+
+        @Override
+        public boolean compareNonNumber(Object left, Object right) {
+            checkComparedText(left, right);
+            return super.compareNonNumber(left, right);
+        }
+    }
+
+    static final class LimitedNENode extends ASTNENode {
+
+        LimitedNENode(Parser parser, ASTNENode from) {
+            super(parser, from.getType());
+            moveChildren(from, this);
+            this.last = from.getLastToken();
+            this.template = from.getTemplate();
+        }
+
+        @Override
+        public boolean compareNonNumber(Object left, Object right) {
+            checkComparedText(left, right);
+            return super.compareNonNumber(left, right);
+        }
+    }
+
+    static final class LimitedMulNode extends ASTMulNode {
+
+        LimitedMulNode(Parser parser, ASTMulNode from) {
+            super(parser, from.getType());
+            moveChildren(from, this);
+            this.last = from.getLastToken();
+            this.template = from.getTemplate();
+        }
+
+        @Override
+        public Number perform(Number left, Number right, InternalContextAdapter context) {
+            ValueLimits.checkBits(ValueLimits.bits(left) + ValueLimits.bits(right));
+            return super.perform(left, right, context);
         }
     }
 }
