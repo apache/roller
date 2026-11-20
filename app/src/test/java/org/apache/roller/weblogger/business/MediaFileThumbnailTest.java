@@ -337,6 +337,30 @@ public class MediaFileThumbnailTest {
                 "the previous image's size must not count against the new content");
     }
 
+    /**
+     * An image so much wider than tall that its thumbnail would be less than
+     * a pixel high is stored with its size and without a thumbnail.
+     */
+    @Test
+    public void testVeryWideImageIsStoredWithoutThumbnail() throws Exception {
+        byte[] png = encode(new BufferedImage(30000, 10,
+                BufferedImage.TYPE_BYTE_GRAY), "png");
+        MediaFile saved = upload("banner.png", "image/png",
+                new ByteArrayInputStream(png), png.length);
+
+        assertNull(saved.getThumbnailInputStream());
+        assertEquals(30000, saved.getWidth());
+        assertEquals(10, saved.getHeight());
+        assertFalse(saved.isThumbnailSkipped());
+    }
+
+    private static byte[] encode(BufferedImage image, String format)
+            throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        assertTrue(ImageIO.write(image, format, out), "no " + format + " writer");
+        return out.toByteArray();
+    }
+
     /** A valid PNG signature and header followed by a token amount of data. */
     private static byte[] pngHeaderOnly(int width, int height) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

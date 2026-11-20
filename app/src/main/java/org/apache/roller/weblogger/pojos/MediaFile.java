@@ -497,6 +497,9 @@ public class MediaFile implements Serializable {
      */
     public void setWidth(int width) {
         this.width = width;
+        // the thumbnail size is worked out again from the new size
+        thumbnailWidth = -1;
+        thumbnailHeight = -1;
     }
 
     /**
@@ -512,6 +515,9 @@ public class MediaFile implements Serializable {
      */
     public void setHeight(int height) {
         this.height = height;
+        // the thumbnail size is worked out again from the new size
+        thumbnailWidth = -1;
+        thumbnailHeight = -1;
     }
 
     /**

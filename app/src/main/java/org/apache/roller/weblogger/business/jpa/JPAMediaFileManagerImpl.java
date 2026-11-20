@@ -325,11 +325,15 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                         return false;
                     }
 
-                    // decode only every n-th pixel, keeping about twice the
-                    // thumbnail size so the smooth scaling below has detail
-                    int step = Math.max(1, Math.min(
-                            width / Math.max(1, 2 * mediaFile.getThumbnailWidth()),
-                            height / Math.max(1, 2 * mediaFile.getThumbnailHeight())));
+                    int step = thumbnailSubsampling(width, height,
+                            mediaFile.getThumbnailWidth(),
+                            mediaFile.getThumbnailHeight());
+                    if (step < 1) {
+                        log.debug("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + " (" + width + "x" + height
+                                + "), it is too narrow to scale down");
+                        return false;
+                    }
                     ImageReadParam param = reader.getDefaultReadParam();
                     param.setSourceSubsampling(step, step, 0, 0);
                     img = reader.read(0, param);
@@ -369,6 +373,22 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 forgetSize(mediaFile);
             }
         }
+    }
+
+    /**
+     * The subsampling step for decoding an image for its thumbnail: only
+     * every n-th pixel is decoded, keeping about twice the thumbnail size in
+     * each direction so the smooth scaling has detail. Returns 0 when the
+     * image is so much wider than tall, or taller than wide, that its
+     * thumbnail would be less than a pixel across; no thumbnail is made then.
+     */
+    static int thumbnailSubsampling(int width, int height,
+            int thumbnailWidth, int thumbnailHeight) {
+        if (thumbnailWidth < 1 || thumbnailHeight < 1) {
+            return 0;
+        }
+        return Math.max(1, Math.max(width / (2 * thumbnailWidth),
+                height / (2 * thumbnailHeight)));
     }
 
     /**
