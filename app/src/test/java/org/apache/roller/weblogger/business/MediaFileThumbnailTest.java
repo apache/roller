@@ -203,8 +203,9 @@ public class MediaFileThumbnailTest {
         assertNull(saved.getThumbnailInputStream());
 
         // back at the default limit, which 500 x 373 is well under
+        TestUtils.endSession(true);
         MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-        assertTrue(mgr.getMediaFile(saved.getId()).isThumbnailSkipped());
+        assertTrue(loadedWithoutContent(saved.getId()).isThumbnailSkipped());
         assertTrue(mgr.getMediaFile(saved.getId(), true).isThumbnailSkipped());
     }
 
@@ -220,16 +221,29 @@ public class MediaFileThumbnailTest {
             assertNotNull(in);
         }
 
+        TestUtils.endSession(true);
         WebloggerConfig.init();
         MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
         try (MockedStatic<WebloggerConfig> config =
                 mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
             config.when(() -> WebloggerConfig.getIntProperty(
                     eq("uploads.thumbnail.maxPixels"), anyInt())).thenReturn(100000);
-            assertFalse(mgr.getMediaFile(saved.getId()).isThumbnailSkipped());
+            assertFalse(loadedWithoutContent(saved.getId()).isThumbnailSkipped());
             assertFalse(mgr.getMediaFile(saved.getId(), true)
                     .isThumbnailSkipped());
         }
+    }
+
+    /**
+     * Load a media file the way the list views do, without its content, so
+     * that whether it has a thumbnail has to be looked up in the file store.
+     */
+    private static MediaFile loadedWithoutContent(String id) throws Exception {
+        MediaFile mediaFile = WebloggerFactory.getWeblogger().getMediaFileManager()
+                .getMediaFile(id);
+        assertNull(mediaFile.getThumbnailInputStream(),
+                "the thumbnail content should not be loaded");
+        return mediaFile;
     }
 
     /**
