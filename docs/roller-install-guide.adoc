@@ -89,7 +89,11 @@ specifically, here’s what you need to install and run Roller:
 
 * *Java Development Kit*, specifically Java 21 or later. The computer on
 which you install Roller should already have the JDK installed and
-configured.
+configured. Keep it up to date with your vendor's security releases. JDKs
+older than the November 2026 updates have a Base64 decoding flaw on x86-64
+processors with AVX-512 (CVE-2026-114938); until you can update, start your
+server with `-XX:-UseBASE64Intrinsics`, for example in Tomcat's
+`CATALINA_OPTS`. Roller's Docker image sets this option.
 * *Jakarta EE Servlet container* that supports the Servlet 6.1 API.
 Hereinafter, we’ll just call this your _server_. Roller is tested on:
 ** Tomcat 11

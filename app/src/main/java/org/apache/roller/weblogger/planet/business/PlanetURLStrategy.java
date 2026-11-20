@@ -36,7 +36,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
     @Override
     public String getPlanetURL(String planet) {
         StringBuilder url = new StringBuilder();
-        url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
+        url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         return url.toString();
     }
     

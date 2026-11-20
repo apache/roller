@@ -31,8 +31,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.FatalBeanException;
+import org.apache.roller.weblogger.ui.core.filters.InitFilter;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 
 
@@ -178,6 +180,10 @@ public class Install extends UIAction {
             // installer reachable until the next restart.
             BootstrapSecurity.completeIfInstalled(WebloggerFactory.getWeblogger());
 
+            // whoever runs the installer is setting up the site, so take the
+            // site's url from this request if none is configured
+            saveSiteUrlIfUnset();
+
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
 
@@ -205,6 +211,19 @@ public class Install extends UIAction {
         log.info("EXITING - Bootstrap failed, forwarding to error page");
         setPageTitle("installer.error.unknown.pageTitle");
         return BOOTSTRAP;
+    }
+
+
+    private void saveSiteUrlIfUnset() {
+        try {
+            if (WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                    InitFilter.getAbsoluteUrl(getServletRequest()))) {
+                WebloggerFactory.getWeblogger().flush();
+            }
+        } catch (Exception e) {
+            log.warn("Could not save site.absoluteurl; set it under Server "
+                    + "Admin > Configuration", e);
+        }
     }
 
 
