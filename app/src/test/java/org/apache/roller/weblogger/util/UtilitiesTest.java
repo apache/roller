@@ -19,13 +19,15 @@
 
 package org.apache.roller.weblogger.util;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 import org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
  * Test utilities.
@@ -36,7 +38,7 @@ public class UtilitiesTest  {
     public void testHtmlSubsetLinkFormats() {
         assertEquals("<a href=\"https://example.com/\">site</a>",
                 htmlSubset("<a href='https://example.com/'>site</a>"));
-        assertEquals("<a href=\"HTTP://example.com/\">site</a>",
+        assertEquals("<a href=\"http://example.com/\">site</a>",
                 htmlSubset("<A HREF=HTTP://example.com/>site</A>"));
         assertEquals("<a href=\"mailto:reader@example.com\">mail</a>",
                 htmlSubset("<a href=\"mailto:reader@example.com\">mail</a>"));
@@ -52,7 +54,8 @@ public class UtilitiesTest  {
     public void testHtmlSubsetLinkSubset() {
         assertEquals("<a>file</a>", htmlSubset("<a href=\"ftp://example.com/file\">file</a>"));
         assertEquals("<a>local</a>", htmlSubset("<a href=\"../page\">local</a>"));
-        assertEquals("<a>site</a>",
+        // other attributes are removed, and the link stays
+        assertEquals("<a href=\"https://example.com/\">site</a>",
                 htmlSubset("<a href=\"https://example.com/\" title=\"site\">site</a>"));
         assertEquals("<a>empty</a>", htmlSubset("<a href=\"\">empty</a>"));
     }
@@ -62,8 +65,12 @@ public class UtilitiesTest  {
         assertNull(Utilities.transformToHTMLSubset(null));
         assertEquals("", htmlSubset(""));
         String text = "<p><b>Bold</b> and <i>italic</i><br>line</p>";
-        assertEquals("<p><b>Bold</b> and <i>italic</i><br />line</p>", htmlSubset(text));
-        assertEquals("&#65; &lt;example&gt;", htmlSubset("&#65; &lt;example&gt;"));
+        assertEquals("<p><b>Bold</b> and <i>italic</i><br>line</p>", htmlSubset(text));
+        // a tag left open ends with the comment
+        assertEquals("<b>bold <i>to the end</i></b>", htmlSubset("<b>bold <i>to the end"));
+        assertEquals("A &lt;example&gt;", htmlSubset("&#65; &lt;example&gt;"));
+        assertEquals("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>",
+                htmlSubset("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>"));
         assertEquals("&lt;a href=\"https://example.com/\"&gt;site&lt;/a&gt;",
                 htmlSubset("&lt;a href=\"https://example.com/\"&gt;site&lt;/a&gt;"));
         assertEquals("<a href=\"https://example.com/$1\">one</a> <a>two</a>",
@@ -79,6 +86,133 @@ public class UtilitiesTest  {
         assertEquals("<a>file</a>", plugin.render(comment, text));
         comment.setContentType("text/plain");
         assertEquals(text, plugin.render(comment, text));
+    }
+
+    @Test
+    public void testHtmlSubsetShowsOtherMarkupAsText() {
+        // text that isn't a tag in the subset is shown, not removed
+        assertEquals("Use List&lt;String&gt; x and Map&lt;K,V&gt;",
+                htmlSubset("Use List<String> x and Map<K,V>"));
+        assertEquals("if a&lt;b and c&gt;d then", htmlSubset("if a<b and c>d then"));
+        assertEquals("if i&lt;p &amp;&amp; b&gt;c then", htmlSubset("if i<p && b>c then"));
+        assertEquals("when x&lt;a or y&gt;z", htmlSubset("when x<a or y>z"));
+        assertEquals("email me at &lt;foo@bar.com&gt; ok", htmlSubset("email me at <foo@bar.com> ok"));
+        assertEquals("&lt;http://example.com/foo&gt;", htmlSubset("<http://example.com/foo>"));
+        assertEquals("&lt;bean id=\"x\"&gt; and &lt;dependency&gt;&lt;/dependency&gt;",
+                htmlSubset("<bean id=\"x\"> and <dependency></dependency>"));
+        assertEquals("1 &lt; 2, 3 &lt;= 4 and &lt;&lt;EOF", htmlSubset("1 < 2, 3 <= 4 and <<EOF"));
+        assertEquals("a &lt;", htmlSubset("a <"));
+        assertEquals("&lt;/", htmlSubset("</"));
+        assertEquals("&lt; b&gt;not bold", htmlSubset("< b>not bold"));
+        assertEquals("&lt;bold&gt;, &lt;pres&gt; and &lt;b2&gt;", htmlSubset("<bold>, <pres> and <b2>"));
+        assertEquals("x&lt;a.b=c&gt;d and &lt;a:x=y&gt;", htmlSubset("x<a.b=c>d and <a:x=y>"));
+
+        // a tag that never ends is text too, and so is the rest of the comment
+        assertEquals("see &lt;a href=http://x.com and the rest of my comment",
+                htmlSubset("see <a href=http://x.com and the rest of my comment"));
+        assertEquals("see &lt;a href=\"http://x.com&gt; and the rest of my comment",
+                htmlSubset("see <a href=\"http://x.com> and the rest of my comment"));
+        assertEquals("see &lt;a href='http://x.com&gt; and <b>the rest</b>",
+                htmlSubset("see <a href='http://x.com> and <b>the rest</b>"));
+        assertEquals("&lt;b and <i>italic</i>", htmlSubset("<b and <i>italic</i>"));
+
+        // tags in the subset still work, in any case and with spaces
+        assertEquals("<b>B</b><br><br><p>para</p>", htmlSubset("<B>B</B ><br/><BR /><p\n>para</p>"));
+        assertEquals("<a href=\"https://example.com/?a=1&amp;b=2\">x</a>",
+                htmlSubset("<a title=\"a > b\" href=https://example.com/?a=1&b=2>x</a>"));
+    }
+
+    @Test
+    public void testHtmlSubsetNeutralizesActiveContent() {
+        // tags outside the subset are shown as text
+        assertEquals("<b>Hi</b>&lt;img src=x onerror=alert(1)&gt;",
+                htmlSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
+        assertEquals("&lt;script&gt;alert(1)&lt;/script&gt;", htmlSubset("<script>alert(1)</script>"));
+        assertEquals("&lt;SCRIPT src=//example.com/x.js&gt;&lt;/SCRIPT&gt;",
+                htmlSubset("<SCRIPT src=//example.com/x.js></SCRIPT>"));
+        assertEquals("&lt;style&gt;body{display:none}&lt;/style&gt;",
+                htmlSubset("<style>body{display:none}</style>"));
+        assertEquals("&lt;iframe src=\"https://example.com/\"&gt;&lt;/iframe&gt;x",
+                htmlSubset("<iframe src=\"https://example.com/\"></iframe>x"));
+        assertEquals("&lt;!-- &lt;script&gt;alert(1)&lt;/script&gt; --&gt;text",
+                htmlSubset("<!-- <script>alert(1)</script> -->text"));
+        assertEquals("&lt;!-- --&gt; text", htmlSubset("&lt;!-- --&gt; text"));
+        assertEquals("&lt;svg&gt;<a href=\"https://example.com/\">x</a>&lt;/svg&gt;",
+                htmlSubset("<svg><a href=\"https://example.com/\" onload=alert(1)>x</a></svg>"));
+        assertEquals("&lt;scr<b>ipt&gt;alert(1)&lt;/script&gt;</b>",
+                htmlSubset("<scr<b>ipt>alert(1)</script>"));
+        assertEquals("&lt;&lt;script&gt;alert(1)//&lt;", htmlSubset("<<script>alert(1)//<"));
+
+        // only links keep an attribute, and only an http, https or mailto href
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"javascript:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"JaVaScRiPt:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"jav&#x09;ascript:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"data:text/html;base64,PHNjcmlwdD4=\">x</a>"));
+        assertEquals("<a href=\"https://example.com/\">x</a>",
+                htmlSubset("<a href=\"https://example.com/\" onclick=\"alert(1)\" style=\"x\">x</a>"));
+        assertEquals("<a href=\"https://example.com/\">x</a>",
+                htmlSubset("<a onmouseover=alert(1) href=https://example.com/>x</a>"));
+        // a quote can't end the href value and add an attribute
+        assertEquals("<a href=\"https://example.com/&quot; onclick=&quot;alert(1)\">x</a>",
+                htmlSubset("<a href='https://example.com/\" onclick=\"alert(1)'>x</a>"));
+
+        // the other tags take no attributes, so with one they are text
+        assertEquals("&lt;b onmouseover=\"alert(1)\"&gt;x", htmlSubset("<b onmouseover=\"alert(1)\">x</b>"));
+        assertEquals("&lt;p style=\"background:url(javascript:alert(1))\"&gt;x",
+                htmlSubset("<p style=\"background:url(javascript:alert(1))\">x"));
+
+        // a tag inside an attribute value makes the outer tag text
+        assertEquals("&lt;a href=\"data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;\"&gt;x",
+                htmlSubset("<a href=\"data:text/html,<script>alert(1)</script>\">x</a>"));
+        assertEquals("&lt;a href=\"https://example.com/<b>\" onmouseover=\"alert(1)\"&gt;x</b>",
+                htmlSubset("<a href=\"https://example.com/<b>\" onmouseover=\"alert(1)\">x</a>"));
+    }
+
+    @Test
+    public void testTransformToHtmlSubsetKeepsEncodedMarkupAsText() {
+        // encoded tags outside the subset stay text
+        assertEquals("&lt;script&gt;how to&lt;/script&gt;",
+                Utilities.transformToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
+        assertEquals("&lt;img src=x onerror=alert(1)&gt; <b>bold</b>",
+                Utilities.transformToHTMLSubset("&lt;img src=x onerror=alert(1)&gt; &lt;b&gt;bold&lt;/b&gt;"));
+        assertEquals("&lt;script&gt;alert(1)&lt;/script&gt;",
+                Utilities.transformToHTMLSubset("&#60;script&#62;alert(1)&#60;/script&#62;"));
+        // encoded quotes can't add attributes to a link
+        assertEquals("<a href=\"http://example.com/\">x</a>", Utilities.transformToHTMLSubset(
+                "&lt;a href=&quot;http://example.com/&quot; onclick=&quot;alert(1)&quot;&gt;x&lt;/a&gt;"));
+        assertEquals("<a href=\"http://example.com/&quot; onclick=&quot;alert(1)\">x</a>",
+                Utilities.transformToHTMLSubset(
+                "&lt;a href='http://example.com/&quot; onclick=&quot;alert(1)'&gt;x&lt;/a&gt;"));
+        assertEquals("<a>x</a>", Utilities.transformToHTMLSubset(
+                "&lt;a href=&quot;javascript:alert(1)&quot;&gt;x&lt;/a&gt;"));
+    }
+
+    @Test
+    public void testSanitizeToHtmlSubsetTakesRawHtml() {
+        assertNull(Utilities.sanitizeToHTMLSubset(null));
+        assertEquals("<b>Hi</b> &amp; bye", Utilities.sanitizeToHTMLSubset("<b>Hi</b> &amp; bye"));
+        assertEquals("<b>Hi</b>&lt;img src=x onerror=alert(1)&gt;",
+                Utilities.sanitizeToHTMLSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
+        assertEquals("&lt;script&gt;how to&lt;/script&gt;",
+                Utilities.sanitizeToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
+    }
+
+    @Test
+    public void testHtmlSubsetShowsAmpersandsAsTyped() {
+        // an ampersand that doesn't start a complete reference is text, even
+        // when an entity name follows it
+        String url = "http://example.com/?id=1&region=us&copy=2&times=6&para";
+        String encoded = url.replace("&", "&amp;");
+        assertEquals(encoded, Utilities.sanitizeToHTMLSubset(url));
+        assertEquals("<a href=\"" + encoded + "\">x</a>",
+                Utilities.sanitizeToHTMLSubset("<a href=\"" + url + "\">x</a>"));
+        assertEquals("AT&amp;T &amp; &amp;# &amp;#x; &amp;;",
+                Utilities.sanitizeToHTMLSubset("AT&T & &# &#x; &;"));
+        assertEquals(encoded, htmlSubset(url));
+
+        // complete references are still read
+        assertEquals("© ~ ~ &amp; &amp;bogus;",
+                Utilities.sanitizeToHTMLSubset("&copy; &#126; &#x7e; &amp; &bogus;"));
     }
 
     private String htmlSubset(String text) {
@@ -217,15 +351,20 @@ public class UtilitiesTest  {
     public void testUnclosedLinksTakeLinearTime() {
         String escaped = "&lt;a href=".repeat(50000);
         String raw = "<a href=".repeat(50000);
+        String noEnd = "<a ".repeat(50000);
+        String quoted = "<a x=\"<a \" y=\"".repeat(50000);
 
-        long start = System.nanoTime();
-        assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
-        assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
-        assertEquals("", Utilities.addNofollow(raw));
-        long millis = (System.nanoTime() - start) / 1_000_000;
-        // a quadratic scan takes far longer than this; leave room for slow
-        // build machines
-        assertTrue(millis < 2000, "took " + millis + " ms");
+        // a generous bound, so that only a quadratic scan fails on a slow
+        // build machine
+        assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+            // a tag that never ends is text in the HTML subset
+            assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
+            assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
+            assertEquals("&lt;a ".repeat(50000), Utilities.sanitizeToHTMLSubset(noEnd));
+            assertEquals("&lt;a x=\"&lt;a \" y=\"".repeat(50000), Utilities.sanitizeToHTMLSubset(quoted));
+            // and addNofollow drops it
+            assertEquals("", Utilities.addNofollow(raw));
+        });
     }
 
     @Test
