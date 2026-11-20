@@ -283,7 +283,7 @@ A bug in an optional feature is a vulnerability when the feature is enabled.
 
 | Setting | What it changes |
 | --- | --- |
-| `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
+| `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members and matches a weblog's banned words as plain words rather than regular expressions. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
 | `themes.customtheme.allowed` | Lets weblog Admins edit templates. Templates stay in the sandbox. |
 | `uploads.enabled` | Lets members upload media files. |
 | `webservices.enableXmlRpc`, `webservices.enableAtomPub` | Turn on the remote publishing APIs. They use the same weblog roles as the UI. |

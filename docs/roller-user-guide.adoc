@@ -815,12 +815,21 @@ here’s how you do it:
 
 ** Go to the Weblog Settings page and scroll down to the bannedwordslist
 fields
-** Enter your spam words, one per line
-** Lines that begin with a left parenthesis will be treated as regular
-expressions (see the Java API documentation for
-_javax.util.regex.Pattern_ for a guide to regular expressions). Don’t
-try to use a regular expression unless you really know what you’re
-doing.
+** Enter your spam words or phrases, one per line. Each one matches
+regardless of case, as a whole word: _casino_ matches "Casino" but not
+"casinos". A word in Chinese, Japanese, Thai or another script written
+without spaces matches anywhere in the text.
+** By default (_weblogAdminsUntrusted=true_), every line is matched as
+plain text, including lines that begin with a left parenthesis, and Weblog
+Settings lists the lines that look like regular expressions. A line that is
+only letters, digits and spaces in parentheses, such as _(casino)_, matches
+that text anywhere, regardless of case: _(casino)_ matches "casinos" and
+"onlinecasino". On a site
+where weblog administrators are trusted (_weblogAdminsUntrusted=false_),
+lines that begin with a left parenthesis are regular expressions, and other
+lines are matched as regular expressions at word boundaries (see the Java
+API documentation for _java.util.regex.Pattern_). Don’t try to use a
+regular expression unless you really know what you’re doing.
 
 == Choosing your weblog theme
 

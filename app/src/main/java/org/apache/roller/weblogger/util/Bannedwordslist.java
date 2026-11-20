@@ -35,7 +35,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -326,19 +328,23 @@ public final class Bannedwordslist {
             stringRules.addAll(moreStringRules);
             stringRules.addAll(bannedwordslistStr);
         }
-        if (testStringRules(str, stringRules)) {
+        try {
+            if (testStringRules(str, stringRules)) {
+                return true;
+            }
+        
+            // test regex bannedwordslisted
+            List<Pattern> regexRules = bannedwordslistRegex;
+            if (moreRegexRules != null && !moreRegexRules.isEmpty()) {
+                regexRules = new ArrayList<>();
+                regexRules.addAll(moreRegexRules);
+                regexRules.addAll(bannedwordslistRegex);
+            }
+            return testRegExRules(str, regexRules);
+        } catch (RuleNotCheckedException e) {
             return true;
         }
-        
-        // test regex bannedwordslisted
-        List<Pattern> regexRules = bannedwordslistRegex;
-        if (moreRegexRules != null && !moreRegexRules.isEmpty()) {
-            regexRules = new ArrayList<>();
-            regexRules.addAll(moreRegexRules);
-            regexRules.addAll(bannedwordslistRegex);
-        }
-        return testRegExRules(str, regexRules);
-    }      
+    }
 
     /** 
      * Test string only against rules provided by caller, NOT against built-in bannedwordslist.
@@ -348,24 +354,42 @@ public final class Bannedwordslist {
      */
     public static boolean matchesRulesOnly(
         String str, List<String> stringRules, List<Pattern> regexRules) {
-        return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
+        return matchesRulesOnly(str, stringRules, regexRules, true);
+    }
+
+    /**
+     * Test string only against rules provided by caller, NOT against built-in bannedwordslist.
+     * @param str             String to be checked against rules
+     * @param stringRules     String rules to consider
+     * @param regexRules      Regex rules to consider
+     * @param uncheckedMatches what to return when a rule can't be checked in
+     *                        time: true for a comment, which the weblog owner
+     *                        can review, false for a referrer, which would
+     *                        refuse the reader the page
+     */
+    public static boolean matchesRulesOnly(String str, List<String> stringRules,
+            List<Pattern> regexRules, boolean uncheckedMatches) {
+        if (str == null) {
+            return false;
+        }
+        try {
+            return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
+        } catch (RuleNotCheckedException e) {
+            return uncheckedMatches;
+        }
     }
         
     /** Test String against the RegularExpression rules. */
     private static boolean testRegExRules(String str, List<Pattern> regexRules) {
         for (Pattern testPattern : regexRules) {
-            // want to see what it is matching on, but only in debug mode
-            if (mLogger.isDebugEnabled()) {
-                Matcher matcher = testPattern.matcher(str);
-                if (matcher.find()) {
+            Matcher matcher = testPattern.matcher(new DeadlineText(str));
+            if (find(matcher, testPattern.pattern())) {
+                // want to see what it is matching on, but only in debug mode
+                if (mLogger.isDebugEnabled()) {
                     mLogger.debug(matcher.group()
                             + " matched by " + testPattern.pattern());
-                    return true;
                 }
-            } else {
-                if (testPattern.matcher(str).find()) {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
@@ -399,9 +423,9 @@ public final class Bannedwordslist {
                         Pattern.CASE_INSENSITIVE);
 
                 Matcher matcher;
-                matcher = pattern.matcher(source);
+                matcher = pattern.matcher(new DeadlineText(source));
 
-                matches = matcher.find();
+                matches = find(matcher, rule);
                 if (matches) {
                     break;
                 }
@@ -426,23 +450,250 @@ public final class Bannedwordslist {
     /** Utility method to populate lists based a bannedwordslist in string form */
     public static void populateSpamRules(
         String bannedwordslist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
-        String weblogWords = bannedwordslist;
-        weblogWords = (weblogWords == null) ? "" : weblogWords;
-        String siteWords = (addendum != null) ? addendum : "";
-        StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
-        while (toker.hasMoreTokens()) {
-            String token = toker.nextToken().trim();
-            if (token.startsWith("#")) {
-                continue;
+        populateSpamRules(bannedwordslist, stringRules, regexRules, addendum, false);
+    }
+
+    /**
+     * Populates the rule lists from a weblog's banned words and the site-wide
+     * addendum. With weblogRulesAsWords, the weblog's own lines are matched as
+     * plain words (case-insensitive, at word boundaries) rather than as
+     * regular expressions, so an untrusted weblog admin can't write a rule
+     * that backtracks; the addendum's rules are still regular expressions.
+     * A weblog line such as (casino), written for earlier versions, that is
+     * only letters, digits and spaces in parentheses is matched as that text
+     * anywhere, case-insensitive, without word edges.
+     * A regex rule that doesn't compile is logged and matched as a plain
+     * word; use validateRules() to refuse it when the list is saved.
+     */
+    public static void populateSpamRules(String bannedwordslist, List<String> stringRules,
+            List<Pattern> regexRules, String addendum, boolean weblogRulesAsWords) {
+        if (weblogRulesAsWords) {
+            readRules(addendum, stringRules, regexRules, false);
+            for (String rule : ruleLines(bannedwordslist)) {
+                String text = textInParentheses(rule);
+                regexRules.add(text != null ? textPattern(text) : wordPattern(rule));
             }
+        } else {
+            String weblogWords = (bannedwordslist == null) ? "" : bannedwordslist;
+            String siteWords = (addendum != null) ? addendum : "";
+            readRules(siteWords + "\n" + weblogWords, stringRules, regexRules, false);
+        }
+    }
+
+    /**
+     * Checks that each regex rule in a banned words list compiles.
+     * @throws PatternSyntaxException for the first one that doesn't
+     */
+    public static void validateRules(String bannedwordslist) {
+        readRules(bannedwordslist, new ArrayList<>(), new ArrayList<>(), true);
+    }
+
+    /**
+     * The lines of a weblog's banned words that only mean something as a
+     * regular expression, so that a weblog admin can be told they are
+     * matched as plain words. A line that is text in parentheses isn't
+     * listed, since it still matches that text.
+     */
+    public static List<String> regexStyleRules(String bannedwordslist) {
+        List<String> rules = new ArrayList<>();
+        for (String rule : ruleLines(bannedwordslist)) {
+            if (textInParentheses(rule) == null
+                    && (rule.startsWith("(") || StringUtils.containsAny(rule, "|\\[*+?{^$"))) {
+                rules.add(rule);
+            }
+        }
+        return rules;
+    }
+
+    /** The lines of a list that are rules, without comments or blank lines. */
+    private static List<String> ruleLines(String rules) {
+        List<String> lines = new ArrayList<>();
+        StringTokenizer toker = new StringTokenizer(rules == null ? "" : rules, "\n");
+        while (toker.hasMoreTokens()) {
+            String token = stripSpaces(toker.nextToken());
+            if (!token.isEmpty() && !token.startsWith("#")) {
+                lines.add(token);
+            }
+        }
+        return lines;
+    }
+
+    /**
+     * Removes white space from both ends, including spaces such as U+00A0
+     * and U+3000 that trim() keeps and that look blank in a text box.
+     */
+    private static String stripSpaces(String str) {
+        int start = 0;
+        int end = str.length();
+        while (start < end && isSpace(str.charAt(start))) {
+            start++;
+        }
+        while (end > start && isSpace(str.charAt(end - 1))) {
+            end--;
+        }
+        return str.substring(start, end);
+    }
+
+    private static boolean isSpace(char c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c);
+    }
+
+    private static void readRules(String rules, List<String> stringRules, List<Pattern> regexRules,
+            boolean strict) {
+        for (String token : ruleLines(rules)) {
             if (token.startsWith("(")) {
-                regexRules.add(Pattern.compile(token));
+                try {
+                    regexRules.add(Pattern.compile(token));
+                } catch (PatternSyntaxException e) {
+                    if (strict) {
+                        throw e;
+                    }
+                    mLogger.warn("Banned words rule is not a valid regex and is matched as plain text: "
+                            + token);
+                    regexRules.add(wordPattern(token));
+                }
             } else {
                 stringRules.add(token);
             }
-        }        
+        }
     }
-        
+
+    /** Letters, combining marks, digits and spaces in parentheses. */
+    private static final Pattern TEXT_IN_PARENTHESES =
+            Pattern.compile("\\(([\\p{L}\\p{M}\\p{N} ]+)\\)");
+
+    /**
+     * The text inside a line such as (casino), which earlier versions
+     * matched as a regular expression, or null if the line isn't only
+     * letters, combining marks, digits and spaces in parentheses.
+     */
+    private static String textInParentheses(String rule) {
+        Matcher matcher = TEXT_IN_PARENTHESES.matcher(rule);
+        return matcher.matches() && !matcher.group(1).isBlank() ? matcher.group(1) : null;
+    }
+
+    /** The literal text anywhere, case-insensitive in any script. */
+    private static Pattern textPattern(String text) {
+        return Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    }
+
+    /** A letter, combining mark, digit or underscore, in any script. */
+    private static final String WORD_CHAR = "[\\p{L}\\p{M}\\p{N}_]";
+    private static final Pattern WORD_CHAR_PATTERN = Pattern.compile(WORD_CHAR);
+
+    /**
+     * The literal text, case-insensitive in any script, with a word edge
+     * check on each end that is a word character; a check next to "(" or
+     * "/" would need a word character beside it and so would rarely match.
+     * There is no check next to a letter of a script written without
+     * spaces, since such a word is rarely at a word edge.
+     */
+    private static Pattern wordPattern(String word) {
+        StringBuilder regex = new StringBuilder();
+        if (needsEdgeCheck(word.codePointAt(0))) {
+            regex.append("(?<!").append(WORD_CHAR).append(')');
+        }
+        regex.append(Pattern.quote(word));
+        if (needsEdgeCheck(word.codePointBefore(word.length()))) {
+            regex.append("(?!").append(WORD_CHAR).append(')');
+        }
+        return Pattern.compile(regex.toString(),
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    }
+
+    private static boolean needsEdgeCheck(int codePoint) {
+        return WORD_CHAR_PATTERN.matcher(new String(Character.toChars(codePoint))).matches()
+                && !SCRIPTS_WITHOUT_SPACES.contains(Character.UnicodeScript.of(codePoint));
+    }
+
+    /**
+     * Scripts written without spaces between words, where a word is
+     * usually next to other letters.
+     */
+    private static final Set<Character.UnicodeScript> SCRIPTS_WITHOUT_SPACES = EnumSet.of(
+            Character.UnicodeScript.HAN, Character.UnicodeScript.HIRAGANA,
+            Character.UnicodeScript.KATAKANA, Character.UnicodeScript.THAI,
+            Character.UnicodeScript.LAO, Character.UnicodeScript.KHMER,
+            Character.UnicodeScript.MYANMAR);
+
+    /**
+     * Longest one rule may take to check one value, such as a comment's
+     * text. A regex rule that backtracks without end would otherwise hold
+     * the request. The clock is checked as the match reads the text, so a
+     * regex that repeats without reading it, such as nested counted repeats
+     * of an empty group, isn't stopped; such rules come only from the
+     * site-wide list or from trusted weblog admins.
+     */
+    static final long MATCH_TIME_LIMIT_MILLIS = 1000;
+
+    private static boolean find(Matcher matcher, String rule) {
+        try {
+            return matcher.find();
+        } catch (MatchTimeLimitException e) {
+            mLogger.warn("Banned words rule took over " + MATCH_TIME_LIMIT_MILLIS
+                    + " ms and the value could not be checked; consider simplifying it: " + rule);
+            throw new RuleNotCheckedException();
+        } catch (StackOverflowError e) {
+            // a regex such as (a|b)+c recurses once per repetition
+            mLogger.warn("Banned words rule ran out of stack and the value could not be checked;"
+                    + " consider simplifying it: " + rule);
+            throw new RuleNotCheckedException();
+        }
+    }
+
+    private static final class MatchTimeLimitException extends RuntimeException {
+        MatchTimeLimitException() {
+            super(null, null, false, false);
+        }
+    }
+
+    /** A rule could not be checked against the value, which then counts as a match for a comment. */
+    private static final class RuleNotCheckedException extends RuntimeException {
+        RuleNotCheckedException() {
+            super(null, null, false, false);
+        }
+    }
+
+    /** The checked text, which stops a match once the time limit has passed. */
+    private static final class DeadlineText implements CharSequence {
+        private final CharSequence text;
+        private final long deadline;
+        private int reads;
+
+        DeadlineText(CharSequence text) {
+            this(text, System.nanoTime() + MATCH_TIME_LIMIT_MILLIS * 1_000_000L);
+        }
+
+        private DeadlineText(CharSequence text, long deadline) {
+            this.text = text;
+            this.deadline = deadline;
+        }
+
+        @Override
+        public char charAt(int index) {
+            // checking the clock on every read would slow ordinary matches
+            if ((++reads & 0x3FF) == 0 && System.nanoTime() - deadline > 0) {
+                throw new MatchTimeLimitException();
+            }
+            return text.charAt(index);
+        }
+
+        @Override
+        public int length() {
+            return text.length();
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return new DeadlineText(text.subSequence(start, end), deadline);
+        }
+
+        @Override
+        public String toString() {
+            return text.toString();
+        }
+    }
+
     /** Return pretty list of String and RegEx rules. */
     @Override
     public String toString() {

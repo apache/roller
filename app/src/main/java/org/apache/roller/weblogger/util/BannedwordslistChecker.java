@@ -58,13 +58,11 @@ public final class BannedwordslistChecker {
         if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.referrers")) {
             List<String> stringRules = new ArrayList<>();
             List<Pattern> regexRules = new ArrayList<>();
-            Bannedwordslist.populateSpamRules(
-                website.getBannedwordslist(), stringRules, regexRules, null);
-            if (WebloggerRuntimeConfig.getProperty("spam.bannedwordslist") != null) {
-                Bannedwordslist.populateSpamRules(
-                    WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"), stringRules, regexRules, null);
-            }
-            return Bannedwordslist.matchesRulesOnly(referrerURL, stringRules, regexRules);
+            Bannedwordslist.populateSpamRules(website.getBannedwordslist(), stringRules, regexRules,
+                WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"), weblogRulesAsWords());
+            // a referrer that can't be checked in time is let through, so a
+            // slow rule doesn't refuse the reader the page
+            return Bannedwordslist.matchesRulesOnly(referrerURL, stringRules, regexRules, false);
         }
         return false;
     }
@@ -80,7 +78,7 @@ public final class BannedwordslistChecker {
         Weblog website = c.getWeblogEntry().getWebsite();
         Bannedwordslist.populateSpamRules(
             website.getBannedwordslist(), stringRules, regexRules,
-            WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"));
+            WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"), weblogRulesAsWords());
         Bannedwordslist bannedwordslist = Bannedwordslist.getBannedwordslist();
         if (   bannedwordslist.isBannedwordslisted(c.getUrl(),     stringRules, regexRules)
             || bannedwordslist.isBannedwordslisted(c.getEmail(),   stringRules, regexRules)
@@ -89,5 +87,10 @@ public final class BannedwordslistChecker {
             ret = true;
         }
         return ret;
-    }        
+    }
+
+    /** Untrusted weblog admins' banned words are matched as words, not regexes. */
+    private static boolean weblogRulesAsWords() {
+        return WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted");
+    }
 }
