@@ -47,6 +47,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -518,6 +519,35 @@ class PasswordChangeSessionTest {
     }
 
     @Test
+    void endingASessionLogsOutItsParallelRequests() throws Exception {
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+
+        changeOwnPassword(a);
+
+        // Spring gives two requests of b the login context kept in b's session
+        SecurityContext shared = SecurityContextHolder.createEmptyContext();
+        shared.setAuthentication(b.login);
+        HttpServletRequest parallel = b.requestWith(shared);
+
+        // the first one ends the session
+        SecurityContextHolder.setContext(shared);
+        RollerSession.getRollerSession(b.httpRequest);
+
+        // the second one asks for a session afterwards, as LoadSaltFilter does
+        SecurityContextHolder.setContext(shared);
+        parallel.getSession(true);
+        RollerSession rollerSession = RollerSession.getRollerSession(parallel);
+
+        assertNull(rollerSession.getAuthenticatedUser(), "the parallel request should have no user");
+        assertNull(shared.getAuthentication(), "the login should be cleared for every request of the session");
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
     void savingAProfileOnASessionEndedByAnotherRequestDoesNotFail() throws Exception {
         Browser b = new Browser(userName);
         b.request();
@@ -717,6 +747,19 @@ class PasswordChangeSessionTest {
                     return createSuccessfulAuthentication(httpRequest, details);
                 }
             }.accept();
+        }
+
+        /**
+         * Another request of this browser, which reads its login from the
+         * given security context, as Spring's request wrapper does.
+         */
+        HttpServletRequest requestWith(SecurityContext context) {
+            HttpServletRequest other = mock(HttpServletRequest.class);
+            when(other.getUserPrincipal()).thenAnswer(call -> context.getAuthentication());
+            when(other.getSession(false)).thenAnswer(call -> httpRequest.getSession(false));
+            when(other.getSession(true)).thenAnswer(call -> httpRequest.getSession(true));
+            when(other.getSession()).thenAnswer(call -> httpRequest.getSession(true));
+            return other;
         }
 
         /**

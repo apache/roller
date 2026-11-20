@@ -333,6 +333,10 @@ public class RollerSession
      */
     private static RollerSession endSession(HttpServletRequest request, HttpSession session) {
         log.info("Ending session of a user whose password or account changed");
+        // The session's other requests share this security context, so clear
+        // the login from it before the session ends; otherwise one of them
+        // could carry the login into a new session.
+        SecurityContextHolder.getContext().setAuthentication(null);
         try {
             session.invalidate();
         } catch (IllegalStateException ignored) {
