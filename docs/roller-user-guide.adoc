@@ -817,7 +817,8 @@ here’s how you do it:
 fields
 ** Enter your spam words or phrases, one per line. Each one matches
 regardless of case, as a whole word: _casino_ matches "Casino" but not
-"casinos".
+"casinos". A word in Chinese, Japanese, Thai or another script written
+without spaces matches anywhere in the text.
 ** By default (_weblogAdminsUntrusted=true_), every line is matched as
 plain text, including lines that begin with a left parenthesis. On a site
 where weblog administrators are trusted (_weblogAdminsUntrusted=false_),

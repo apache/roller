@@ -169,6 +169,20 @@ public class BannedwordslistTest  {
         assertFalse(Bannedwordslist.matchesRulesOnly("réélan", stringRules, regexRules));
     }
 
+    // scripts written without spaces between words have no word edges to check
+    @Test
+    public void testWeblogRulesInScriptsWithoutSpaces() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        // "赌场" is casino in Chinese, "カジノ" in Japanese, "คาสิโน" in Thai
+        Bannedwordslist.populateSpamRules("赌场\nカジノ\nคาสิโน\ncasino", stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("在线赌场网站", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("オンラインカジノです", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("เล่นคาสิโนออนไลน์", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("赌场casino", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("casinos", stringRules, regexRules));
+    }
+
     // a line that looks blank, such as one non-breaking space, is not a rule
     @Test
     public void testBlankLinesAreNotRules() {

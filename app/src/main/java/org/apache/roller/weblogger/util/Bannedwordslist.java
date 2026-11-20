@@ -35,7 +35,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -543,23 +545,36 @@ public final class Bannedwordslist {
      * The literal text, case-insensitive in any script, with a word edge
      * check on each end that is a word character; a check next to "(" or
      * "/" would need a word character beside it and so would rarely match.
+     * There is no check next to a letter of a script written without
+     * spaces, since such a word is rarely at a word edge.
      */
     private static Pattern wordPattern(String word) {
         StringBuilder regex = new StringBuilder();
-        if (isWordChar(word.codePointAt(0))) {
+        if (needsEdgeCheck(word.codePointAt(0))) {
             regex.append("(?<!").append(WORD_CHAR).append(')');
         }
         regex.append(Pattern.quote(word));
-        if (isWordChar(word.codePointBefore(word.length()))) {
+        if (needsEdgeCheck(word.codePointBefore(word.length()))) {
             regex.append("(?!").append(WORD_CHAR).append(')');
         }
         return Pattern.compile(regex.toString(),
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
     }
 
-    private static boolean isWordChar(int codePoint) {
-        return WORD_CHAR_PATTERN.matcher(new String(Character.toChars(codePoint))).matches();
+    private static boolean needsEdgeCheck(int codePoint) {
+        return WORD_CHAR_PATTERN.matcher(new String(Character.toChars(codePoint))).matches()
+                && !SCRIPTS_WITHOUT_SPACES.contains(Character.UnicodeScript.of(codePoint));
     }
+
+    /**
+     * Scripts written without spaces between words, where a word is
+     * usually next to other letters.
+     */
+    private static final Set<Character.UnicodeScript> SCRIPTS_WITHOUT_SPACES = EnumSet.of(
+            Character.UnicodeScript.HAN, Character.UnicodeScript.HIRAGANA,
+            Character.UnicodeScript.KATAKANA, Character.UnicodeScript.THAI,
+            Character.UnicodeScript.LAO, Character.UnicodeScript.KHMER,
+            Character.UnicodeScript.MYANMAR);
 
     /**
      * Longest one rule may take to check one value, such as a comment's
