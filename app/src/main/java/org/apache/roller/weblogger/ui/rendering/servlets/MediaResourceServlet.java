@@ -95,13 +95,14 @@ public class MediaResourceServlet extends HttpServlet {
         MediaFile mediaFile;
 
         try {
-            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(),
-                    true);
-            // a media file is only served at its own weblog's address
-            if (mediaFile == null || !belongsTo(mediaFile, weblog)) {
+            // a media file is only served at its own weblog's address, so look
+            // it up in that weblog before loading its content
+            if (mfMgr.getMediaFile(weblog, resourceRequest.getResourceId()) == null) {
                 throw new WebloggerException("media file " + resourceRequest.getResourceId()
                         + " is not in weblog " + weblog.getHandle());
             }
+            mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(),
+                    true);
             resourceLastMod = mediaFile.getLastModified();
 
         } catch (Exception ex) {
@@ -176,11 +177,6 @@ public class MediaResourceServlet extends HttpServlet {
             resourceStream.close();
         }
 
-    }
-
-    private static boolean belongsTo(MediaFile mediaFile, Weblog weblog) {
-        Weblog owner = mediaFile.getWeblog();
-        return owner != null && owner.getId() != null && owner.getId().equals(weblog.getId());
     }
 
 }

@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.filters.InitFilter;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -197,7 +198,8 @@ public class Register extends UIAction {
         
         if (!hasActionErrors()) {
             try {
-                if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.beginInitialAdmin();
+                boolean initialAdmin = !BootstrapSecurity.isCompleted();
+                if (initialAdmin) BootstrapSecurity.beginInitialAdmin();
 
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 
@@ -218,6 +220,21 @@ public class Register extends UIAction {
                 // are we using email activation?
                 boolean activationEnabled = WebloggerRuntimeConfig.getBooleanProperty(
                         "user.account.email.activation");
+
+                // the activation email links to the site, so without a site
+                // url it can't be sent and the account could never be
+                // activated. The first administrator is let through, as
+                // nobody else can set the url.
+                if (activationEnabled && !initialAdmin
+                        && !WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+                    log.warn("A registration was refused because activation "
+                            + "emails can't be sent until the site's absolute "
+                            + "URL is set. Set it under Server Admin > "
+                            + "Configuration.");
+                    addError("Register.error.activationUnavailable");
+                    return INPUT;
+                }
+
                 if (activationEnabled) {
                     // User account will be enabled after the activation process
                     ud.setEnabled(Boolean.FALSE);
@@ -241,6 +258,12 @@ public class Register extends UIAction {
                 mgr.addUser(ud);
                 WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
                         new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
+
+                // the first administrator is the one setting up the site, so
+                // take the site's url from this request if none is configured
+                if (initialAdmin) {
+                    saveSiteUrlIfUnset();
+                }
 
                 WebloggerFactory.getWeblogger().flush();
                 if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.complete();
@@ -268,6 +291,20 @@ public class Register extends UIAction {
         }
         
         return INPUT;
+    }
+
+    /**
+     * Failing to save the site's url doesn't stop the registration; an
+     * administrator can set it later.
+     */
+    private void saveSiteUrlIfUnset() {
+        try {
+            WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                    InitFilter.getAbsoluteUrl(getServletRequest()));
+        } catch (Exception e) {
+            log.warn("Could not save site.absoluteurl; set it under Server "
+                    + "Admin > Configuration", e);
+        }
     }
 
 	private String retryActivationCode(UserManager mgr, String inActivationCode) throws WebloggerException {
@@ -299,11 +336,13 @@ public class Register extends UIAction {
 		    try {
 		        // send activation mail to the user
 		        MailUtil.sendUserActivationEmail(ud);
+		        setActivationStatus("pending");
 		    } catch (WebloggerException ex) {
 		        log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
+		        // the account exists but can't be activated without the email
+		        addError("Register.error.activationNotSent");
+		        setActivationStatus("error");
 		    }
-
-		    setActivationStatus("pending");
 		}
 	}
     
@@ -357,7 +396,7 @@ public class Register extends UIAction {
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
-            String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            String unusedPassword = RollerPasswordEncoders.externalLoginMarker();
             
             // Preserve username and password, Spring Security case
             preserveUsernameAndPassword(unusedPassword);
@@ -389,8 +428,14 @@ public class Register extends UIAction {
             getBean().setPasswordConfirm(randomString);
         }
         
+        // the external-login marker is stored for users who log in elsewhere
+        // and never matches at login
+        if (!usingSSO && RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
+
         // check that passwords match 
-        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
         

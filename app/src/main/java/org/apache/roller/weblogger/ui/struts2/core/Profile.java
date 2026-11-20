@@ -135,6 +135,10 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        // the external-login marker never matches at login
+        if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             // check that passwords match if they were specified (w/StringUtils.equals, null == null)
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
