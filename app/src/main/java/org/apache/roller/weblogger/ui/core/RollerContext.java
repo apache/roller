@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.util.Reflection;
@@ -70,7 +71,7 @@ public class RollerContext extends ContextLoaderListener
     private static final Log log = LogFactory.getLog(RollerContext.class);
 
     private static ServletContext servletContext = null;
-    private static DelegatingPasswordEncoder encoder;
+    private static PasswordEncoder encoder;
 
 
     public RollerContext() {
@@ -278,7 +279,7 @@ public class RollerContext extends ContextLoaderListener
             }
         }
 
-        encoder = createPasswordEncoder();
+        encoder = new ExternalLoginAwarePasswordEncoder(createPasswordEncoder());
 
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
 
