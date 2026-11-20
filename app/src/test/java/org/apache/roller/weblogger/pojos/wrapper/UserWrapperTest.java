@@ -84,8 +84,17 @@ class UserWrapperTest {
                 assertNames("&amp;eacute; &amp;#169;", "&eacute; &#169;");
             });
         }
-        // trusted admins' names aren't encoded at all
-        withUntrustedAdmins(false, () -> assertNames("&amp;quot;Tom&amp;quot;", "&quot;Tom&quot;"));
+    }
+
+    /**
+     * A name saved while weblog admins were untrusted keeps its encoded
+     * quotes and angle brackets after the setting is turned off, and is
+     * still shown as it was typed.
+     */
+    @Test
+    void namesSavedWhileUntrustedAreShownAsTyped() {
+        withUntrustedAdmins(false, () -> assertNames(
+                "O&#39;Brien &quot;Tom&quot; &lt;3", "O&#39;Brien &quot;Tom&quot; &lt;3"));
     }
 
     @Test
