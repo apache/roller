@@ -153,4 +153,17 @@ public class BannedwordslistTest  {
         assertTrue(Bannedwordslist.matchesRulesOnly("a", stringRules, regexRules));
     }
 
+    @Test
+    public void testWeblogRulesAsUnicodeWords() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        // "café" is cafe with an acute accent, "élan" is elan
+        Bannedwordslist.populateSpamRules("café\nélan", stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("at the café now", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("AT THE CAFÉ NOW", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("too much caféine", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("with ÉLAN", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("réélan", stringRules, regexRules));
+    }
+
 }

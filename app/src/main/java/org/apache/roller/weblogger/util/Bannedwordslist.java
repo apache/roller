@@ -482,25 +482,30 @@ public final class Bannedwordslist {
         }
     }
 
+    /** A letter, combining mark, digit or underscore, in any script. */
+    private static final String WORD_CHAR = "[\\p{L}\\p{M}\\p{N}_]";
+    private static final Pattern WORD_CHAR_PATTERN = Pattern.compile(WORD_CHAR);
+
     /**
-     * The literal text, case-insensitive, with a word boundary on each end
-     * that is a word character; {@code \b} next to "(" or "/" would need a
-     * word character beside it and so would rarely match.
+     * The literal text, case-insensitive in any script, with a word edge
+     * check on each end that is a word character; a check next to "(" or
+     * "/" would need a word character beside it and so would rarely match.
      */
     private static Pattern wordPattern(String word) {
         StringBuilder regex = new StringBuilder();
-        if (isWordChar(word.charAt(0))) {
-            regex.append("\\b");
+        if (isWordChar(word.codePointAt(0))) {
+            regex.append("(?<!").append(WORD_CHAR).append(')');
         }
         regex.append(Pattern.quote(word));
-        if (isWordChar(word.charAt(word.length() - 1))) {
-            regex.append("\\b");
+        if (isWordChar(word.codePointBefore(word.length()))) {
+            regex.append("(?!").append(WORD_CHAR).append(')');
         }
-        return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
+        return Pattern.compile(regex.toString(),
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
     }
 
-    private static boolean isWordChar(char c) {
-        return c == '_' || (c < 128 && Character.isLetterOrDigit(c));
+    private static boolean isWordChar(int codePoint) {
+        return WORD_CHAR_PATTERN.matcher(new String(Character.toChars(codePoint))).matches();
     }
 
     /**
