@@ -681,6 +681,8 @@ class PasswordChangeSessionTest {
         boolean ended;
         // a session another request invalidated after this one picked it up
         HttpSession endedUnderneath;
+        // attributes of the current request
+        final Map<String, Object> requestAttributes = new HashMap<>();
 
         Browser(String name) {
             this(UsernamePasswordAuthenticationToken.authenticated(name, null, List.of()));
@@ -709,6 +711,10 @@ class PasswordChangeSessionTest {
                 return session;
             });
             when(httpRequest.getSession()).thenAnswer(call -> httpRequest.getSession(true));
+            doAnswer(call -> requestAttributes.put(call.getArgument(0), call.getArgument(1)))
+                    .when(httpRequest).setAttribute(anyString(), any());
+            when(httpRequest.getAttribute(anyString()))
+                    .thenAnswer(call -> requestAttributes.get(call.<String>getArgument(0)));
             if (remembered) {
                 rememberMeLogin(authentication.getName());
             } else {
@@ -819,6 +825,7 @@ class PasswordChangeSessionTest {
         }
 
         RollerSession request() {
+            requestAttributes.clear();
             if (ended && endedUnderneath == null) {
                 SecurityContextHolder.clearContext();
             } else {
@@ -832,6 +839,7 @@ class PasswordChangeSessionTest {
             assertNull(rollerSession == null ? null : rollerSession.getAuthenticatedUser(),
                     "the session should no longer have a user");
             assertTrue(ended, "the HTTP session should be invalidated");
+            assertTrue(RollerSession.isSessionEnded(httpRequest), "the request should be marked as logged out");
             assertNull(SecurityContextHolder.getContext().getAuthentication(),
                     "the login should be cleared from this request");
             SecurityContextHolder.clearContext();
@@ -843,6 +851,7 @@ class PasswordChangeSessionTest {
             assertNotNull(rollerSession.getAuthenticatedUser(), "the session should keep its user");
             assertEquals(name, rollerSession.getAuthenticatedUser().getUserName());
             assertFalse(ended, "the HTTP session should stay valid");
+            assertFalse(RollerSession.isSessionEnded(httpRequest));
             assertNotNull(SecurityContextHolder.getContext().getAuthentication());
             SecurityContextHolder.clearContext();
         }
