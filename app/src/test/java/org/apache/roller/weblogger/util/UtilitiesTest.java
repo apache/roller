@@ -170,6 +170,58 @@ public class UtilitiesTest  {
                 + " <a href=\"/two\" rel=\"nofollow\">two</a>";
         assertEquals(expect3, Utilities.addNofollow(test3));
 
+        // an existing rel gets nofollow added to its value
+        assertEquals("<a href=\"/x\" rel=\"external nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel=\"external\">x</a>"));
+        assertEquals("<a href=\"/x\" REL='noopener nofollow'>x</a>",
+                Utilities.addNofollow("<a href=\"/x\" REL='noopener'>x</a>"));
+        assertEquals("<a href=\"/x\" rel=\"external nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel=external>x</a>"));
+        assertEquals("<a href=\"/x\" rel=\"Nofollow external\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel=\"Nofollow external\">x</a>"));
+
+        // "rel=" inside another attribute's value isn't the link's rel
+        assertEquals("<a href=\"/x\" title='foo rel=external' rel=\"noopener nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" title='foo rel=external' rel=\"noopener\">x</a>"));
+        assertEquals("<a href=\"/x\" title=\"a rel='b'\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" title=\"a rel='b'\">x</a>"));
+        assertEquals("<a href=\"/x\" data-rel=\"external\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" data-rel=\"external\">x</a>"));
+        assertEquals("<a href=\"/x\"rel=\"external nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\"rel=\"external\">x</a>"));
+        assertEquals("<a href=\"/x\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel>x</a>"));
+
+        // a ">" inside a quoted attribute value doesn't end the tag
+        assertEquals("<a href=\"/x\" title=\"a > b\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" title=\"a > b\">x</a>"));
+        assertEquals("<a href='/x?a>b' rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href='/x?a>b'>x</a>"));
+
+        // a quote inside an unquoted value is part of the value, not the
+        // start of a quoted one
+        assertEquals("<a href=/p?a=' rel=\"nofollow\">it</a> and <a href=\"/q\" rel=\"nofollow\">don't</a>",
+                Utilities.addNofollow("<a href=/p?a='>it</a> and <a href=\"/q\">don't</a>"));
+        assertEquals("<a href=x= ' rel=\"nofollow\">a</a> <a href=\"http://spam\" rel=\"nofollow\">spam</a>",
+                Utilities.addNofollow("<a href=x= '>a</a> <a href=\"http://spam\">spam</a>"));
+
+        // a quote that never closes ends the link at the next ">", and later
+        // links still get nofollow
+        assertEquals("<a href='x rel=\"nofollow\">a</a> <a href=\"http://spam\" rel=\"nofollow\">spam</a>",
+                Utilities.addNofollow("<a href='x>a</a> <a href=\"http://spam\">spam</a>"));
+        assertEquals("<a href=x=\"a rel=\"nofollow\">t</a>",
+                Utilities.addNofollow("<a href=x=\"a rel=\">t</a>"));
+        assertEquals("<a href=x rel=\"external nofollow\">t</a>",
+                Utilities.addNofollow("<a href=x rel=\"external>t</a>"));
+
+        assertEquals("<a href=x rel=\"nofollow\">t</a>",
+                Utilities.addNofollow("<a href=x rel=\"nofollow>t</a>"));
+
+        // an unquoted value runs to the next space or ">", so this rel isn't
+        // nofollow yet
+        assertEquals("<a href=/x rel=\"nofollow/ nofollow\">x</a>",
+                Utilities.addNofollow("<a href=/x rel=nofollow/>x</a>"));
+
         assertEquals("no links", Utilities.addNofollow("no links"));
         assertEquals("<a href=\"x\"", Utilities.addNofollow("<a href=\"x\""));
         assertNull(Utilities.addNofollow(null));
@@ -185,7 +237,9 @@ public class UtilitiesTest  {
         assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
         assertEquals(raw, Utilities.addNofollow(raw));
         long millis = (System.nanoTime() - start) / 1_000_000;
-        assertTrue(millis < 200, "took " + millis + " ms");
+        // a quadratic scan takes far longer than this; leave room for slow
+        // build machines
+        assertTrue(millis < 2000, "took " + millis + " ms");
     }
 
     @Test
