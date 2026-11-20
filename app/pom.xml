@@ -268,7 +268,7 @@ limitations under the License.
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.7.1</version>
+            <version>3.8.0</version>
         </dependency>
 
         <dependency>

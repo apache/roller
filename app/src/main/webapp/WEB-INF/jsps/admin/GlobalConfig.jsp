@@ -34,7 +34,7 @@
             <%-- special case for comment plugins --%>
             <s:if test="#pd.name == 'users.comments.plugins'">
                 <s:checkboxlist label="%{getText(#pd.key)}" name="commentPlugins"
-                                list="pluginsList" listKey="id" value="name" listValue="name"/>
+                                list="pluginsList" listKey="id" listValue="name"/>
             </s:if>
 
             <%-- special case for front page blog --%>

@@ -267,34 +267,154 @@ public class Utilities {
 
     /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in
-     * HTML that don't already have it.
+     * HTML that don't already have it. A link with another rel value gets
+     * nofollow added to that value.
      */
     public static String addNofollow(String html) {
         if (html == null || html.length() == 0) {
             return html;
         }
-        // Each link runs to the first ">" after its "href=". Once no ">" is
-        // left, no later link can close either, so stop there.
+        // Each link runs to the first ">" after its "href=" that isn't inside
+        // a quoted attribute value, or to the first ">" of any kind when a
+        // quote never closes. Once no ">" is left, no later link can close
+        // either, so stop there.
         Matcher m = mLinkPattern.matcher(html);
         StringBuilder buf = new StringBuilder(html.length());
         int end = 0;
         while (m.find()) {
-            int close = html.indexOf('>', m.end());
+            int close = findTagEnd(html, m.end());
+            if (close < 0) {
+                close = html.indexOf('>', m.end());
+            }
             if (close < 0) {
                 break;
             }
-            String link = html.substring(m.start(), close + 1);
             buf.append(html, end, m.start());
-            if (link.contains("rel=\"nofollow\"")) {
-                buf.append(link);
-            } else {
-                buf.append(link, 0, link.length() - 1).append(" rel=\"nofollow\">");
-            }
+            buf.append(addNofollowToLink(html.substring(m.start(), close + 1)));
             end = close + 1;
             m.region(end, html.length());
         }
         buf.append(html, end, html.length());
         return buf.toString();
+    }
+
+    /**
+     * Index of the ">" that ends the tag, skipping any inside quoted attribute
+     * values, or -1 if the tag doesn't end. Starts right after an "=".
+     */
+    private static int findTagEnd(String html, int from) {
+        char quote = 0;
+        // a quote only opens a value as its first character; inside an
+        // unquoted value it is part of the value
+        boolean valueNext = true;
+        boolean unquoted = false;
+        for (int i = from; i < html.length(); i++) {
+            char c = html.charAt(i);
+            if (quote != 0) {
+                if (c == quote) {
+                    quote = 0;
+                }
+            } else if (c == '>') {
+                return i;
+            } else if (Character.isWhitespace(c)) {
+                unquoted = false;
+            } else if (valueNext) {
+                valueNext = false;
+                if (c == '"' || c == '\'') {
+                    quote = c;
+                } else {
+                    unquoted = true;
+                }
+            } else if (c == '=' && !unquoted) {
+                valueNext = true;
+            }
+        }
+        return -1;
+    }
+
+    private static String addNofollowToLink(String link) {
+        // Walk the attributes the way findTagEnd does, so "rel=" inside
+        // another attribute's quoted value isn't taken for the link's rel.
+        // Browsers use the first rel when there are several.
+        int close = link.length() - 1;
+        int i = 2;
+        while (i < close) {
+            char c = link.charAt(i);
+            if (Character.isWhitespace(c) || c == '/') {
+                i++;
+                continue;
+            }
+            int nameStart = i++;
+            while (i < close && !isAttributeNameEnd(link.charAt(i))) {
+                i++;
+            }
+            int nameEnd = i;
+            while (i < close && Character.isWhitespace(link.charAt(i))) {
+                i++;
+            }
+            int valueStart = -1;
+            int valueEnd = -1;
+            boolean quoted = false;
+            if (i < close && link.charAt(i) == '=') {
+                i++;
+                while (i < close && Character.isWhitespace(link.charAt(i))) {
+                    i++;
+                }
+                char q = i < close ? link.charAt(i) : 0;
+                if (q == '"' || q == '\'') {
+                    quoted = true;
+                    valueStart = i + 1;
+                    valueEnd = link.indexOf(q, valueStart);
+                    if (valueEnd < 0 || valueEnd > close) {
+                        valueEnd = close;
+                    }
+                    i = Math.min(valueEnd + 1, close);
+                } else {
+                    valueStart = i;
+                    while (i < close && !Character.isWhitespace(link.charAt(i))) {
+                        i++;
+                    }
+                    valueEnd = i;
+                }
+            }
+            if ("rel".equalsIgnoreCase(link.substring(nameStart, nameEnd))) {
+                return addNofollowToRel(link, nameEnd, valueStart, valueEnd, quoted);
+            }
+        }
+        return link.substring(0, close) + " rel=\"nofollow\">";
+    }
+
+    private static boolean isAttributeNameEnd(char c) {
+        return Character.isWhitespace(c) || c == '/' || c == '=';
+    }
+
+    private static String addNofollowToRel(String link, int nameEnd, int valueStart,
+            int valueEnd, boolean quoted) {
+        if (valueStart < 0) {
+            // a rel with no value
+            return link.substring(0, nameEnd) + "=\"nofollow\"" + link.substring(nameEnd);
+        }
+        String value = link.substring(valueStart, valueEnd);
+        // a quoted value that runs to the end of the tag has no closing quote
+        boolean unclosed = quoted && valueEnd == link.length() - 1;
+        boolean found = false;
+        for (String token : StringUtils.split(value)) {
+            if ("nofollow".equalsIgnoreCase(token)) {
+                found = true;
+            }
+        }
+        if (found && !unclosed) {
+            return link;
+        }
+        String values = found ? value : value.isBlank() ? "nofollow" : value + " nofollow";
+        if (!quoted) {
+            // unquoted value: quote it so the added token stays part of it
+            values = '"' + values + '"';
+        } else if (unclosed) {
+            // close the quote so the tag's ">" isn't part of the value
+            values += link.charAt(valueStart - 1);
+        }
+        return link.substring(0, valueStart) + values + link.substring(valueEnd);
     }
 
     // ------------------------------------------------------------------------

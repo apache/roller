@@ -20,13 +20,13 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -88,8 +88,9 @@ public final class WeblogFeedCache {
     
     
     public Object get(String key, long lastModified) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -115,8 +116,9 @@ public final class WeblogFeedCache {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -126,8 +128,9 @@ public final class WeblogFeedCache {
     
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -151,7 +154,7 @@ public final class WeblogFeedCache {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts][/page=N]
      *
      * examples ...
      *
@@ -170,8 +173,10 @@ public final class WeblogFeedCache {
         key.append('/').append(feedRequest.getType());
         key.append('/').append(feedRequest.getFormat());
         
+        // the search term and tag names are URL-encoded so that a "/" in them
+        // can't be mistaken for the separator before another key part
         if (feedRequest.getTerm() != null) {
-            key.append("/search/").append(feedRequest.getTerm());
+            key.append("/search/").append(URLEncoder.encode(feedRequest.getTerm(), StandardCharsets.UTF_8));
         }
         
         if(feedRequest.getWeblogCategoryName() != null) {
@@ -180,8 +185,9 @@ public final class WeblogFeedCache {
         }
         
         if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
-            String[] tags = feedRequest.getTags().toArray(new String[0]);
-            Arrays.sort(tags);
+            String[] tags = feedRequest.getTags().stream()
+                    .map(tag -> URLEncoder.encode(tag, StandardCharsets.UTF_8))
+                    .sorted().toArray(String[]::new);
             key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }        
         
@@ -191,6 +197,11 @@ public final class WeblogFeedCache {
         
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
+        }
+        
+        // add page number when past the first page
+        if(feedRequest.getPage() > 0) {
+            key.append("/page=").append(feedRequest.getPage());
         }
         
         return key.toString();

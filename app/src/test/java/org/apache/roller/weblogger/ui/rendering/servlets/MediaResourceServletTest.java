@@ -74,6 +74,7 @@ class MediaResourceServletTest {
         when(file.getLastModified()).thenReturn(0L);
         when(file.getInputStream()).thenAnswer(call ->
                 new ByteArrayInputStream("jpeg".getBytes(StandardCharsets.UTF_8)));
+        when(media.getMediaFile(owner, FILE_ID)).thenReturn(file);
         when(media.getMediaFile(FILE_ID, true)).thenReturn(file);
 
         servlet = new MediaResourceServlet();
@@ -100,10 +101,13 @@ class MediaResourceServletTest {
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         assertEquals("", written.toString(StandardCharsets.UTF_8.name()));
+        // the other weblog's file is never loaded
+        verify(media, never()).getMediaFile(FILE_ID, true);
     }
 
     @Test
     void anUnknownFileIsNotFound() throws Exception {
+        when(media.getMediaFile(owner, FILE_ID)).thenReturn(null);
         when(media.getMediaFile(FILE_ID, true)).thenReturn(null);
         HttpServletResponse response = serve(owner, new ByteArrayOutputStream());
 

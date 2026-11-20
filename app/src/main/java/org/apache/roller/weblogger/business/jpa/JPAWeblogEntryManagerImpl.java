@@ -201,41 +201,53 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setAnchor(this.createAnchor(entry));
         }
         
-        if (entry.isPublished()) {
-            // tag aggregates are updated only when entry published in order for
-            // tag cloud counts to match published articles
-            if (entry.getRefreshAggregates()) {
-                // blog entry wasn't published before, so all tags need to be incremented
-                for (WeblogEntryTag tag : entry.getTags()) {
-                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
-                }
-            } else {
-                // only new tags need to be incremented
-                for (WeblogEntryTag tag : entry.getAddedTags()) {
-                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
-                }
-            }
-        } else {
-            if (entry.getRefreshAggregates()) {
-                // blog entry no longer published so need to reduce aggregate count
-                for (WeblogEntryTag tag : entry.getTags()) {
-                    updateTagCount(tag.getName(), entry.getWebsite(), -1);
-                }
-            }
-        }
-
-        for (WeblogEntryTag tag : entry.getRemovedTags()) {
-            removeWeblogEntryTag(tag);
-        }
-
         // if the entry was published to future, set status as SCHEDULED
         // we only consider an entry future published if it is scheduled
-        // more than 1 minute into the future
+        // more than 1 minute into the future; decide this before updating the
+        // tag aggregates so a scheduled entry's tags are not counted early
         if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
                 entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
             entry.setStatus(PubStatus.SCHEDULED);
         }
         
+        // tag aggregates count only published entries, so that tag cloud
+        // counts match published articles. getRefreshAggregates() means the
+        // entry is entering or leaving PUBLISHED with this save.
+        if (entry.getRefreshAggregates()) {
+            if (entry.isPublished()) {
+                // the entry wasn't published before, so none of its tags were
+                // counted; count the tags it has now
+                for (WeblogEntryTag tag : entry.getTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
+                }
+            } else {
+                // the entry was published before: uncount the tags it had
+                // then, which are its current tags less the ones just added
+                // plus the ones just removed
+                for (WeblogEntryTag tag : entry.getTags()) {
+                    if (!entry.getAddedTags().contains(tag)) {
+                        updateTagCount(tag.getName(), entry.getWebsite(), -1);
+                    }
+                }
+                for (WeblogEntryTag tag : entry.getRemovedTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), -1);
+                }
+            }
+            for (WeblogEntryTag tag : entry.getRemovedTags()) {
+                this.strategy.remove(tag);
+            }
+        } else {
+            if (entry.isPublished()) {
+                // only new tags need to be incremented
+                for (WeblogEntryTag tag : entry.getAddedTags()) {
+                    updateTagCount(tag.getName(), entry.getWebsite(), 1);
+                }
+            }
+            for (WeblogEntryTag tag : entry.getRemovedTags()) {
+                removeWeblogEntryTag(tag);
+            }
+        }
+
         // Store value object (creates new or updates existing)
         entry.setUpdateTime(new Timestamp(new Date().getTime()));
         
