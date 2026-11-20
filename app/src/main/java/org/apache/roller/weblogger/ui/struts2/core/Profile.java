@@ -135,6 +135,9 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+            addError("userRegister.error.passwordTooLong");
+        }
         // the external-login marker never matches at login
         if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
             addError("error.add.user.reservedPassword");
