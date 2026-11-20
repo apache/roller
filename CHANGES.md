@@ -179,13 +179,20 @@
 
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
-  or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
-  stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
-  `#include` load only the weblog's own templates, and macros defined inline
-  in a template stay with the page that defines them and the templates it
-  includes, so weblogs can't affect each other's macros.
-  Library macros such as `roller.vm` and a site's own `roller-custom.vm` stay
-  global. Error pages no longer show template ids (#317).
+  or runs longer than `rendering.maxRenderSeconds` (30 seconds), and the
+  page isn't cached. The same happens to a `#foreach` of more than 100,000
+  passes, a render that builds more than ten times `maxOutputChars` of
+  strings in memory or adds more than 1,000,000 items to lists and maps, a
+  number past 100,000 bits, and a regular expression that repeats a part
+  that can match an empty string. `String.repeat`, `format`, `join`, `lines`
+  and `splitWithDelimiters` aren't available, nor are static methods called
+  through `$x.class`. Templates can no longer call `$utils.addNofollow`, a
+  breaking change. `#parse` and `#include` load only the weblog's own
+  templates, and macros defined inline in a template stay with the page that
+  defines them and the templates it includes, so weblogs can't affect each
+  other's macros. Library macros such as `roller.vm` and a site's own
+  `roller-custom.vm` stay global. Error pages no longer show template ids
+  (#317).
 - **Entries with scripts or embeds open as HTML.** If an entry contains
   scripts, frames, embedded objects, event-handler attributes or
   `javascript:` links, the rich-text editor opens it in the HTML textarea

@@ -18,10 +18,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.StringReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +29,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.velocity.util.ExtProperties;
@@ -53,6 +52,11 @@ public class RollerResourceLoader extends ResourceLoader {
 	public void init(ExtProperties configuration) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(configuration);
+		}
+		// see inRenderScope()
+		if (configuration.getBoolean("cache", false)) {
+			throw new VelocityException("resource.loader.roller.cache must be false,"
+					+ " so that each weblog renders only its own templates");
 		}
 	}
 
@@ -88,7 +92,7 @@ public class RollerResourceLoader extends ResourceLoader {
 			WeblogTemplate page = WebloggerFactory.getWeblogger()
 					.getWeblogManager().getTemplate(name);
 
-			if (page == null) {
+			if (page == null || !inRenderScope(page)) {
 				throw new ResourceNotFoundException(
 						"RollerResourceLoader: page \"" + name + "\" not found");
 			}
@@ -101,13 +105,8 @@ public class RollerResourceLoader extends ResourceLoader {
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			}
-			return new InputStreamReader(new ByteArrayInputStream(contents.getBytes(encoding)));
-
-		} catch (UnsupportedEncodingException uex) {
-			// This should never actually happen. We expect UTF-8 in all JRE
-			// installation.
-//			logger.error(uex);
-			throw new RuntimeException(uex);
+			// the template is already text, so it needs no encoding
+			return new StringReader(contents);
 
 		} catch (WebloggerException | ResourceNotFoundException re) {
 			String msg = "RollerResourceLoader Error: "
@@ -115,6 +114,30 @@ public class RollerResourceLoader extends ResourceLoader {
 //			logger.error(msg, re);
 			throw new ResourceNotFoundException(msg, re);
 		}
+	}
+
+	/**
+	 * While a template is being rendered, the only stored templates it may
+	 * load (by #parse or #include) are those of the weblog being rendered, so
+	 * one weblog cannot read or run another's templates by id. Outside
+	 * rendering, the template being loaded is the one the servlet chose. This
+	 * relies on resource.loader.roller.cache=false in velocity.properties, so
+	 * every load comes through here rather than from Velocity's cache; init()
+	 * refuses to start with caching on.
+	 */
+	private static boolean inRenderScope(WeblogTemplate page) {
+		RenderSession session = RenderSession.current();
+		if (session == null) {
+			return true;
+		}
+		String weblogId = session.getWeblogId();
+		boolean allowed = weblogId != null && page.getWeblog() != null
+				&& weblogId.equals(page.getWeblog().getId());
+		if (!allowed) {
+			logger.debug("Refusing template " + page.getId()
+					+ " outside the weblog being rendered");
+		}
+		return allowed;
 	}
 
 	/**

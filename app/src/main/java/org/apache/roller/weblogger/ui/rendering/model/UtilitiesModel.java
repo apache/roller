@@ -367,13 +367,6 @@ public class UtilitiesModel implements Model {
     }
         
     /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
-     */
-    public String addNofollow(String html) {
-        return Utilities.addNofollow(html);
-    }
-    
-    /**
      * Transforms the given String into a subset of HTML displayable on a web
      * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
      * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
