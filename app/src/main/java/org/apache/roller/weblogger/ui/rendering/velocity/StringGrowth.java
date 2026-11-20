@@ -19,7 +19,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import java.util.BitSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.IntPredicate;
 import java.util.function.UnaryOperator;
@@ -69,18 +69,30 @@ final class StringGrowth {
     private static final long SCALAR_LENGTH = 32;
 
     /**
-     * Most characters toUpperCase or toLowerCase makes of one character. Only
-     * characters outside ASCII grow (the Lithuanian lower case of an ASCII I
-     * gains a dot only before an accent, which is outside ASCII).
+     * The characters toUpperCase or toLowerCase turn into more than one, in
+     * any locale. The Lithuanian lower case of I, J and I with ogonek gains a
+     * dot before an accent, so those count as growing by one.
      */
-    private static final long CASE_GROWTH = 3;
+    private static final Growth CASE_GROWTH = new Growth(c -> {
+        String s = String.valueOf((char) c);
+        int longest = 1;
+        for (Locale l : new Locale[] {Locale.ROOT, Locale.forLanguageTag("tr"),
+                Locale.forLanguageTag("az"), Locale.forLanguageTag("lt")}) {
+            longest = Math.max(longest, Math.max(s.toUpperCase(l).length(),
+                    s.toLowerCase(l).length()));
+        }
+        return c == 'I' || c == 'J' || c == '\u012e' ? Math.max(longest, 2) : longest;
+    });
+
+    /** Most characters addNofollow is taken to make of one character; see forUtilities. */
+    private static final long NOFOLLOW_GROWTH = 9;
 
     /** Most characters a pattern letter of a date format writes, with room to spare. */
     private static final long DATE_LETTER_LENGTH = 64;
 
-    /** The characters UtilitiesModel.escapeHTML and escapeXML escape. */
-    private static final Escaped HTML_ESCAPED = new Escaped(StringEscapeUtils::escapeHtml4);
-    private static final Escaped XML_ESCAPED = new Escaped(StringEscapeUtils::escapeXml11);
+    /** What UtilitiesModel.escapeHTML and escapeXML make of each character. */
+    private static final Growth HTML_ESCAPED = escaped(StringEscapeUtils::escapeHtml4);
+    private static final Growth XML_ESCAPED = escaped(StringEscapeUtils::escapeXml11);
 
     private StringGrowth() {
     }
@@ -251,33 +263,38 @@ final class StringGrowth {
     }
 
     /**
-     * The characters an escaper turns into more than one, found by escaping
-     * each one, so that text the escaper leaves alone (most letters outside
-     * ASCII) isn't counted.
+     * How many characters each char becomes, found by trying each one, so
+     * that only the characters that really grow are counted.
      */
-    private static final class Escaped {
+    private static final class Growth {
 
-        private final BitSet grows = new BitSet(Character.MAX_VALUE + 1);
-        private long longest = 1;
+        private final byte[] extra = new byte[Character.MAX_VALUE + 1];
 
-        Escaped(UnaryOperator<String> escape) {
+        Growth(java.util.function.IntUnaryOperator lengthOf) {
             for (int c = 0; c <= Character.MAX_VALUE; c++) {
-                int length = escape.apply(String.valueOf((char) c)).length();
-                if (length > 1) {
-                    grows.set(c);
-                    longest = Math.max(longest, length);
-                }
+                extra[c] = (byte) Math.max(0, lengthOf.applyAsInt(c) - 1);
             }
         }
 
         long length(CharSequence s) {
-            return grown(s, longest, grows::get);
+            if (s == null) {
+                return 0;
+            }
+            long n = s.length();
+            for (int i = 0; i < s.length(); i++) {
+                n += extra[s.charAt(i)];
+            }
+            return n;
         }
+    }
+
+    private static Growth escaped(UnaryOperator<String> escape) {
+        return new Growth(c -> escape.apply(String.valueOf((char) c)).length());
     }
 
     /** Length of a case change of s. */
     private static long caseChange(CharSequence s) {
-        return grown(s, CASE_GROWTH, c -> c >= 0x80);
+        return CASE_GROWTH.length(s);
     }
 
     /** Length of s when each character that matches can become up to perChar characters. */
