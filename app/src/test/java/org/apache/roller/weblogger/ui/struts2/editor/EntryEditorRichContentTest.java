@@ -46,8 +46,8 @@ class EntryEditorRichContentTest {
         return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
     }
 
-    /** Calls that pass Summernote a command name, in either quote style. */
-    private static final Pattern COMMAND_CALL = Pattern.compile("\\.summernote\\(\\s*[\"']");
+    /** Every call to Summernote, whatever it passes. */
+    private static final Pattern SUMMERNOTE_CALL = Pattern.compile("\\.summernote\\(");
 
     @Test
     void summernoteStartsOnlyAfterTheContentCheck() throws IOException {
@@ -59,22 +59,27 @@ class EntryEditorRichContentTest {
         int init = jsp.indexOf("$('#edit_content').summernote({");
         assertTrue(check > 0 && check < start && start < init, "check, then start, then init");
 
-        // every other call is guarded by the flag
-        Matcher call = COMMAND_CALL.matcher(jsp);
+        // the only other call is guarded by the flag
+        Matcher call = SUMMERNOTE_CALL.matcher(jsp);
         int calls = 0;
         while (call.find()) {
             calls++;
+            if (call.start() == init + "$('#edit_content')".length()) {
+                continue;
+            }
             String before = jsp.substring(Math.max(0, call.start() - 120), call.start());
             assertTrue(before.contains("if (richEditorStarted)"), "unguarded call near: " + before);
         }
-        assertEquals(1, calls);
+        assertEquals(2, calls, "the init and the guarded pasteHTML");
     }
 
     @Test
-    void commandCallsAreFoundInEitherQuoteStyle() {
-        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote(\"code\", html);").find());
-        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote('code', html);").find());
-        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote( 'code');").find());
+    void summernoteCallsAreFoundWhateverTheyPass() {
+        assertTrue(SUMMERNOTE_CALL.matcher("$('#edit_content').summernote(\"code\", html);").find());
+        assertTrue(SUMMERNOTE_CALL.matcher("$('#edit_content').summernote('code', html);").find());
+        assertTrue(SUMMERNOTE_CALL.matcher("$('#edit_content').summernote(command);").find());
+        assertTrue(SUMMERNOTE_CALL.matcher("$('#edit_content').summernote();").find());
+        assertTrue(SUMMERNOTE_CALL.matcher("$(\"#edit_content\").summernote({height: 400});").find());
     }
 
     @Test
