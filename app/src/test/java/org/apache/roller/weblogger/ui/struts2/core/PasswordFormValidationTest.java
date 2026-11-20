@@ -112,6 +112,20 @@ class PasswordFormValidationTest {
     }
 
     @Test
+    void registerReportsATakenUserNameWithATooLongPassword() throws Exception {
+        Register action = register(AuthMethod.ROLLERDB);
+        action.getBean().setUserName("taken");
+        action.getBean().setPasswordText(TOO_LONG);
+        action.getBean().setPasswordConfirm(TOO_LONG + "x");
+        try (MockedStatic<WebloggerFactory> factory = mockUserManager()) {
+            action.myValidate();
+        }
+        assertTrue(action.getActionErrors().contains("userRegister.error.passwordTooLong"));
+        assertTrue(action.getActionErrors().contains("userRegister.error.mismatchedPasswords"));
+        assertTrue(action.getActionErrors().contains("error.add.user.userNameInUse"));
+    }
+
+    @Test
     void registerRequiresAPasswordInDatabaseMode() throws Exception {
         Register action = register(AuthMethod.ROLLERDB);
         action.getBean().setUserName("nopassword");

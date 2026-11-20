@@ -398,7 +398,6 @@ public class Register extends UIAction {
             // (with LDAP or CMA the bean holds the marker, not a typed password)
             if (!usingSSO && RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
                 addError("userRegister.error.passwordTooLong");
-                return;
             }
 
             // the external-login marker is stored for users who log in
