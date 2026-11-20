@@ -79,6 +79,19 @@ class HTMLSanitizerTest {
     }
 
     @Test
+    void keepsTextAfterALessThanSignThatNeverEnds() {
+        assertEquals("Why x&lt;y matters", HTMLSanitizer.sanitize("Why x<y matters"));
+        assertEquals("<b>Why</b> x&lt;y &lt;z", HTMLSanitizer.sanitize("<b>Why</b> x<y <z"));
+        assertEquals("a &lt;!-- b", HTMLSanitizer.sanitize("a <!-- b"));
+        assertEquals("Me&lt;You", HTMLSanitizer.sanitizeText("Me<You"));
+        assertEquals("Me&lt;You & x&region", HTMLSanitizer.sanitizeText("Me<You & x&region"));
+        assertTrue(HTMLSanitizer.xssEnabled);
+        User user = new User();
+        user.setScreenName("Me<You");
+        assertEquals("Me&lt;You", user.getScreenName());
+    }
+
+    @Test
     void plainTextKeepsAmpersands() {
         assertNull(HTMLSanitizer.sanitizeText(null));
         assertEquals("a&b@example.com", HTMLSanitizer.sanitizeText("a&b@example.com"));

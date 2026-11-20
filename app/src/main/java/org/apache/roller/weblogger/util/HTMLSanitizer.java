@@ -98,8 +98,9 @@ public final class HTMLSanitizer {
         if (html == null) {
             return null;
         }
+        String text = encodeUnclosedTags(html);
         Document clean = CLEANER.clean(
-                Jsoup.parseBodyFragment(plainText ? encodeAmpersands(html) : html, ""));
+                Jsoup.parseBodyFragment(plainText ? encodeAmpersands(text) : text, ""));
         for (Element el : clean.select("[style]")) {
             String style = safeStyle(el.attr("style"));
             if (style.isEmpty()) {
@@ -110,6 +111,19 @@ public final class HTMLSanitizer {
         }
         clean.outputSettings().prettyPrint(false);
         return encodeText(clean.body().html(), plainText);
+    }
+
+    /**
+     * Encodes each "&lt;" after the last "&gt;", since no tag it starts can
+     * end, so that the parser reads the rest as text, such as "x&lt;y", and
+     * doesn't drop it as an unfinished tag.
+     */
+    private static String encodeUnclosedTags(String html) {
+        int lt = html.indexOf('<', html.lastIndexOf('>') + 1);
+        if (lt < 0) {
+            return html;
+        }
+        return html.substring(0, lt) + html.substring(lt).replace("<", "&lt;");
     }
 
     /**
