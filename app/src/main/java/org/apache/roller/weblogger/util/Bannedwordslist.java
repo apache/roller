@@ -314,7 +314,6 @@ public final class Bannedwordslist {
         if (str == null || StringUtils.isEmpty(str)) {
             return false;
         }
-        CharSequence text = new DeadlineText(str);
 
         // First iterate over bannedwordslist, doing indexOf.
         // Then iterate over bannedwordslistRegex and test.
@@ -328,7 +327,7 @@ public final class Bannedwordslist {
             stringRules.addAll(bannedwordslistStr);
         }
         try {
-            if (testStringRules(text, stringRules)) {
+            if (testStringRules(str, stringRules)) {
                 return true;
             }
         
@@ -339,8 +338,8 @@ public final class Bannedwordslist {
                 regexRules.addAll(moreRegexRules);
                 regexRules.addAll(bannedwordslistRegex);
             }
-            return testRegExRules(text, regexRules);
-        } catch (MatchTimeLimitException e) {
+            return testRegExRules(str, regexRules);
+        } catch (RuleNotCheckedException e) {
             return true;
         }
     }
@@ -353,32 +352,42 @@ public final class Bannedwordslist {
      */
     public static boolean matchesRulesOnly(
         String str, List<String> stringRules, List<Pattern> regexRules) {
+        return matchesRulesOnly(str, stringRules, regexRules, true);
+    }
+
+    /**
+     * Test string only against rules provided by caller, NOT against built-in bannedwordslist.
+     * @param str             String to be checked against rules
+     * @param stringRules     String rules to consider
+     * @param regexRules      Regex rules to consider
+     * @param uncheckedMatches what to return when a rule can't be checked in
+     *                        time: true for a comment, which the weblog owner
+     *                        can review, false for a referrer, which would
+     *                        refuse the reader the page
+     */
+    public static boolean matchesRulesOnly(String str, List<String> stringRules,
+            List<Pattern> regexRules, boolean uncheckedMatches) {
         if (str == null) {
             return false;
         }
-        CharSequence text = new DeadlineText(str);
         try {
-            return testStringRules(text, stringRules) || testRegExRules(text, regexRules);
-        } catch (MatchTimeLimitException e) {
-            return true;
+            return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
+        } catch (RuleNotCheckedException e) {
+            return uncheckedMatches;
         }
     }
         
     /** Test String against the RegularExpression rules. */
-    private static boolean testRegExRules(CharSequence str, List<Pattern> regexRules) {
+    private static boolean testRegExRules(String str, List<Pattern> regexRules) {
         for (Pattern testPattern : regexRules) {
-            // want to see what it is matching on, but only in debug mode
-            if (mLogger.isDebugEnabled()) {
-                Matcher matcher = testPattern.matcher(str);
-                if (find(matcher, testPattern.pattern())) {
+            Matcher matcher = testPattern.matcher(new DeadlineText(str));
+            if (find(matcher, testPattern.pattern())) {
+                // want to see what it is matching on, but only in debug mode
+                if (mLogger.isDebugEnabled()) {
                     mLogger.debug(matcher.group()
                             + " matched by " + testPattern.pattern());
-                    return true;
                 }
-            } else {
-                if (find(testPattern.matcher(str), testPattern.pattern())) {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
@@ -395,7 +404,7 @@ public final class Bannedwordslist {
      *
      * @return true if a match was found, otherwise false
      */
-    private static boolean testStringRules(CharSequence source, List<String> rules) {
+    private static boolean testStringRules(String source, List<String> rules) {
         boolean matches = false;
         
         for (String rule : rules) {
@@ -412,7 +421,7 @@ public final class Bannedwordslist {
                         Pattern.CASE_INSENSITIVE);
 
                 Matcher matcher;
-                matcher = pattern.matcher(source);
+                matcher = pattern.matcher(new DeadlineText(source));
 
                 matches = find(matcher, rule);
                 if (matches) {
@@ -420,7 +429,7 @@ public final class Bannedwordslist {
                 }
             }
             catch (PatternSyntaxException e) {
-                matches = source.toString().contains(rule);
+                matches = source.contains(rule);
                 if (matches) {
                     break;
                 }
@@ -509,9 +518,12 @@ public final class Bannedwordslist {
     }
 
     /**
-     * Longest the rules may take to check one value, such as a comment's
-     * text. A rule that backtracks without end, which a weblog's own banned
-     * words can include, would otherwise hold the request.
+     * Longest one rule may take to check one value, such as a comment's
+     * text. A regex rule that backtracks without end would otherwise hold
+     * the request. The clock is checked as the match reads the text, so a
+     * regex that repeats without reading it, such as nested counted repeats
+     * of an empty group, isn't stopped; such rules come only from the
+     * site-wide list or from trusted weblog admins.
      */
     static final long MATCH_TIME_LIMIT_MILLIS = 1000;
 
@@ -520,13 +532,25 @@ public final class Bannedwordslist {
             return matcher.find();
         } catch (MatchTimeLimitException e) {
             mLogger.warn("Banned words rule took over " + MATCH_TIME_LIMIT_MILLIS
-                    + " ms and was counted as a match; consider simplifying it: " + rule);
-            throw e;
+                    + " ms and the value could not be checked; consider simplifying it: " + rule);
+            throw new RuleNotCheckedException();
+        } catch (StackOverflowError e) {
+            // a regex such as (a|b)+c recurses once per repetition
+            mLogger.warn("Banned words rule ran out of stack and the value could not be checked;"
+                    + " consider simplifying it: " + rule);
+            throw new RuleNotCheckedException();
         }
     }
 
     private static final class MatchTimeLimitException extends RuntimeException {
         MatchTimeLimitException() {
+            super(null, null, false, false);
+        }
+    }
+
+    /** A rule could not be checked against the value, which then counts as a match for a comment. */
+    private static final class RuleNotCheckedException extends RuntimeException {
+        RuleNotCheckedException() {
             super(null, null, false, false);
         }
     }

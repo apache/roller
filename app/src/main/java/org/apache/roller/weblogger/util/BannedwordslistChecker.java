@@ -60,7 +60,9 @@ public final class BannedwordslistChecker {
             List<Pattern> regexRules = new ArrayList<>();
             Bannedwordslist.populateSpamRules(website.getBannedwordslist(), stringRules, regexRules,
                 WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"), weblogRulesAsWords());
-            return Bannedwordslist.matchesRulesOnly(referrerURL, stringRules, regexRules);
+            // a referrer that can't be checked in time is let through, so a
+            // slow rule doesn't refuse the reader the page
+            return Bannedwordslist.matchesRulesOnly(referrerURL, stringRules, regexRules, false);
         }
         return false;
     }

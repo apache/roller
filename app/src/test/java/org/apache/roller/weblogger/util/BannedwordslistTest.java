@@ -166,4 +166,44 @@ public class BannedwordslistTest  {
         assertFalse(Bannedwordslist.matchesRulesOnly("réélan", stringRules, regexRules));
     }
 
+    // each rule has its own time limit, so a long list of plain words
+    // against a long comment is slow but isn't counted as a match
+    @Test
+    public void testTimeLimitIsPerRule() {
+        StringBuilder rules = new StringBuilder();
+        for (int i = 0; i < 20000; i++) {
+            rules.append("spamword").append(i).append('\n');
+        }
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules(rules.toString(), stringRules, regexRules, null, true);
+        String text = "an ordinary comment ".repeat(500);
+        assertTimeoutPreemptively(Duration.ofSeconds(60), () ->
+                assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules)));
+    }
+
+    // a referrer that can't be checked in time is let through, since the
+    // reader would otherwise be refused the page
+    @Test
+    public void testReferrerThatCantBeCheckedIsNoMatch() {
+        String text = "x".repeat(40) + "!";
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("((x+)+)+y", stringRules, regexRules, null);
+        assertTimeoutPreemptively(Duration.ofSeconds(8), () ->
+                assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules, false)));
+    }
+
+    // a rule that recurses once per repetition can run out of stack on long
+    // text; the text is then handled as if the time limit had passed
+    @Test
+    public void testRuleThatRunsOutOfStack() {
+        String text = "ab".repeat(50000);
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(a|b)+c", stringRules, regexRules, null);
+        assertTrue(bannedwordslist.isBannedwordslisted(text, stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules, false));
+    }
+
 }
