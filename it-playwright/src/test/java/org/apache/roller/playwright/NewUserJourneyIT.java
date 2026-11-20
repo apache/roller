@@ -46,7 +46,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * upload a media file (the first user is the admin, so the journey also turns
  * file uploads on, which Roller ships disabled), and finally use the authoring
  * dialogs: add a category, cancel an entry delete, and insert the media file
- * into a new entry.
+ * into a new entry. An entry with HTML the rich editor would change opens in
+ * the HTML textarea, which warns before leaving once it is edited.
  *
  * <p>This is the journey the old Selenium suite covered. Roller only accepts
  * registrations on an install with no users yet, so the test skips when the
@@ -143,6 +144,7 @@ class NewUserJourneyIT extends BaseIT {
         importBookmarks();
         addCategoryThroughDialog(BLOG_HANDLE, CATEGORY_NAME);
         cancelEntryDeleteDialog(BLOG_HANDLE, ENTRY_TITLE);
+        editEntryInTheHtmlTextarea(BLOG_HANDLE);
         insertMediaFileThroughDialog(BLOG_HANDLE);
         assertPublishingTimeOnOneLine();
     }

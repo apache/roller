@@ -160,7 +160,8 @@
         if (RollerRichEditor.hasActiveHtml(document.getElementById('edit_content').value)) {
             $('#edit_content_html_notice').show();
             RollerRichEditor.trackCursor(document.getElementById('edit_content'));
-            $("#edit_content").one("change", warnBeforeLeaving);
+            // input, not change: change waits for the textarea to lose focus
+            $("#edit_content").one("input", warnBeforeLeaving);
             return;
         }
         richEditorStarted = true;
@@ -223,7 +224,7 @@
             // at the cursor, or at the end if the textarea hasn't had one
             var textArea = document.getElementById('edit_content');
             RollerRichEditor.insertAtCursor(textArea, toInsert);
-            $(textArea).trigger("change");
+            $(textArea).trigger("input");
         }
     }
 

@@ -86,6 +86,17 @@ class EntryEditorRichContentTest {
     }
 
     @Test
+    void theTextareaFallbackWarnsWhileTheAuthorTypes() throws IOException {
+        String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
+        // change waits for the textarea to lose focus, so an author who types
+        // and closes the tab would not be warned
+        assertTrue(jsp.contains("$(\"#edit_content\").one(\"input\", warnBeforeLeaving);"));
+        assertFalse(jsp.contains("one(\"change\", warnBeforeLeaving)"));
+        // a media file inserted into the textarea counts as an edit too
+        assertTrue(jsp.contains("$(textArea).trigger(\"input\");"));
+    }
+
+    @Test
     void theTextareaFallbackInsertsMediaAtTheCursor() throws IOException {
         String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
         int check = jsp.indexOf("RollerRichEditor.hasActiveHtml(");
