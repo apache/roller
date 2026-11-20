@@ -174,6 +174,13 @@
   - The Emoticons plugin no longer changes text inside HTML tags or
     comments, so the `:x` in an attribute such as `xmlns:xlink` stays as it
     is; in an embedded SVG it used to become an emoji.
+- **Links in HTML comments keep their address when they have other
+  attributes.** The HTML subset that comments may use is now built with
+  jsoup's Cleaner. A link such as `<a href="https://example.com/" title="x">`
+  keeps its `href` and loses only the other attributes; it used to lose the
+  `href` as well. A tag a comment leaves open is closed at the end of the
+  comment, so it no longer changes the rest of the page. Other markup, and
+  text such as `a<b` or `AT&T`, is shown as typed, as before.
 
 ### Behaviour changes worth reading before upgrading
 
@@ -314,6 +321,17 @@
   change the limit. The bundled `bannedwordslist.txt` rules match the same
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
+
+- **HTML from weblog users is cleaned with jsoup.** While
+  `weblogAdminsUntrusted` is on (the default), entry text, titles,
+  summaries, taglines, user names and blogroll names are now cleaned with
+  jsoup's Cleaner instead of the old sanitizer. The same tags, links, images
+  and image data are kept, but an attribute that isn't on the list is now
+  removed, where it used to be kept as encoded text. `width` and `height`
+  must be a number of pixels or a percentage, and a `style` keeps only the
+  declarations that can't load anything or run script, such as `color`, or
+  a `url()` to an http or https address. A `<` with no `>` after it, as in
+  `x<y`, is kept as text.
 
 ### Build and packaging
 

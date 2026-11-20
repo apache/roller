@@ -167,7 +167,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
         }
         // make sure new name is not a duplicate of an existing folder
         // names are stored sanitized, so compare the sanitized form
-        String name = HTMLSanitizer.conditionallySanitize(getBean().getName());
+        String name = HTMLSanitizer.conditionallySanitizeText(getBean().getName());
         if ( isAdd() || !name.equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(name)) {
                 addError("folderForm.error.duplicateName", getBean().getName());

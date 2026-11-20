@@ -135,7 +135,7 @@ public class BookmarkEdit extends UIAction {
         }
         // if name new or changed, check new name doesn't already exist; names are
         // stored sanitized, so compare the sanitized form
-        String name = HTMLSanitizer.conditionallySanitize(getBean().getName());
+        String name = HTMLSanitizer.conditionallySanitizeText(getBean().getName());
         if ((isAdd() || !StringUtils.equals(name, bookmark.getName()))
              && bookmark.getFolder().hasBookmarkOfName(name)) {
                 addError("bookmarkForm.error.duplicateName", getBean().getName());
