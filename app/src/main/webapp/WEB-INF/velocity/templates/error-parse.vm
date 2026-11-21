@@ -35,11 +35,7 @@
     </tr>
     <tr>
       <td style="border: 1px dotted #CCCCCC;" width="25%">Message</td>
-      <td style="border: 1px dotted #CCCCCC;">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
-    </tr>
-    <tr>
-      <td style="border: 1px dotted #CCCCCC;" width="25%">Type</td>
-      <td style="border: 1px dotted #CCCCCC;">$exceptionSource</td>
+      <td style="border: 1px dotted #CCCCCC;">$utils.autoformat($utils.escapeHTML($exceptionMessage))</td>
     </tr>
     <tr>
       <td style="border: 1px dotted #CCCCCC;" width="25%">Exception</td>

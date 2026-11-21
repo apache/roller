@@ -284,7 +284,7 @@ A bug in an optional feature is a vulnerability when the feature is enabled.
 | Setting | What it changes |
 | --- | --- |
 | `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
-| `themes.customtheme.allowed` | Lets weblog Admins edit templates. Templates stay in the sandbox. |
+| `themes.customtheme.allowed` | Lets weblog Admins edit templates. Templates stay in the sandbox, but can use a lot of CPU and memory (see Not vulnerabilities). |
 | `uploads.enabled` | Lets members upload media files. |
 | `webservices.enableXmlRpc`, `webservices.enableAtomPub` | Turn on the remote publishing APIs. They use the same weblog roles as the UI. |
 | `users.registration.enabled` | Lets anyone create an account. |
@@ -317,6 +317,12 @@ Roller does not protect against:
 - **Forged anonymous comments.** A comment forged cross-site carries no
   identity, so it gains the attacker nothing.
 - **Unsupported settings**, listed under Settings above.
+- **Resource use by templates.** When custom themes are on, a weblog Admin's
+  template can use a lot of CPU or memory. Roller bounds a render's output
+  size, time and loop length, but does not promise to stop every expensive
+  template. A global admin who turns custom themes on trusts weblog Admins
+  not to abuse the server's resources. Templates still cannot run Java code,
+  read files outside their theme, or reach other weblogs.
 - **Partial writes** when a multi-step operation fails. That is a bug, not a
   vulnerability.
 
@@ -326,6 +332,8 @@ Roller does not protect against:
   servlet container. Roller sets `HttpOnly` but not `Secure`.
 - Keep `weblogAdminsUntrusted=true` unless every weblog admin is trusted.
 - Enable custom themes, uploads, XML-RPC and AtomPub only when you need them.
+  Enable custom themes only for weblog Admins you trust with the server's
+  resources.
 - Restrict access to the server log. It holds the setup token during
   installation and upgrades.
 - Keep the database, data directories and `roller-custom.properties` private.
@@ -336,8 +344,8 @@ Roller does not protect against:
 ## Common mistakes
 
 - Setting `weblogAdminsUntrusted=false` on a multi-user site to allow rich HTML.
-- Enabling custom themes and assuming templates are harmless. They are
-  sandboxed, but they run on every page view.
+- Enabling custom themes on a site where anyone can register. Templates are
+  sandboxed, but one template can still overload the server.
 - Running over plain HTTP with remember-me enabled.
 - Running setup on a host where other people can read the log.
 
