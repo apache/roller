@@ -262,12 +262,14 @@
     function onSelectMediaFile(name, url, isImage, hasThumbnail) {
         $("#mediafile_edit_lightbox").modal("hide");
         $("#mediaFileEditor").attr('src', 'about:blank');
+        var link = $('<a>').attr('href', url);
         if (isImage === "true") {
             var src = hasThumbnail === "false" ? url : url + '?t=true';
-            insertMediaFile('<a href="' + url + '"><img src="' + src + '" alt="' + name + '" /></a>');
+            link.append($('<img>').attr({src: src, alt: name}));
         } else {
-            insertMediaFile('<a href="' + url + '">' + name + '</a>');
+            link.text(name);
         }
+        insertMediaFile(link.prop('outerHTML'));
     }
 
 </script>

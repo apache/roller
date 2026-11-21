@@ -82,6 +82,7 @@
 
 ### Bug fixes
 
+- **Media filenames keep their punctuation** when inserted into an entry.
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account
   now logs out that user's other browsers at their next Roller UI page; the
