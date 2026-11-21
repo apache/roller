@@ -113,7 +113,7 @@ public class LoadSaltFilterTest {
     }
 
     @Test
-    void endedSessionIsNotRedirectedToAnotherHost() throws Exception {
+    void endedSessionOutsideTheAdminUiGoesToTheLoginPage() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
             mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
             mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
@@ -126,17 +126,9 @@ public class LoadSaltFilterTest {
 
             filter.doFilter(request, response, chain);
 
-            verify(response).sendRedirect("/");
+            verify(response).sendRedirect("/roller-ui/login.rol");
             verify(chain, never()).doFilter(request, response);
         }
-    }
-
-    @Test
-    void localPathsAreRecognized() {
-        org.junit.jupiter.api.Assertions.assertTrue(LoadSaltFilter.isLocalPath("/roller/roller-ui/menu.rol"));
-        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("//example.com/"));
-        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("/\\example.com/"));
-        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("https://example.com/"));
     }
 
     @Test

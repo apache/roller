@@ -36,6 +36,8 @@ public class LoadSaltFilter implements Filter {
 
     static final String RENDERING_PATH = "/roller-ui/rendering/";
 
+    private static final String ROLLER_UI_PATH = "/roller-ui/";
+
     /** Roller UI static files, which never hold a form. */
     static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/",
         "/roller-ui/theme/"};
@@ -108,27 +110,19 @@ public class LoadSaltFilter implements Filter {
                 || request.getDispatcherType() != DispatcherType.REQUEST) {
             return false;
         }
+        String path = request.getServletPath()
+                + (request.getPathInfo() != null ? request.getPathInfo() : "");
         String target;
-        if ("GET".equalsIgnoreCase(request.getMethod()) || "HEAD".equalsIgnoreCase(request.getMethod())) {
-            target = request.getContextPath() + request.getServletPath()
-                    + (request.getPathInfo() != null ? request.getPathInfo() : "")
+        if (("GET".equalsIgnoreCase(request.getMethod()) || "HEAD".equalsIgnoreCase(request.getMethod()))
+                && path.startsWith(ROLLER_UI_PATH)) {
+            // Starting the redirect with /roller-ui/ keeps it on this site.
+            target = request.getContextPath() + ROLLER_UI_PATH + path.substring(ROLLER_UI_PATH.length())
                     + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-            if (!isLocalPath(target)) {
-                target = request.getContextPath() + "/";
-            }
         } else {
             target = request.getContextPath() + "/roller-ui/login.rol";
         }
         response.sendRedirect(target);
         return true;
-    }
-
-    /**
-     * True for a path on this site. A path that starts with // or /\ is read
-     * by browsers as another host, so it isn't one.
-     */
-    static boolean isLocalPath(String path) {
-        return path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/\\");
     }
 
     @Override
