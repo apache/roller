@@ -19,10 +19,13 @@
 
 package org.apache.roller.selenium.editor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Runs the entry editor's rich-editor-content.js in a blank page in Firefox,
  * without a Roller server: which entries open in the HTML textarea instead of
- * the rich editor, and where the textarea fallback inserts media files.
+ * the rich editor, and how media is inserted in the entry editor.
  *
  * <p>The module's verify phase starts Roller in Jetty first. To run just this
  * class without it, from it-selenium:
@@ -162,6 +165,11 @@ public class RichEditorContentIT {
     // the rich editor loads entries with jQuery's html()
     private static final String JQUERY = "META-INF/resources/webjars/jquery/3.7.1/jquery.js";
 
+    private static final Pattern MEDIA_CHOOSER_CALLBACK =
+            Pattern.compile("(?ms)^    function onSelectMediaFile\\(.*?^    }");
+    private static final String MEDIA_NAME = "Notes ' \" <draft> & edits";
+    private static final String MEDIA_URL = "/blog/mediaresource/123";
+
     private static WebDriver driver;
     private static String script;
     private static String jquery;
@@ -256,6 +264,45 @@ public class RichEditorContentIT {
             }
         }
         assertEquals("should open in the textarea:", "", missed.toString());
+    }
+
+    @Test
+    public void mediaLinkKeepsFilenamePunctuation() throws IOException {
+        selectMedia(false, false);
+        assertEquals(MEDIA_NAME, js("return insertedMedia.querySelector('a').textContent;"));
+    }
+
+    @Test
+    public void mediaImageWithThumbnailKeepsFilenamePunctuation() throws IOException {
+        selectMedia(true, true);
+        assertEquals(MEDIA_NAME, js("return insertedMedia.querySelector('img').alt;"));
+        assertEquals(MEDIA_URL + "?t=true", js("return insertedMedia.querySelector('img').getAttribute('src');"));
+    }
+
+    @Test
+    public void mediaImageWithoutThumbnailKeepsFilenamePunctuation() throws IOException {
+        selectMedia(true, false);
+        assertEquals(MEDIA_NAME, js("return insertedMedia.querySelector('img').alt;"));
+        assertEquals(MEDIA_URL, js("return insertedMedia.querySelector('img').getAttribute('src');"));
+    }
+
+    private static void selectMedia(boolean isImage, boolean hasThumbnail) throws IOException {
+        String jsp = Files.readString(Paths.get("../app/src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp"));
+        Matcher callback = MEDIA_CHOOSER_CALLBACK.matcher(jsp);
+        assertTrue("media chooser callback is present", callback.find());
+
+        js("var s = document.createElement('script');"
+                + "s.textContent = arguments[0];"
+                + "document.head.appendChild(s);", jquery + "\n" + callback.group());
+        // Parse the markup passed to the editor without loading a media resource.
+        js("jQuery.fn.modal = function () { return this; };"
+                + "window.insertMediaFile = function (html) {"
+                + "  var template = document.createElement('template');"
+                + "  template.innerHTML = html;"
+                + "  window.insertedMedia = template.content;"
+                + "};"
+                + "onSelectMediaFile(arguments[0], arguments[1], arguments[2], arguments[3]);",
+                MEDIA_NAME, MEDIA_URL, Boolean.toString(isImage), Boolean.toString(hasThumbnail));
     }
 
     private static String insert(String text) {
