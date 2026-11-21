@@ -23,7 +23,7 @@
   inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
   (30 seconds), and the page isn't cached. A `#foreach` of more than 100,000
   passes fails the same way. `#parse` and `#include` load only the weblog's
-  own templates. Error pages no longer show template ids (#NNN).
+  own templates. Error pages no longer show template ids (#366).
 - **Macros defined in a template belong to that template.** A macro defined
   inline in a template works in that page and in the templates it
   `#parse`s, and one weblog's macro no longer replaces another's of the same
@@ -32,7 +32,7 @@
   worked only once the defining template had been rendered since the server
   started. Define the macro in the page that calls it, or `#parse` the
   template that defines it. Library macros (`roller.vm`, `weblog.vm` and a
-  site's own `roller-custom.vm`) stay global (#NNN).
+  site's own `roller-custom.vm`) stay global (#366).
 
 - **Entries with scripts or embeds open as HTML.** If an entry contains
   scripts, frames, embedded objects, event-handler attributes or
