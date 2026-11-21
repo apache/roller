@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
@@ -50,6 +51,9 @@ public class LoadSaltFilter implements Filter {
         }
         httpReq.getSession(true);
         RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
+        if (redirectEndedSession(httpReq, (HttpServletResponse) response)) {
+            return;
+        }
         if (rollerSession != null) {
             String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
             SaltCache saltCache = SaltCache.getInstance();
@@ -87,6 +91,44 @@ public class LoadSaltFilter implements Filter {
             }
         }
         return false;
+    }
+
+    /**
+     * Sends a request whose session Roller has just ended, because its user's
+     * password or account changed, back to the page it asked for, or to the
+     * login page if it posted a form. Spring Security then asks for a login
+     * where one is needed, as it does for any visitor who is not logged in.
+     * Only the request the browser sent is redirected, not a forward.
+     *
+     * @return true when the request was redirected
+     */
+    static boolean redirectEndedSession(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        if (!RollerSession.isSessionEnded(request)
+                || request.getDispatcherType() != DispatcherType.REQUEST) {
+            return false;
+        }
+        String target;
+        if ("GET".equalsIgnoreCase(request.getMethod()) || "HEAD".equalsIgnoreCase(request.getMethod())) {
+            target = request.getContextPath() + request.getServletPath()
+                    + (request.getPathInfo() != null ? request.getPathInfo() : "")
+                    + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            if (!isLocalPath(target)) {
+                target = request.getContextPath() + "/";
+            }
+        } else {
+            target = request.getContextPath() + "/roller-ui/login.rol";
+        }
+        response.sendRedirect(target);
+        return true;
+    }
+
+    /**
+     * True for a path on this site. A path that starts with // or /\ is read
+     * by browsers as another host, so it isn't one.
+     */
+    static boolean isLocalPath(String path) {
+        return path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/\\");
     }
 
     @Override

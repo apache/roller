@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -104,6 +105,28 @@ public class ValidateSaltFilterTest {
             assertThrows(ServletException.class, () -> {
                 filter.doFilter(request, response, chain);
             });
+        }
+    }
+
+    @Test
+    void formPostWhoseSessionWasEndedGoesToTheLoginPage() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+
+            // the session ended, so the form's salt belongs to its old user
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getContextPath()).thenReturn("/roller");
+            when(request.getParameter("salt")).thenReturn("oldSalt");
+            when(saltCache.get("oldSalt")).thenReturn("userId");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendRedirect("/roller/roller-ui/login.rol");
+            verify(chain, never()).doFilter(request, response);
         }
     }
 

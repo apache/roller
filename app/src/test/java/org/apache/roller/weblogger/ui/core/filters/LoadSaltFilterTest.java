@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -89,6 +90,84 @@ public class LoadSaltFilterTest {
 
             verify(request, never()).setAttribute(eq("salt"), anyString());
             verify(saltCache, never()).put(anyString(), anyString());
+            verify(chain).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void requestWhoseSessionWasEndedGoesBackToThePageItAskedFor() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
+            when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
+            when(request.getMethod()).thenReturn("GET");
+            when(request.getContextPath()).thenReturn("/roller");
+            when(request.getServletPath()).thenReturn("/roller-ui/menu.rol");
+            when(request.getQueryString()).thenReturn("weblog=demo");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendRedirect("/roller/roller-ui/menu.rol?weblog=demo");
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void endedSessionIsNotRedirectedToAnotherHost() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
+            when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
+            when(request.getMethod()).thenReturn("GET");
+            // Roller deployed at the root, and a path that a browser reads as a host
+            when(request.getContextPath()).thenReturn("");
+            when(request.getServletPath()).thenReturn("");
+            when(request.getPathInfo()).thenReturn("//example.com/page");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendRedirect("/");
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void localPathsAreRecognized() {
+        org.junit.jupiter.api.Assertions.assertTrue(LoadSaltFilter.isLocalPath("/roller/roller-ui/menu.rol"));
+        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("//example.com/"));
+        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("/\\example.com/"));
+        org.junit.jupiter.api.Assertions.assertFalse(LoadSaltFilter.isLocalPath("https://example.com/"));
+    }
+
+    @Test
+    void formPostWhoseSessionWasEndedGoesToTheLoginPage() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
+            when(request.getDispatcherType()).thenReturn(DispatcherType.REQUEST);
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getContextPath()).thenReturn("/roller");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendRedirect("/roller/roller-ui/login.rol");
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void forwardWhoseSessionWasEndedIsNotRedirected() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedRollerSession.when(() -> RollerSession.isSessionEnded(request)).thenReturn(true);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            // only the request the browser sent is redirected
+            when(request.getDispatcherType()).thenReturn(DispatcherType.FORWARD);
+
+            filter.doFilter(request, response, chain);
+
+            verify(response, never()).sendRedirect(anyString());
             verify(chain).doFilter(request, response);
         }
     }

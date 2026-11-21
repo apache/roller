@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -75,6 +76,7 @@ public class Profile extends UIAction {
 
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
+            String previousOpenIdUrl = existingUser.getOpenIdUrl();
 
             // copy updated attributes
             getBean().copyTo(existingUser);
@@ -106,9 +108,15 @@ public class Profile extends UIAction {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OIDC) ||
-                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so a profile edit doesn't end the user's
+            // other sessions.
+            if ((authMethod.equals(AuthMethod.OIDC) ||
+                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(existingUser.getPassword())
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(existingUser.getOpenIdUrl(), "/")))) {
                 String randomString = RollerPasswordEncoders.randomUnusedPassword();
                 existingUser.resetPassword(randomString);
             }
@@ -121,9 +129,12 @@ public class Profile extends UIAction {
 
             try {
                 // save the updated profile
+                // a password change ends the user's other sessions, not this one
+                RollerSession.savingPassword(getServletRequest(), existingUser);
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
+                RollerSession.refreshPassword(getServletRequest(), existingUser);
                 addMessage("generic.changes.saved");
                 return SUCCESS;
             } catch (WebloggerException ex) {
@@ -135,6 +146,9 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+            addError("userRegister.error.passwordTooLong");
+        }
         // the external-login marker never matches at login
         if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
             addError("error.add.user.reservedPassword");
