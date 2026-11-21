@@ -27,7 +27,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.Arrays;
@@ -35,14 +38,18 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Allows user to edit his/her profile.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class Profile extends UIAction {
+public class Profile extends UIAction implements ServletRequestAware {
     private static Log log = LogFactory.getLog(Profile.class);
     
     private ProfileBean bean = new ProfileBean();
+
+    private HttpServletRequest servletRequest = null;
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
     public Profile() {
@@ -73,6 +80,7 @@ public class Profile extends UIAction {
 
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
+            String previousOpenIdUrl = existingUser.getOpenIdUrl();
 
             // copy updated attributes
             getBean().copyTo(existingUser);
@@ -104,9 +112,14 @@ public class Profile extends UIAction {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(existingUser.getPassword())
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(existingUser.getOpenIdUrl(), "/")))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 existingUser.resetPassword(randomString);
             }
@@ -119,9 +132,12 @@ public class Profile extends UIAction {
 
             try {
                 // save the updated profile
+                // a password change ends the user's other sessions, not this one
+                RollerSession.savingPassword(getServletRequest(), existingUser);
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
+                RollerSession.refreshPassword(getServletRequest(), existingUser);
                 addMessage("generic.changes.saved");
                 return SUCCESS;
             } catch (WebloggerException ex) {
@@ -133,6 +149,10 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        // the external-login marker never matches at login
+        if (ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             // check that passwords match if they were specified (w/StringUtils.equals, null == null)
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
@@ -174,6 +194,15 @@ public class Profile extends UIAction {
                 addError("error.add.user.invalid.locale");
             }
         }
+    }
+
+    protected HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
     }
 
     public String getAuthMethod() {

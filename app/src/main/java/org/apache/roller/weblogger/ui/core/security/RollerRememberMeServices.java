@@ -22,10 +22,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -50,6 +54,17 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
     }
 
     /**
+     * Records the login a remember-me cookie stands for in its session, as a
+     * login form does.
+     */
+    @Override
+    protected Authentication createSuccessfulAuthentication(HttpServletRequest request, UserDetails user) {
+        Authentication login = super.createSuccessfulAuthentication(request, user);
+        RollerSession.loggedIn(request, login);
+        return login;
+    }
+
+    /**
      * Calculates the digital signature to be put in the cookie. Default value is
      * SHA-512 ("username:tokenExpiryTime:password:key")
      *
@@ -64,7 +79,7 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
             // for LDAP we don't store its password in the roller_users table,
             // just an string indicating external auth method being used.
-            password = WebloggerConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
+            password = ExternalLoginAwarePasswordEncoder.externalLoginMarker();
         }
 
         String data = username + ":" + tokenExpiryTime + ":" + password + ":" + getKey();

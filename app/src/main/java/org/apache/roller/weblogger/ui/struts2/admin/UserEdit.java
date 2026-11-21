@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,8 +40,11 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -47,12 +52,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Action that allows an admin to modify a users profile.
  */
 // TODO: make this work @AllowedMethods({"execute","save","firstSave"})
-public class UserEdit extends UIAction {
+public class UserEdit extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(UserEdit.class);
 
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
+
+    private HttpServletRequest servletRequest = null;
 
     // user we are creating or modifying
     private User user = null;
@@ -141,6 +148,7 @@ public class UserEdit extends UIAction {
         myValidate();
         
         if (!hasActionErrors()) {
+            String previousOpenIdUrl = user.getOpenIdUrl();
             getBean().copyTo(user);
 
             if (authMethod == AuthMethod.DB_OPENID) {
@@ -156,9 +164,14 @@ public class UserEdit extends UIAction {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(user.getPassword())
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(user.getOpenIdUrl(), "/")))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 user.resetPassword(randomString);
             }
@@ -189,6 +202,9 @@ public class UserEdit extends UIAction {
                     // save new user
                     mgr.addUser(user);
                 } else {
+                    if (isUserEditingSelf()) {
+                        RollerSession.savingPassword(getServletRequest(), user);
+                    }
                     mgr.saveUser(user);
                 }
 
@@ -212,6 +228,12 @@ public class UserEdit extends UIAction {
                 }
                 WebloggerFactory.getWeblogger().flush();
 
+                // a password change ends the user's sessions, except this one
+                // when the administrator edits their own account
+                if (!isAdd() && isUserEditingSelf()) {
+                    RollerSession.refreshPassword(getServletRequest(), user);
+                }
+
                 // successful add or edit: send user back to user admin page
                 bean = new CreateUserBean();
                 addMessage("userAdmin.userSaved");
@@ -230,6 +252,10 @@ public class UserEdit extends UIAction {
     }
 
     private void myValidate() {
+        // the external-login marker never matches at login
+        if (ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPassword())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.isBlank()) {
@@ -270,6 +296,15 @@ public class UserEdit extends UIAction {
                 addError("generic.error.check.logs");
             }
         }
+    }
+
+    protected HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
     }
 
     public CreateUserBean getBean() {
