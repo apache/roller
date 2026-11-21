@@ -80,6 +80,12 @@
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
 
+- **Weblog content is served only at the weblog's own addresses.** Direct
+  requests to `/roller-ui/rendering/page/`, `feed/`, `search/` and
+  `resources/` now answer 404; Roller reaches those servlets by forwarding the
+  weblog's public URLs. Comment posts, RSD and
+  `/roller-ui/rendering/media-resources/` links in entries work as before.
+
 - **User details in templates.** The user and visitor objects no longer
   provide an email address. Bundled themes use the existing name properties.
 - **Longer passwords on account forms.** Registration, profile and the
@@ -97,6 +103,7 @@
 
 ### Bug fixes
 
+- **Media filenames keep their punctuation** when inserted into an entry.
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account
   now logs out that user's other browsers at their next Roller UI page; the
@@ -142,6 +149,12 @@
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
   trusted.
+- **Saving the "Create weblog" form follows the site setting.** When "Allow
+  users to create weblogs" is off, saving the form now refuses, as opening it
+  already did.
+- **Only the site's first account becomes an administrator.** With
+  `users.firstUserAdmin` on, a new account was made an administrator whenever
+  no enabled account existed. Disabled accounts now count too.
 
 ## 6.1.7
 
