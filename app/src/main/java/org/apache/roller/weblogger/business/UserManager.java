@@ -283,6 +283,21 @@ public interface UserManager {
             throws WebloggerException;
 
     /**
+     * Change the memberships of a weblog as one operation that keeps the
+     * weblog's administrators. Changes for the same weblog are serialized:
+     * the weblog's row stays locked until the caller flushes or releases the
+     * session, so the administrator check and the changes cannot interleave
+     * with another membership update.
+     * @param weblog  Weblog whose memberships change
+     * @param changes New actions by user name; a null value removes that
+     *                user's membership
+     * @return false, with nothing changed, if the changes would remove the
+     *         weblog's last administrator (pending invitations don't count)
+     */
+    boolean updateWeblogMembership(Weblog weblog, Map<String, List<String>> changes)
+            throws WebloggerException;
+
+    /**
      * Get all permissions (pending or actual) for a weblog.
      */
     List<WeblogPermission> getWeblogPermissionsIncludingPending(Weblog weblog)

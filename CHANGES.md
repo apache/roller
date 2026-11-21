@@ -53,8 +53,8 @@
   refused with 413 before they're stored, and entries show the creator's
   email address only to the creator (also in MetaWeblog responses) (#328).
 
-- **Search queries are limited to 256 characters**, and a query the search
-  engine can't run finds nothing (#334).
+- **Search queries are limited to 256 characters**, after spaces around them
+  are dropped, and a query the search engine can't run finds nothing (#334).
 
 - **Weblog pages ignore a `skipCache` query parameter** (#325).
 
@@ -84,8 +84,11 @@
 - **"nofollow" is added to links that need it.** `addNofollow` only touched
   links that already had `rel="nofollow"` (#330).
 - **Tags of a scheduled entry are counted once, when it goes live** (#328).
-- **A weblog's only administrator can't resign from it**, and declining an
-  invitation only removes a pending invitation (#334).
+- **A weblog's only administrator can't resign from it**, and the main menu
+  says why. Resigning now redirects to the main menu, as accepting and
+  declining an invitation do. Declining an invitation only removes a pending
+  invitation, and declining one you already accepted says you're already a
+  member (#334).
 - **New passwords can't be the external-login placeholder.** Registration,
   the profile page and user administration refuse
   `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
