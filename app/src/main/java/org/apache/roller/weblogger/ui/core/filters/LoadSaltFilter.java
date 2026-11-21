@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
@@ -31,6 +32,8 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  * Roller. See also: ValidateSalt filter.
  */
 public class LoadSaltFilter implements Filter {
+
+    private static final String ROLLER_UI_PATH = "/roller-ui/";
 
     /** Roller UI static files, which never hold a form. */
     static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/",
@@ -47,6 +50,9 @@ public class LoadSaltFilter implements Filter {
         }
         httpReq.getSession(true);
         RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
+        if (redirectEndedSession(httpReq, (HttpServletResponse) response)) {
+            return;
+        }
         if (rollerSession != null) {
             String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
             SaltCache saltCache = SaltCache.getInstance();
@@ -58,6 +64,36 @@ public class LoadSaltFilter implements Filter {
         chain.doFilter(request, response);
     }
  
+    /**
+     * Sends a request whose session Roller has just ended, because its user's
+     * password or account changed, back to the page it asked for, or to the
+     * login page if it posted a form. Spring Security then asks for a login
+     * where one is needed, as it does for any visitor who is not logged in.
+     * A weblog page forwarded here renders for a visitor who is not logged in.
+     *
+     * @return true when the request was redirected
+     */
+    static boolean redirectEndedSession(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        if (!RollerSession.isSessionEnded(request)
+                || request.getDispatcherType() != DispatcherType.REQUEST) {
+            return false;
+        }
+        String path = request.getServletPath()
+                + (request.getPathInfo() != null ? request.getPathInfo() : "");
+        String target;
+        if (("GET".equalsIgnoreCase(request.getMethod()) || "HEAD".equalsIgnoreCase(request.getMethod()))
+                && path.startsWith(ROLLER_UI_PATH)) {
+            // Starting the redirect with /roller-ui/ keeps it on this site.
+            target = request.getContextPath() + ROLLER_UI_PATH + path.substring(ROLLER_UI_PATH.length())
+                    + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        } else {
+            target = request.getContextPath() + "/roller-ui/login.rol";
+        }
+        response.sendRedirect(target);
+        return true;
+    }
+
     /** Stylesheets, scripts and images get no session and no salt. */
     static boolean isStaticFile(HttpServletRequest request) {
         String path = request.getServletPath();

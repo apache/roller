@@ -41,6 +41,7 @@
                     username-parameter="j_username" 
                     password-parameter="j_password" 
                     authentication-failure-url="/roller-ui/login.rol?error=true"
+                    authentication-success-handler-ref="formLoginSuccessHandler"
                     login-processing-url="/roller_j_security_check"/>
 
         <remember-me services-ref="rollerRememberMeServices"
@@ -103,9 +104,22 @@
         <beans:property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
     </beans:bean>
 
+    <!-- The success handlers record the login in its session, so a later
+         password change ends that session, then send the user on. -->
+    <beans:bean id="formLoginSuccessHandler"
+                class="org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler">
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"/>
+        </beans:constructor-arg>
+    </beans:bean>
+
     <beans:bean id="myAuthenticationSuccessHandler"
-                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
+                class="org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler">
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+                <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
+            </beans:bean>
+        </beans:constructor-arg>
     </beans:bean>
 
     <beans:bean id="myAuthenticationFailureHandler"

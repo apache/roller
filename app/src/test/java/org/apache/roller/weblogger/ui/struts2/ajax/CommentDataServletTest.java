@@ -95,6 +95,38 @@ public class CommentDataServletTest {
     }
 
     @Test
+    public void testGetWithoutAUserIsForbidden() throws Exception {
+        Weblogger weblogger = mock(Weblogger.class);
+        WeblogEntryManager manager = mock(WeblogEntryManager.class);
+        WeblogEntryComment comment = mock(WeblogEntryComment.class);
+        WeblogEntry entry = mock(WeblogEntry.class);
+        Weblog weblog = mock(Weblog.class);
+        // a session that was just ended has no user
+        RollerSession session = mock(RollerSession.class);
+
+        when(weblogger.getWeblogEntryManager()).thenReturn(manager);
+        when(manager.getComment("comment-id")).thenReturn(comment);
+        when(comment.getWeblogEntry()).thenReturn(entry);
+        when(entry.getWebsite()).thenReturn(weblog);
+        // as Weblog does, which builds a permission from the user
+        when(weblog.hasUserPermission(null, WeblogPermission.POST)).thenThrow(new NullPointerException());
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("id")).thenReturn("comment-id");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<RollerSession> sessions = mockStatic(RollerSession.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            sessions.when(() -> RollerSession.getRollerSession(request)).thenReturn(session);
+
+            new CommentDataServlet().doGet(request, response);
+        }
+
+        verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+    }
+
+    @Test
     public void testRepeatedSavesReturnFreshResponseSalts() throws Exception {
         Weblogger weblogger = mock(Weblogger.class);
         WeblogEntryManager manager = mock(WeblogEntryManager.class);
