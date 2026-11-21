@@ -127,6 +127,12 @@
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
   trusted.
+- **Saving the "Create weblog" form follows the site setting.** When "Allow
+  users to create weblogs" is off, saving the form now refuses, as opening it
+  already did.
+- **Only the site's first account becomes an administrator.** With
+  `users.firstUserAdmin` on, a new account was made an administrator whenever
+  no enabled account existed. Disabled accounts now count too.
 
 ## 6.1.7
 
