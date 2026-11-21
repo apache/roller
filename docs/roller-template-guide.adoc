@@ -1075,10 +1075,6 @@ are hierarchical
 |Date
 |Date that user was created
 
-|$user.emailAddress
-|String
-|User's email address
-
 |$user.fullName
 |String
 |User's full name

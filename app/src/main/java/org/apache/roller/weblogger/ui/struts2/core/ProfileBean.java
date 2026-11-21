@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.roller.weblogger.pojos.User;
 
 
@@ -116,6 +118,10 @@ public class ProfileBean {
     
     public String getPasswordText() {
         return passwordText;
+    }
+
+    boolean isPasswordTooLong() {
+        return passwordText != null && passwordText.getBytes(StandardCharsets.UTF_8).length > 72;
     }
 
     public void setPasswordText(String passwordText) {

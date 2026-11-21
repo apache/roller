@@ -80,6 +80,20 @@
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
 
+- **User details in templates.** The user and visitor objects no longer
+  provide an email address. Bundled themes use the existing name properties.
+- **Longer passwords on account forms.** Registration and profile forms
+  take passwords up to 72 UTF-8 bytes.
+- **Request and result limits.** Struts multipart requests allow up to
+  12 MiB in total, enough for five default 2 MiB files plus form data.
+  XML-RPC request limits allow for the configured file size and its base64
+  encoding, up to 32 MiB, with a 1 MiB limit when uploads are off. Blogger
+  and MetaWeblog return at most 200 recent entries, including when the
+  requested count is zero or negative.
+- **Configuration and weblog logging.** Configuration debug messages show
+  property names without values, and weblog lookup errors print handles on
+  one line.
+
 ### Bug fixes
 
 - **Changing a password ends the account's other sessions.** Saving a new

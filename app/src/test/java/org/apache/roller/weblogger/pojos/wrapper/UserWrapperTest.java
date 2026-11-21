@@ -24,12 +24,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class UserWrapperTest {
+
+    @Test
+    void templateUserPropertiesDoNotIncludeEmail() {
+        assertThrows(NoSuchMethodException.class, () -> UserWrapper.class.getMethod("getEmailAddress"));
+    }
 
     /** A user whose stored names are exactly {@code name}. */
     private static User user(String name) {

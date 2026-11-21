@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business.jpa;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
@@ -376,7 +377,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (handle == null) {
             throw new WebloggerException("Handle cannot be null");
         } else if (!isAlphanumeric(handle)) {
-            throw new WebloggerException("Invalid handle: '"+handle+"'");
+            throw new WebloggerException("Invalid handle: '" + StringEscapeUtils.escapeJava(handle) + "'");
         }
         
         // check cache first

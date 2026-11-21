@@ -452,6 +452,14 @@ public class XMLRPCWeblogPermissionTest {
                 handle, authorName, PASSWORD, 1000000);
         assertEquals(BloggerAPIHandler.DRAFT_SCAN_CAP, metaBounded.size());
 
+        Vector<?> bloggerDefault = (Vector<?>) blogger.getRecentPosts(
+                "", handle, authorName, PASSWORD, 0);
+        assertEquals(bloggerBounded.size(), bloggerDefault.size());
+
+        Vector<?> metaDefault = (Vector<?>) metaWeblog.getRecentPosts(
+                handle, authorName, PASSWORD, -1);
+        assertEquals(metaBounded.size(), metaDefault.size());
+
         @SuppressWarnings("unchecked")
         Vector<Object> bloggerLegacy = (Vector<Object>) blogger.getRecentPosts(
                 "", handle, limitedName, PASSWORD, 0);

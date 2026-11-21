@@ -149,6 +149,9 @@ public class Profile extends UIAction implements ServletRequestAware {
     }
 
     public void myValidate() {
+        if (getBean().isPasswordTooLong()) {
+            addError("userRegister.error.passwordTooLong");
+        }
         // the external-login marker never matches at login
         if (ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPasswordText())) {
             addError("error.add.user.reservedPassword");

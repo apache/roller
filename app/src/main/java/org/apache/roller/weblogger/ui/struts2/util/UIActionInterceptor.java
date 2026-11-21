@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -85,7 +86,7 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
                             .getWeblogByHandle(weblogHandle);
                 } catch (Exception e) {
                     log.error("Error looking up action weblog - "
-                            + weblogHandle, e);
+                            + StringEscapeUtils.escapeJava(weblogHandle), e);
                 }
             }
             theAction.setActionWeblog(weblog);

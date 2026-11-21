@@ -140,17 +140,7 @@ public final class WebloggerConfig {
         // finally we can start logging...
         log = LogFactory.getLog(WebloggerConfig.class);
 
-        // some debugging for those that want it
-        if(log.isDebugEnabled()) {
-            log.debug("WebloggerConfig looks like this ...");
-
-            String key;
-            Enumeration<Object> keys = config.keys();
-            while(keys.hasMoreElements()) {
-                key = (String) keys.nextElement();
-                log.debug(key+"="+config.getProperty(key));
-            }
-        }
+        log.debug("Loaded " + config.size() + " configuration properties");
 
     }
 
@@ -173,7 +163,7 @@ public final class WebloggerConfig {
      */
     public static String getProperty(String key) {
         String value = config.getProperty(key);
-        log.debug("Fetching property ["+key+"="+value+"]");
+        log.debug("Fetching property [" + key + "]");
         return value == null ? null : value.trim();
     }
     
@@ -185,7 +175,7 @@ public final class WebloggerConfig {
      */
     public static String getProperty(String key, String defaultValue) {
         String value = config.getProperty(key);
-        log.debug("Fetching property ["+key+"="+value+",defaultValue="+defaultValue+"]");
+        log.debug("Fetching property [" + key + "]");
         if (value == null) {
             return defaultValue;
         }
