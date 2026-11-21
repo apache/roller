@@ -55,6 +55,11 @@
     </filter>
 
     <filter>
+        <filter-name>RenderingForwardOnlyFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RenderingForwardOnlyFilter</filter-class>
+    </filter>
+
+    <filter>
         <filter-name>RequestMappingFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter</filter-class>
     </filter>
@@ -180,6 +185,30 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+
+    <!-- Weblog pages, feeds, search and theme resources are reached through
+         the weblog's own URLs, which RequestMappingFilter forwards here.
+         Comment posts, RSD and media files keep their direct addresses. -->
+    <filter-mapping>
+        <filter-name>RenderingForwardOnlyFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RenderingForwardOnlyFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RenderingForwardOnlyFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/search/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RenderingForwardOnlyFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/resources/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <filter-mapping>

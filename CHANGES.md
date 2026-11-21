@@ -80,6 +80,12 @@
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
 
+- **Weblog content is served only at the weblog's own addresses.** Direct
+  requests to `/roller-ui/rendering/page/`, `feed/`, `search/` and
+  `resources/` now answer 404; Roller reaches those servlets by forwarding the
+  weblog's public URLs. Comment posts, RSD and
+  `/roller-ui/rendering/media-resources/` links in entries work as before.
+
 ### Bug fixes
 
 - **Changing a password ends the account's other sessions.** Saving a new
