@@ -82,11 +82,22 @@ public class LoadSaltFilter implements Filter {
             target = request.getContextPath() + request.getServletPath()
                     + (request.getPathInfo() != null ? request.getPathInfo() : "")
                     + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            if (!isLocalPath(target)) {
+                target = request.getContextPath() + "/";
+            }
         } else {
             target = request.getContextPath() + "/roller-ui/login.rol";
         }
         response.sendRedirect(target);
         return true;
+    }
+
+    /**
+     * True for a path on this site. A path that starts with // or /\ is read
+     * by browsers as another host, so it isn't one.
+     */
+    static boolean isLocalPath(String path) {
+        return path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/\\");
     }
 
     /** Stylesheets, scripts and images get no session and no salt. */
