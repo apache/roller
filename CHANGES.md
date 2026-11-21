@@ -84,8 +84,11 @@
 - **New passwords can't be the external-login placeholder.** Registration,
   the profile page and user administration refuse
   `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
-  password, and it never works as one. An administrator can set a new password
-  for an account that used it (#306).
+  password, and it never works as one. When you change that setting, list its
+  earlier values in the new `users.passwords.externalAuthValue.previous`
+  (comma-separated) so they're treated the same. A login refused for this
+  reason is logged, and an administrator can set a new password for an
+  account that used one (#306).
 - **The LDAP comment authenticator escapes the commenter's user name** when
   it builds the bind name (#334).
 - **Roller UI stylesheets, scripts and images don't start a session** (#332).
