@@ -256,6 +256,9 @@ public class UserEdit extends UIAction implements ServletRequestAware {
         if (ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPassword())) {
             addError("error.add.user.reservedPassword");
         }
+        if (getBean().isPasswordTooLong()) {
+            addError("userRegister.error.passwordTooLong");
+        }
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.isBlank()) {

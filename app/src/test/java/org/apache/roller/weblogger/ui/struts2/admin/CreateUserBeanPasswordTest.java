@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.weblogger.ui.struts2.editor;
-
-import java.io.InputStream;
-import java.util.Properties;
+package org.apache.roller.weblogger.ui.struts2.admin;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MediaFileUploadLimitTest {
+class CreateUserBeanPasswordTest {
 
     @Test
-    void multipartLimitLeavesRoomForFiveDefaultSizeFiles() throws Exception {
-        Properties properties = new Properties();
-        try (InputStream stream = getClass().getResourceAsStream("/struts.properties")) {
-            properties.load(stream);
-        }
-        assertEquals(12 * 1024 * 1024, Integer.parseInt(properties.getProperty("struts.multipart.maxSize")));
+    void passwordLengthIsMeasuredInUtf8Bytes() {
+        CreateUserBean bean = new CreateUserBean();
+        assertFalse(bean.isPasswordTooLong());
+        bean.setPassword("a".repeat(72));
+        assertFalse(bean.isPasswordTooLong());
+        bean.setPassword("a".repeat(73));
+        assertTrue(bean.isPasswordTooLong());
+        // 25 three-byte characters are 75 bytes
+        bean.setPassword("€".repeat(25));
+        assertTrue(bean.isPasswordTooLong());
     }
 }

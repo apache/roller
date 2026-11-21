@@ -69,7 +69,7 @@
                  tooltip="%{getText('userAdmin.tip.fullName')}" />
 
     <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
-        <s:password name="bean.password" size="30" maxlength="30" onkeyup="formChanged()"
+        <s:password name="bean.password" size="30" maxlength="72" onkeyup="formChanged()"
                      label="%{getText('userSettings.password')}"
                      tooltip="%{getText('userAdmin.tip.password')}" />
     </s:if>

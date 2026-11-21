@@ -82,10 +82,11 @@
 
 - **User details in templates.** The user and visitor objects no longer
   provide an email address. Bundled themes use the existing name properties.
-- **Longer passwords on account forms.** Registration and profile forms
-  take passwords up to 72 UTF-8 bytes.
-- **Request and result limits.** Struts multipart requests allow up to
-  12 MiB in total, enough for five default 2 MiB files plus form data.
+- **Longer passwords on account forms.** Registration, profile and the
+  administrator's user form take passwords up to 72 UTF-8 bytes.
+- **Request and result limits.** Multipart requests to the Roller UI allow
+  five files of the "Maximum file size" set in Site Settings plus 1 MiB of
+  form data (11 MiB with the default 2 MB), and the limit follows that setting.
   XML-RPC request limits allow for the configured file size and its base64
   encoding, up to 32 MiB, with a 1 MiB limit when uploads are off. Blogger
   and MetaWeblog return at most 200 recent entries, including when the
