@@ -182,6 +182,12 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         
         PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 		for (Subscription sub : subscriptions) {
+			// asked to stop, so leave the remaining feeds for the next run
+			if (Thread.currentThread().isInterrupted()) {
+				log.warn("Interrupted, not updating the remaining subscriptions");
+				break;
+			}
+			
 			try {
 				// reattach sub.  sub gets detached as we iterate
 				sub = pmgr.getSubscriptionById(sub.getId());

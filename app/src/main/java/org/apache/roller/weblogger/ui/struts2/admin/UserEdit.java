@@ -232,6 +232,10 @@ public class UserEdit extends UIAction {
     }
 
     private void myValidate() {
+        // the external-login marker never matches at login
+        if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPassword())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.isBlank()) {

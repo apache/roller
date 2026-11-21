@@ -40,11 +40,35 @@ public final class RollerPasswordEncoders {
 
     private static final Log log = LogFactory.getLog(RollerPasswordEncoders.class);
 
+    /** Stored in place of a password when none is configured. */
+    public static final String DEFAULT_EXTERNAL_LOGIN_MARKER = "<externalAuth>";
+
     private RollerPasswordEncoders() {
     }
 
+    /**
+     * The value stored in place of a Roller password for users who log in
+     * through LDAP or the servlet container: users.passwords.externalAuthValue,
+     * or the default when that setting is empty.
+     */
+    public static String externalLoginMarker() {
+        String marker = WebloggerConfig.getProperty("users.passwords.externalAuthValue");
+        return marker == null || marker.isEmpty() ? DEFAULT_EXTERNAL_LOGIN_MARKER : marker;
+    }
+
+    /**
+     * Whether a password is the configured external-login marker or the
+     * default one, which accounts may still have stored from before the
+     * setting changed. Neither matches at login, so neither can be chosen as a
+     * Roller password.
+     */
+    public static boolean isExternalLoginMarker(CharSequence password) {
+        return password != null && (externalLoginMarker().contentEquals(password)
+                || DEFAULT_EXTERNAL_LOGIN_MARKER.contentEquals(password));
+    }
+
     @SuppressWarnings("deprecation")
-    public static DelegatingPasswordEncoder create() {
+    public static PasswordEncoder create() {
 
         Map<String, PasswordEncoder> encoders = new HashMap<>();
 
@@ -95,7 +119,37 @@ public final class RollerPasswordEncoders {
 
         log.info("Password Encryption Algorithm set to '" + algorithm + "'");
 
-        return new DelegatingPasswordEncoder(algorithm, encoders);
+        return new ExternalLoginAware(new DelegatingPasswordEncoder(algorithm, encoders));
+    }
+
+    /**
+     * Users who log in through LDAP or the servlet container have no Roller
+     * password; Roller stores users.passwords.externalAuthValue in its place.
+     * That placeholder is not a password, so it never matches, and neither do
+     * the default placeholder and an empty password.
+     */
+    private record ExternalLoginAware(PasswordEncoder delegate) implements PasswordEncoder {
+
+        @Override
+        public String encode(CharSequence rawPassword) {
+            return delegate.encode(rawPassword);
+        }
+
+        @Override
+        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+            // a stored marker is checked before the delegate sees it, since a
+            // marker such as {noop}secret would otherwise match its own suffix
+            if (rawPassword == null || rawPassword.length() == 0 || isExternalLoginMarker(rawPassword)
+                    || isExternalLoginMarker(encodedPassword)) {
+                return false;
+            }
+            return delegate.matches(rawPassword, encodedPassword);
+        }
+
+        @Override
+        public boolean upgradeEncoding(String encodedPassword) {
+            return delegate.upgradeEncoding(encodedPassword);
+        }
     }
 
     /**

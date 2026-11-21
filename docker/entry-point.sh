@@ -43,5 +43,12 @@ users.oidc.autoProvision.enabled=${OIDC_AUTO_PROVISION:-true}
 EOF
 fi
 
+# Turn off the JVM's hardware-accelerated Base64 decoding, which has an
+# out-of-bounds write on x86-64 processors with AVX-512 in JDKs older than the
+# November 2026 updates (CVE-2026-114938). It only costs Base64 speed; an
+# image built on a patched JDK can drop it. It goes before any CATALINA_OPTS
+# passed to the container, so those options add to it.
+export CATALINA_OPTS="-XX:-UseBASE64Intrinsics ${CATALINA_OPTS}"
+
 /usr/local/tomcat/bin/wait-for-it.sh ${DATABASE_HOST}
 exec /usr/local/tomcat/bin/catalina.sh run
