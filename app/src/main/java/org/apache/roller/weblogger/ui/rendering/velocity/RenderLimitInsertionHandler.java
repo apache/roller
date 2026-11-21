@@ -32,12 +32,8 @@ public class RenderLimitInsertionHandler implements ReferenceInsertionEventHandl
     @Override
     public Object referenceInsert(Context context, String reference, Object value) {
         RenderSession.checkDeadline();
-        RenderSession session = RenderSession.current();
         if (value instanceof CharSequence) {
             RenderSession.checkLength(((CharSequence) value).length());
-        } else if (session != null && ValueLimits.holdsValues(value)) {
-            // a list or map is written as text, built in full before it is written
-            RenderSession.checkLength(ValueLimits.textLength(value, session.getMaxOutputChars()));
         }
         return value;
     }
