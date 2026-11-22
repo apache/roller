@@ -535,7 +535,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     protected List<WeblogEntry> getRecentEntries(Weblog weblog, User user,
             int requestedLimit, WeblogEntrySearchCriteria.SortBy sortBy,
             Date endDate) throws Exception {
-        int effectiveLimit = requestedLimit <= 0 ? -1
+        int effectiveLimit = requestedLimit <= 0 ? DRAFT_SCAN_CAP
                 : Math.min(requestedLimit, DRAFT_SCAN_CAP);
         WeblogEntryManager entryManager = WebloggerFactory.getWeblogger()
                 .getWeblogEntryManager();
@@ -560,7 +560,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entries.sort(Comparator.comparing(
                     WeblogEntry::getPubTime, newestFirst));
         }
-        if (effectiveLimit > 0 && entries.size() > effectiveLimit) {
+        if (entries.size() > effectiveLimit) {
             return new ArrayList<>(entries.subList(0, effectiveLimit));
         }
         return entries;

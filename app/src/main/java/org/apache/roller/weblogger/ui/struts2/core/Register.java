@@ -426,6 +426,8 @@ public class Register extends UIAction implements ServletRequestAware {
             String randomString = RandomStringUtils.randomAlphanumeric(255);
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);
+        } else if (!usingSSO && getBean().isPasswordTooLong()) {
+            addError("userRegister.error.passwordTooLong");
         }
         
         // the external-login marker is stored for users who log in elsewhere

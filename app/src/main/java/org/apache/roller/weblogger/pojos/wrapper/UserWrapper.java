@@ -85,11 +85,6 @@ public final class UserWrapper {
     }
     
     
-    public String getEmailAddress() {
-        return this.pojo.getEmailAddress();
-    }
-    
-    
     public Date getDateCreated() {
         return this.pojo.getDateCreated();
     }

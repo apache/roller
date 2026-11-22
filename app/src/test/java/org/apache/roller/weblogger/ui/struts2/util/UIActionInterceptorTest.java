@@ -23,13 +23,24 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.jpa.JPAWeblogManagerImpl;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.LogCapture;
 import org.apache.struts2.StrutsStatics;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 /**
@@ -37,6 +48,32 @@ import static org.mockito.Mockito.when;
  * trusted sources only, overwriting anything bound from request parameters.
  */
 class UIActionInterceptorTest {
+
+    @Test
+    void weblogLookupKeepsTheHandleOnOneLineInTheLog() throws Exception {
+        TestAction action = new TestAction();
+        action.setWeblog("team\r\nnotes");
+        ActionInvocation invocation = mock(ActionInvocation.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(invocation.getAction()).thenReturn(action);
+        when(invocation.getInvocationContext()).thenReturn(new ActionContext(
+                new HashMap<>(Map.of(StrutsStatics.HTTP_REQUEST, request))));
+        Weblogger weblogger = mock(Weblogger.class);
+        when(weblogger.getWeblogManager()).thenReturn(mock(JPAWeblogManagerImpl.class, CALLS_REAL_METHODS));
+
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             LogCapture log = new LogCapture(UIActionInterceptor.class, Level.ERROR)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            new UIActionInterceptor().doIntercept(invocation);
+
+            assertEquals(1, log.events().size());
+            LogEvent event = log.events().get(0);
+            assertAll(
+                    () -> assertEquals("Error looking up action weblog - team\\r\\nnotes",
+                            event.getMessage().getFormattedMessage()),
+                    () -> assertEquals("Invalid handle: 'team\\r\\nnotes'", event.getThrown().getMessage()));
+        }
+    }
 
     static class TestAction extends UIAction {
         TestAction() { this.actionName = "test"; }

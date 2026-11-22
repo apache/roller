@@ -18,7 +18,10 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -57,6 +60,7 @@ import static org.mockito.Mockito.when;
 class ExternalLoginMarkerPasswordTest {
 
     private static final String RESERVED = "error.add.user.reservedPassword";
+    private static final String TOO_LONG = "userRegister.error.passwordTooLong";
 
     private final Map<String, String> savedProperties = new HashMap<>();
     private MockedStatic<WebloggerFactory> factory;
@@ -231,6 +235,40 @@ class ExternalLoginMarkerPasswordTest {
 
         verify(users, never()).saveUser(any());
         verify(users, never()).addUser(any());
+    }
+
+    @Test
+    void registerAndProfileFormsAllowLongerPasswords() throws Exception {
+        for (String form : List.of("Register.jsp", "Profile.jsp")) {
+            Path view = Path.of(System.getProperty("project.basedir", System.getProperty("user.dir")),
+                    "src/main/webapp/WEB-INF/jsps/core", form);
+            String jsp = Files.readString(view);
+            assertTrue(jsp.contains("name=\"bean.passwordText\" size=\"20\" maxlength=\"72\""), form);
+            assertTrue(jsp.contains("name=\"bean.passwordConfirm\" size=\"20\" maxlength=\"72\""), form);
+        }
+    }
+
+    @Test
+    void databaseRegistrationChecksPasswordLengthInBytes() {
+        for (String password : List.of("a".repeat(72), "é".repeat(36), "é".repeat(36) + "a")) {
+            Register register = withText(new Register());
+            register.getBean().setUserName("newuser");
+            register.getBean().setPasswordText(password);
+            register.getBean().setPasswordConfirm(password);
+            register.myValidate();
+            assertEquals(password.endsWith("éa"), register.getActionErrors().contains(TOO_LONG));
+        }
+    }
+
+    @Test
+    void profileChecksPasswordLengthInBytes() {
+        for (String password : List.of("a".repeat(72), "é".repeat(36), "é".repeat(36) + "a")) {
+            Profile profile = withText(new Profile());
+            profile.getBean().setPasswordText(password);
+            profile.getBean().setPasswordConfirm(password);
+            profile.myValidate();
+            assertEquals(password.endsWith("éa"), profile.getActionErrors().contains(TOO_LONG));
+        }
     }
 
     private static <T extends UIAction> T withText(T action) {

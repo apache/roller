@@ -53,12 +53,12 @@
         <s:password label="%{getText('userSettings.password')}"
                     tooltip="%{getText('userSettings.tip.password')}"
                     onchange="formChanged()" onkeyup="formChanged()"
-                    name="bean.passwordText" size="20" maxlength="20"/>
+                    name="bean.passwordText" size="20" maxlength="72"/>
 
         <s:password label="%{getText('userSettings.passwordConfirm')}"
                     tooltip="%{getText('userRegister.tip.passwordConfirm')}"
                     onchange="formChanged()" onkeyup="formChanged()"
-                    name="bean.passwordConfirm" size="20" maxlength="20"/>
+                    name="bean.passwordConfirm" size="20" maxlength="72"/>
     </s:if>
     <s:else>
         <s:hidden name="bean.password"/>

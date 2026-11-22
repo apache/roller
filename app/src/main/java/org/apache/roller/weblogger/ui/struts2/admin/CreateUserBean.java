@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +79,11 @@ public class CreateUserBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /** True when the password is longer than the 72 UTF-8 bytes BCrypt uses. */
+    boolean isPasswordTooLong() {
+        return password != null && password.getBytes(StandardCharsets.UTF_8).length > 72;
     }
     
     public String getScreenName() {
