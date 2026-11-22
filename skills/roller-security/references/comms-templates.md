@@ -87,6 +87,10 @@ Use the portal-generated advisory and review its fields before sending:
 Do not include private correspondence, internal record links, or reproduction
 steps by default. Coordinate recipients and timing with the ASF process.
 
+When a release discloses several CVEs, send oss-security one combined post for
+the release, not one message per CVE. See "Publication sequence" in
+[cve-portal.md](cve-portal.md).
+
 ## Disclosure notice to reporter
 
 Subject: Apache Roller [version]: advisories published for your reports
