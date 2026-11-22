@@ -31,6 +31,8 @@
         
         <!-- define our own interceptors and a custom interceptor stack -->
         <interceptors>
+            <interceptor name="OAuthSettingsInterceptor"
+                         class="org.apache.roller.weblogger.ui.struts2.core.OAuthSettingsInterceptor"/>
             <interceptor name="UIActionInterceptor" 
                          class="org.apache.roller.weblogger.ui.struts2.util.UIActionInterceptor" />
             <interceptor name="UISecurityInterceptor" 
@@ -86,6 +88,10 @@
                     <param name="excludeMethods">input,back,cancel,browse</param>
                 </interceptor-ref>
                 
+            </interceptor-stack>
+            <interceptor-stack name="oauthStack">
+                <interceptor-ref name="OAuthSettingsInterceptor"/>
+                <interceptor-ref name="rollerStack"/>
             </interceptor-stack>
         </interceptors>
         
@@ -160,12 +166,20 @@
         <action name="oauthKeys"
                 class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
             <result name="success" type="tiles">.OAuthKeys</result>
+            <result name="oauth-disabled" type="httpheader">
+                <param name="status">404</param>
+            </result>
+            <interceptor-ref name="oauthStack"/>
             <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="oauthAuthorize"
                 class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
             <result name="success" type="tiles">.OAuthAuthorize</result>
+            <result name="oauth-disabled" type="httpheader">
+                <param name="status">404</param>
+            </result>
+            <interceptor-ref name="oauthStack"/>
             <allowed-methods>execute</allowed-methods>
         </action>
 

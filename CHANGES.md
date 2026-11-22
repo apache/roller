@@ -4,6 +4,11 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
+  and the OAuth keys page answer only when AtomPub is enabled and its
+  authentication is set to OAuth. A request token is issued only for a
+  correctly signed request, and each request gets new credentials.
+
 - **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
   Roller no longer takes the site's URL from the first request after a start.
   New installs save it during setup, and on an upgraded site where it's empty,

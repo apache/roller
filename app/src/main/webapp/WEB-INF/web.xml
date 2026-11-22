@@ -94,6 +94,11 @@
 		<filter-class>org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter</filter-class>
 	</filter>
 
+    <filter>
+        <filter-name>OAuthSettingsFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.webservices.oauth.OAuthSettingsFilter</filter-class>
+    </filter>
+
     <!-- Development purposes only, not activated in a filter-mapping by default -->
     <filter>
         <filter-name>DebugFilter</filter-name>
@@ -169,6 +174,16 @@
         <filter-name>InitFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>OAuthSettingsFilter</filter-name>
+        <url-pattern>/roller-services/oauth/*</url-pattern>
+        <url-pattern>/roller-ui/oauthKeys.rol</url-pattern>
+        <url-pattern>/roller-ui/oauthAuthorize.rol</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
 	<filter-mapping>

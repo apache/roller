@@ -63,36 +63,19 @@ public class RequestTokenServlet extends HttpServlet {
         try {
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();            
-            OAuthAccessor accessor = omgr.getAccessor(requestMessage);
+            OAuthConsumer consumer = omgr.getConsumer(requestMessage);
+            OAuthAccessor accessor = new OAuthAccessor(consumer);
+            omgr.getValidator().validateMessage(requestMessage, accessor);
 
-            if (accessor == null) {
+            omgr.generateRequestToken(accessor);
+            WebloggerFactory.getWeblogger().flush();
 
-                OAuthConsumer consumer = omgr.getConsumer(requestMessage);
-                accessor = new OAuthAccessor(consumer);
-                omgr.getValidator().validateMessage(requestMessage, accessor);
-
-                {
-                    // Support the 'Variable Accessor Secret' extension
-                    // described in http://oauth.pbwiki.com/AccessorSecret
-                    String secret = requestMessage.getParameter("oauth_accessor_secret");
-                    if (secret != null) {
-                        accessor.setProperty(OAuthConsumer.ACCESSOR_SECRET, secret);
-                    }
-                }
-
-                // generate request_token and secret
-                omgr.generateRequestToken(accessor);
-                WebloggerFactory.getWeblogger().flush();
-            }
-
-            response.setContentType("text/plain");
+            response.setContentType("application/x-www-form-urlencoded");
             try (OutputStream out = response.getOutputStream()) {
-                String token = accessor.requestToken != null ? accessor.requestToken: accessor.accessToken;
                 OAuth.formEncode(OAuth.newList(
-                        "oauth_token", token,
+                        "oauth_token", accessor.requestToken,
                         "oauth_token_secret", accessor.tokenSecret), out);
             }
-            
         } catch (Exception e){
             handleException(e, request, response, true);
         }
