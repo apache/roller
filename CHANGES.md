@@ -177,6 +177,10 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **The security model trusts the Admins of an aggregated front-page
+  weblog.** With `site.frontpage.weblog.aggregated=true`, that weblog's
+  templates can read the whole site through `$site`, so give Admin on it
+  only to people you trust as global admins (`docs/security-model.md`).
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
   inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
