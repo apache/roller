@@ -462,7 +462,8 @@
         try {
             var cdata = JSON.parse(rdata);
             if (cdata.salt) {
-                $("#comments_salt").val(cdata.salt);
+                // the save used up the page's salt; every form on the page shares it
+                $("input[name='salt']").val(cdata.salt);
             }
             return cdata;
         } catch (error) {
