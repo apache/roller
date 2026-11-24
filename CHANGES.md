@@ -4,6 +4,11 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Templates see only published entries when they look one up by anchor.**
+  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
+  a weblog reached through `$site`, now returns null for draft, pending and
+  scheduled entries.
+
 - **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
   and the OAuth keys page answer only when AtomPub is enabled and its
   authentication is set to OAuth. A request token is issued only for a
