@@ -15,10 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Version updates for master. Each ecosystem gets at most one grouped pull
-# request a week, since every pull request event mails commits@. A release
-# has to be 3 days (72 hours) old before it's proposed; security updates
-# don't wait.
+# Version updates for master. Updates are grouped and weekly, since every pull
+# request event mails commits@: one pull request per ecosystem, except Maven,
+# which gets one per family so that one failing upgrade doesn't hold up the
+# rest. A release has to be 3 days (72 hours) old before it's proposed;
+# security updates don't wait.
 version: 2
 updates:
   - package-ecosystem: "maven"
@@ -30,8 +31,33 @@ updates:
       day: "monday"
     cooldown:
       default-days: 3
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
+    # A dependency goes in the first group it matches, so the catch-all is last.
     groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+      struts:
+        patterns:
+          - "org.apache.struts*"
+          - "ognl*"
+          - "com.jgeppert.struts2*"
+      webjars:
+        patterns:
+          - "org.webjars*"
+      testing:
+        patterns:
+          - "org.junit*"
+          - "org.mockito*"
+          - "org.instancio*"
+          - "com.microsoft.playwright*"
+          - "org.eclipse.jetty*"
+          - "org.apache.derby*"
+      build-plugins:
+        patterns:
+          - "org.apache.maven.plugins*"
+          - "org.codehaus.mojo*"
+          - "org.apache.rat*"
       maven:
         patterns:
           - "*"
