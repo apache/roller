@@ -18,8 +18,11 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
+import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
@@ -119,6 +122,57 @@ public class JPAOAuthManagerTest  {
 
         omgr.removeAccessor(authorized);
         omgr.removeConsumer(consumer);
+        TestUtils.endSession(true);
+    }
+
+    @Test
+    void temporaryCredentialsCanBeReissuedAndExchanged() throws Exception {
+        JPAOAuthManagerImpl manager = (JPAOAuthManagerImpl)
+                WebloggerFactory.getWeblogger().getOAuthManager();
+        String owner = "oauth-client-user";
+        String key = "oauth-client-key";
+        OAuthConsumer consumer = manager.addConsumer(owner, key);
+        TestUtils.endSession(true);
+
+        OAuthAccessor first = new OAuthAccessor(consumer);
+        manager.generateRequestToken(first);
+        TestUtils.endSession(true);
+
+        assertNotNull(manager.getAccessorByToken(first.requestToken));
+        TestUtils.endSession(false);
+
+        OAuthAccessor second = new OAuthAccessor(consumer);
+        manager.generateRequestToken(second);
+        TestUtils.endSession(true);
+
+        String pendingToken = second.requestToken;
+        assertNotEquals(first.requestToken, pendingToken);
+        assertNotEquals(first.tokenSecret, second.tokenSecret);
+        assertNull(manager.getAccessorByToken(first.requestToken));
+        assertNotNull(manager.getAccessorByToken(pendingToken));
+        assertTrue(manager.authorizeRequestToken(key, pendingToken, owner));
+        TestUtils.endSession(true);
+
+        OAuthAccessor approved = manager.getAccessorByToken(pendingToken);
+        manager.generateAccessToken(approved);
+        TestUtils.endSession(true);
+        assertNotNull(approved.accessToken);
+        assertNull(manager.getAccessorByToken(pendingToken));
+
+        OAuthAccessor active = manager.getAccessorByToken(approved.accessToken);
+        OAuthMessage atomRequest = approved.newRequestMessage("GET",
+                "https://roller.example/roller-services/app", OAuth.newList("oauth_signature_method", "HMAC-SHA1"));
+        manager.getValidator().validateMessage(atomRequest, manager.getAccessor(atomRequest));
+        assertEquals(owner, active.consumer.getProperty("userId"));
+        TestUtils.endSession(false);
+
+        assertThrows(OAuthProblemException.class,
+                () -> manager.generateRequestToken(new OAuthAccessor(consumer)));
+        TestUtils.endSession(false);
+
+        assertEquals(approved.accessToken, manager.getAccessorByKey(key).accessToken);
+        manager.removeAccessor(active);
+        manager.removeConsumer(consumer);
         TestUtils.endSession(true);
     }
 }

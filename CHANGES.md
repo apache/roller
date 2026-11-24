@@ -4,6 +4,17 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only global admins manage Admin on the aggregated front-page weblog.**
+  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
+  read the whole site, so granting, removing or inviting an Admin there now
+  needs a global admin. Before turning aggregation on, review who is Admin
+  on the front-page weblog.
+
+- **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
+  and the OAuth keys page answer only when AtomPub is enabled and its
+  authentication is set to OAuth. A request token is issued only for a
+  correctly signed request, and each request gets new credentials.
+
 - **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
   Roller no longer takes the site's URL from the first request after a start.
   New installs save it during setup, and on an upgraded site where it's empty,
@@ -103,6 +114,9 @@
 
 ### Bug fixes
 
+- **The comment filter works after editing a comment.** Saving a comment
+  on the Comments page left the filter form with a used-up form token, so
+  filtering then failed with an error.
 - **Media filenames keep their punctuation** when inserted into an entry.
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account

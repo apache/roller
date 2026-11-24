@@ -195,6 +195,26 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aPasswordThatBcryptTreatsAsEqualToAPlaceholderIsNotAPassword() throws Exception {
+        String longMarker = "<external-login-" + "x".repeat(60) + ">";
+        setProperty("users.passwords.externalAuthValue", longMarker);
+        PasswordEncoder encoder = new ExternalLoginAwarePasswordEncoder(new BCryptPasswordEncoder());
+        // BCrypt repeats its key with a NUL after each copy, so this has the
+        // default placeholder's hash
+        String repeated = "<externalAuth>" + '\0' + "<externalAuth>";
+        // BCrypt reads only the first 72 bytes, so this has the long one's
+        String sameStart = longMarker + "suffix";
+        for (String[] pair : new String[][] {{"<externalAuth>", repeated}, {longMarker, sameStart}}) {
+            String stored = encoder.encode(pair[0]);
+            assertTrue(new BCryptPasswordEncoder().matches(pair[1], stored));
+            assertFalse(encoder.matches(pair[1], stored));
+        }
+        // a long password that isn't a placeholder still works
+        String longPassword = "y".repeat(80);
+        assertTrue(encoder.matches(longPassword, encoder.encode(longPassword)));
+    }
+
+    @Test
     void anEmptyConfiguredPlaceholderIsNotAPassword() throws Exception {
         setProperty("authentication.method", "db");
         setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");

@@ -19,6 +19,9 @@
         <named-query name="OAuthAccessorRecord.authorizeRequestToken">
             <query>UPDATE OAuthAccessorRecord p SET p.userName = ?1, p.authorized = true, p.updated = ?2 WHERE p.consumerKey = ?3 AND p.requestToken = ?4 AND p.accessToken IS NULL AND ((p.authorized IS NULL OR p.authorized = false) OR (p.authorized = true AND p.userName = ?1))</query>
         </named-query>
+        <named-query name="OAuthAccessorRecord.exchangeRequestToken">
+            <query>UPDATE OAuthAccessorRecord p SET p.accessToken = ?1, p.updated = ?2, p.requestToken = NULL WHERE p.consumerKey = ?3 AND p.requestToken = ?4 AND p.authorized = true AND p.accessToken IS NULL</query>
+        </named-query>
         <attributes>
             <id name="consumerKey">
                 <column name="consumerkey"/>

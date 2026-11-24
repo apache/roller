@@ -171,8 +171,7 @@ public class Pings extends UIAction {
                     if (pingResult.isError()) {
                         log.debug("Ping Result: " + pingResult);
                         if (pingResult.getMessage() != null && !pingResult.getMessage().isBlank()) {
-                            addError("ping.transmittedButError");
-                            addError(pingResult.getMessage());
+                            addPingServerError(pingResult.getMessage());
                         } else {
                             addError("ping.transmissionFailed");
                         }
@@ -271,5 +270,14 @@ public class Pings extends UIAction {
 
     public void setPingStatus(Map<String, Boolean> pingStatus) {
         this.pingStatus = pingStatus;
+    }
+
+    /**
+     * Shows the ping server's error message. It is passed as an argument, so
+     * it is escaped and never looked up as a message key.
+     */
+    void addPingServerError(String message) {
+        addError("ping.transmittedButError");
+        addError("ping.serverMessage", message);
     }
 }

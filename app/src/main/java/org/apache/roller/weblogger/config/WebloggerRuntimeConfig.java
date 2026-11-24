@@ -54,6 +54,11 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
  * We also provide some methods for converting to different data types.
  */
 public final class WebloggerRuntimeConfig {
+
+    public static boolean isAtomPubOAuthEnabled() {
+        return getBooleanProperty("webservices.enableAtomPub")
+                && "oauth".equals(getProperty("webservices.atomPubAuth"));
+    }
     
     private static Log log = LogFactory.getLog(WebloggerRuntimeConfig.class);
     

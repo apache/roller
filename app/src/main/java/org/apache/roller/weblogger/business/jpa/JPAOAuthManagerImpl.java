@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import net.oauth.OAuthAccessor;
@@ -31,7 +33,6 @@ import net.oauth.OAuthMessage;
 import net.oauth.OAuthProblemException;
 import net.oauth.OAuthServiceProvider;
 import net.oauth.OAuthValidator;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -159,58 +160,47 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         }
     }
 
-    /**
-     * Generate a fresh request token and secret for a consumer.
-     * @throws OAuthException
-     */
     @Override
-    public void generateRequestToken(
-            OAuthAccessor accessor)
-            throws OAuthException {
+    public void generateRequestToken(OAuthAccessor accessor) throws OAuthException {
+        String consumerKey = accessor.consumer.consumerKey;
+        EntityManager em = strategy.getEntityManager(true);
+        // Serializes issuance even while the consumer has no accessor row.
+        if (em.find(OAuthConsumerRecord.class, consumerKey, LockModeType.PESSIMISTIC_WRITE) == null) {
+            throw new OAuthProblemException("consumer_key_unknown");
+        }
+        OAuthAccessorRecord record = em.find(OAuthAccessorRecord.class, consumerKey,
+                LockModeType.PESSIMISTIC_WRITE);
+        if (record != null && record.getAccessToken() != null) {
+            throw new OAuthProblemException("permission_denied");
+        }
 
-        // generate oauth_token and oauth_secret
-        String consumer_key = accessor.consumer.consumerKey;
-        // generate token and secret based on consumer_key
-
-        // for now use md5 of name + current time as token
-        String token_data = consumer_key + System.nanoTime();
-        String token = DigestUtils.md5Hex(token_data);
-        // for now use md5 of name + current time + token as secret
-        String secret_data = consumer_key + System.nanoTime() + token;
-        String secret = DigestUtils.md5Hex(secret_data);
-
-        accessor.requestToken = token;
-        accessor.tokenSecret = secret;
-        accessor.accessToken = null;
-
-        // add to the local cache
-        addAccessor(accessor);
+        accessor.requestToken = UUID.randomUUID().toString();
+        accessor.tokenSecret = UUID.randomUUID().toString();
+        if (record == null) {
+            addAccessor(accessor);
+        } else {
+            record.setRequestToken(accessor.requestToken);
+            record.setTokenSecret(accessor.tokenSecret);
+            record.setAuthorized(Boolean.FALSE);
+            record.setUserName(null);
+            record.setUpdated(new Timestamp(System.currentTimeMillis()));
+        }
     }
-    
-    /**
-     * Generate a fresh request token and secret for a consumer.
-     * @throws OAuthException
-     */
+
     @Override
-    public void generateAccessToken(OAuthAccessor accessor)
-            throws OAuthException {
-
+    public void generateAccessToken(OAuthAccessor accessor) throws OAuthException {
+        String token = UUID.randomUUID().toString();
         try {
-            // generate oauth_token and oauth_secret
-            // generate token and secret based on consumer_key
-            String consumer_key = accessor.consumer.consumerKey;
-
-            OAuthAccessorRecord record = (OAuthAccessorRecord) strategy.load(
-                OAuthAccessorRecord.class, accessor.consumer.consumerKey);
-            
-            // for now use md5 of name + current time as token
-            String token_data = consumer_key + System.nanoTime();
-            String token = DigestUtils.md5Hex(token_data);
-
-            record.setRequestToken(null);
-            record.setAccessToken(token);
-            strategy.store(record);
-
+            Query query = strategy.getNamedUpdate("OAuthAccessorRecord.exchangeRequestToken");
+            query.setParameter(1, token);
+            query.setParameter(2, new Timestamp(System.currentTimeMillis()));
+            query.setParameter(3, accessor.consumer.consumerKey);
+            query.setParameter(4, accessor.requestToken);
+            if (query.executeUpdate() != 1) {
+                throw new OAuthProblemException("permission_denied");
+            }
+            accessor.accessToken = token;
+            accessor.requestToken = null;
         } catch (WebloggerException ex) {
             throw new OAuthException("ERROR: generating access token", ex);
         }

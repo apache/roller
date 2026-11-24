@@ -124,7 +124,8 @@ public interface OAuthManager {
             throws OAuthException;
 
     /**
-     * Generate a fresh request token and secret for a consumer.
+     * Generate fresh temporary credentials for a consumer. A consumer with
+     * active access credentials keeps its current grant.
      * 
      * @throws OAuthException
      */
@@ -133,7 +134,7 @@ public interface OAuthManager {
             throws OAuthException;
     
     /**
-     * Generate a fresh request token and secret for a consumer.
+     * Exchange the approved temporary credentials for an access token.
      * 
      * @throws OAuthException
      */

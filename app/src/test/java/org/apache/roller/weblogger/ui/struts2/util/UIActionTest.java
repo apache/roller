@@ -30,6 +30,8 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class UIActionTest  {
@@ -95,6 +97,29 @@ public class UIActionTest  {
         } finally {
             ActionContext.setContext(null);
         }
+    }
+
+    // the page title comes from struts.xml or the action itself, never from
+    // the request, because it is looked up as a message key
+    @Test
+    public void testPageTitleIsNotARequestParameter() {
+        UIAction action = new org.apache.roller.weblogger.ui.struts2.core.Install();
+        for (String name : new String[] {"pageTitle", "PageTitle", "top.pageTitle",
+                "[0].pageTitle", "pageTitle[0]"}) {
+            assertFalse(action.acceptableParameterName(name), name);
+        }
+        assertTrue(action.acceptableParameterName("bean.title"));
+        assertTrue(action.acceptableParameterName("weblog"));
+    }
+
+    @Test
+    public void testPageTitleOnlyLooksUpPlainKeys() {
+        assertTrue(UIAction.isPageTitleKey("weblogEdit.title.newEntry"));
+        assertTrue(UIAction.isPageTitleKey("installer.error.connection.pageTitle"));
+        assertFalse(UIAction.isPageTitleKey(null));
+        assertFalse(UIAction.isPageTitleKey("addActionMessage('x').x"));
+        assertFalse(UIAction.isPageTitleKey("a b.c"));
+        assertFalse(UIAction.isPageTitleKey("#a.b"));
     }
 
 }
