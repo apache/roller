@@ -185,6 +185,12 @@
   a weblog reached through `$site`, now returns null for draft, pending and
   scheduled entries.
 
+- **Only global admins manage Admin on the aggregated front-page weblog.**
+  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
+  read the whole site, so granting, removing or inviting an Admin there now
+  needs a global admin. Before turning aggregation on, review who is Admin
+  on the front-page weblog.
+
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
   inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
