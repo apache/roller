@@ -60,6 +60,11 @@ updates:
       day: "monday"
     cooldown:
       default-days: 3
+    # Roller 7.0 is tested on PostgreSQL 18. Remove this once 7.0 ships, and
+    # move the stack to 19 with its own data directory (see #374).
+    ignore:
+      - dependency-name: "postgres"
+        versions: [">= 19"]
     groups:
       docker-compose:
         patterns:
