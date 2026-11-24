@@ -180,6 +180,12 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **The security model trusts the Admins of an aggregated front-page
+  weblog.** With `site.frontpage.weblog.aggregated=true` and custom themes
+  on, that weblog's templates can read the whole site through `$site` and
+  `$planet`, so its Admins are trusted for what those templates read. Only a
+  global admin can assign them; review them before turning aggregation on
+  (`docs/security-model.md`).
 - **Templates see only published entries when they look one up by anchor.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
