@@ -17,7 +17,6 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -159,9 +158,22 @@ public final class RollerPasswordEncoders {
      */
     private record ExternalLoginAware(PasswordEncoder delegate) implements PasswordEncoder {
 
+        /**
+         * Returns null for a password that BCrypt refuses as too long. A
+         * login re-encodes the password it has just checked against an older
+         * encoding, and for such a password that login has to succeed and
+         * leave the stored password as it is.
+         */
         @Override
         public String encode(CharSequence rawPassword) {
-            return delegate.encode(rawPassword);
+            try {
+                return delegate.encode(rawPassword);
+            } catch (IllegalArgumentException e) {
+                if (rawPassword != null && isTooLong(rawPassword.toString())) {
+                    return null;
+                }
+                throw e;
+            }
         }
 
         @Override
@@ -226,5 +238,22 @@ public final class RollerPasswordEncoders {
      */
     public static String randomUnusedPassword() {
         return RandomStringUtils.secure().nextAlphanumeric(64);
+    }
+
+    /**
+     * The longest password, in UTF-8 bytes, that BCrypt accepts. PBKDF2,
+     * SCrypt and Argon2 take longer ones, but the limit applies whatever the
+     * algorithm, so that a site can switch to BCrypt, the default, without
+     * leaving passwords it can't re-encode.
+     */
+    public static final int MAX_PASSWORD_BYTES = 72;
+
+    /**
+     * Returns true when a typed password is longer than an encoder accepts, so
+     * that a form can say so instead of failing when the password is encoded.
+     */
+    public static boolean isTooLong(String password) {
+        return password != null
+                && password.getBytes(StandardCharsets.UTF_8).length > MAX_PASSWORD_BYTES;
     }
 }
