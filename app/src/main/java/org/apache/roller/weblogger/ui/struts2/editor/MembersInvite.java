@@ -100,6 +100,10 @@ public class MembersInvite extends UIAction {
             addError("Error looking up invitee");
         }
         
+        if (WeblogPermission.ADMIN.equals(getPermissionString()) && isAdminMembershipLocked()) {
+            addError("memberPermissions.frontPageAdminsGlobalOnly");
+        }
+
         // if we already have an error then bail now
         if(hasActionErrors()) {
             return INPUT;
