@@ -33,19 +33,25 @@ necessarily trust each other. The whole model follows from one rule:
 > **What you may do in one weblog gives you nothing in another weblog, and
 > nothing on the server.**
 
-Only two parties are trusted: the **global admin**, who runs the site, and the
+Two parties are trusted: the **global admin**, who runs the site, and the
 **operator**, who runs the server. Everyone else is a possible attacker. That
-includes the admin of a weblog. The one exception is the
-[aggregated front-page weblog](#the-aggregated-front-page-weblog), whose Admins
-a global admin chooses to trust.
+includes the admin of a weblog. There is one narrow exception to the rule and
+to this list: when a global admin turns on an
+[aggregated front-page weblog](#the-aggregated-front-page-weblog) with custom
+themes, that weblog's templates read across the site, and the Admins the global
+admin assigns to it are trusted for what those templates read.
 
 ## Principles
 
 Every change to Roller must keep these rules:
 
-1. Rights in one weblog give nothing in another weblog or on the server.
-2. Weblog admins are untrusted. Only global admins, the operator and the
-   Admins of the aggregated front-page weblog are trusted.
+1. Rights in one weblog give nothing in another weblog or on the server. The
+   only exception is what the templates of the aggregated front-page weblog
+   can read.
+2. Weblog admins are untrusted. Only global admins and the operator are
+   trusted. When aggregation and custom themes are on, the Admins of the
+   aggregated front-page weblog are also trusted, but only for what that
+   weblog's templates can read.
 3. Every object named in a request is checked against the weblog the action
    runs on.
 4. Content that users write never runs as script for other users.
@@ -153,16 +159,18 @@ sanitizing, and templates run in a sandbox built for untrusted authors.
 A global admin can make one weblog the site's front page
 (`site.frontpage.weblog.handle`) and let it show the whole site
 (`site.frontpage.weblog.aggregated=true`). That weblog's templates then get the
-`$site` model, which reads across every weblog and user by design. With custom
-themes on, its Admins can therefore read and show any weblog's content and any
-user's details.
+`$site` and `$planet` models, which read across every weblog and user by
+design. With custom themes on, its Admins can therefore read and show what
+those models expose about every weblog and user. Templates only get published
+entries, and no user email addresses.
 
 So the Admins of the aggregated front-page weblog are trusted, like global
 admins, for what that weblog's templates can read. They are still untrusted for
-everything else, and Principle 1 still holds for every other weblog. Give Admin
-on that weblog only to people you would trust as global admins. Without
-aggregation, the front-page weblog is an ordinary weblog and its Admins are
-untrusted.
+everything else, and Principle 1 still holds for every other weblog. Only a
+global admin can grant, change or remove Admin on that weblog while aggregation
+is on, so the global admin chooses every one of them. Without aggregation, or
+without custom themes, the front-page weblog is an ordinary weblog and its
+Admins are untrusted.
 
 A request forged cross-site that makes a logged-in user's browser act is an
 attack by an anonymous visitor, not by that user.
@@ -303,7 +311,7 @@ A bug in an optional feature is a vulnerability when the feature is enabled.
 | --- | --- |
 | `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
 | `themes.customtheme.allowed` | Lets weblog Admins edit templates. Templates stay in the sandbox, but can use a lot of CPU and memory (see Not vulnerabilities). |
-| `site.frontpage.weblog.aggregated` | Gives the front-page weblog's templates the site-wide `$site` model, so its Admins become trusted (see [The aggregated front-page weblog](#the-aggregated-front-page-weblog)). |
+| `site.frontpage.weblog.aggregated` | Gives the front-page weblog's templates the site-wide `$site` and `$planet` models. With custom themes on, its Admins, whom only a global admin assigns, become trusted for what those templates read (see [The aggregated front-page weblog](#the-aggregated-front-page-weblog)). |
 | `uploads.enabled` | Lets members upload media files. |
 | `webservices.enableXmlRpc`, `webservices.enableAtomPub` | Turn on the remote publishing APIs. They use the same weblog roles as the UI. |
 | `users.registration.enabled` | Lets anyone create an account. |
@@ -342,7 +350,7 @@ Roller does not protect against:
   template. A global admin who turns custom themes on trusts weblog Admins
   not to abuse the server's resources. Templates still cannot run Java code,
   read files outside their theme, or reach other weblogs, except through the
-  aggregated front page's `$site` model.
+  aggregated front page's `$site` and `$planet` models.
 - **What the aggregated front-page weblog's templates show.** Its Admins are
   trusted to read across the site (see
   [The aggregated front-page weblog](#the-aggregated-front-page-weblog)).
@@ -357,8 +365,9 @@ Roller does not protect against:
 - Enable custom themes, uploads, XML-RPC and AtomPub only when you need them.
   Enable custom themes only for weblog Admins you trust with the server's
   resources.
-- If the front page aggregates the site, give Admin on the front-page weblog
-  only to people you trust as global admins.
+- If the front page aggregates the site and custom themes are on, give Admin
+  on the front-page weblog only to people you trust as global admins. Review
+  that weblog's Admins and pending invitations before you turn aggregation on.
 - Restrict access to the server log. It holds the setup token during
   installation and upgrades.
 - Keep the database, data directories and `roller-custom.properties` private.
