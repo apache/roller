@@ -180,6 +180,11 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Templates see only published entries when they look one up by anchor.**
+  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
+  a weblog reached through `$site`, now returns null for draft, pending and
+  scheduled entries.
+
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
   inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
