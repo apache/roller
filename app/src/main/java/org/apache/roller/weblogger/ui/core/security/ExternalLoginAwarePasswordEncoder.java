@@ -17,6 +17,7 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -116,14 +117,24 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
             return false;
         }
         // BCrypt, for one, treats some other passwords as equal to a marker,
-        // so refuse any password whose stored value a marker matches too
-        for (String marker : markers) {
-            if (delegate.matches(marker, encodedPassword)) {
-                logRefusal();
-                return false;
+        // so refuse any password whose stored value a marker matches too.
+        // BCrypt repeats its key with a NUL after each copy and reads at most
+        // 72 bytes, so only a password with a NUL, or of 72 bytes or more,
+        // can collide; the rest skip the extra hashes.
+        if (mayCollideWithAMarker(rawPassword.toString())) {
+            for (String marker : markers) {
+                if (delegate.matches(marker, encodedPassword)) {
+                    logRefusal();
+                    return false;
+                }
             }
         }
         return true;
+    }
+
+    private static boolean mayCollideWithAMarker(String rawPassword) {
+        return rawPassword.indexOf('\0') >= 0
+                || rawPassword.getBytes(StandardCharsets.UTF_8).length >= 72;
     }
 
     private static void logRefusal() {
