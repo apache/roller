@@ -342,6 +342,14 @@ public class MediaFileView extends MediaFileBase {
                         + directoryName + ")");
                 MediaFileDirectory mediaFileDir = manager
                         .getMediaFileDirectory(getActionWeblog(), directoryId);
+                if (mediaFileDir != null) {
+                    for (MediaFile mediaFile : mediaFileDir.getMediaFiles()) {
+                        if (!mayChange(mediaFile)) {
+                            addError("mediaFile.themeFileAdminOnly", mediaFile.getName());
+                            return execute();
+                        }
+                    }
+                }
                 manager.removeMediaFileDirectory(mediaFileDir);
                 refreshAllDirectories();
                 WebloggerFactory.getWeblogger().getWeblogManager()

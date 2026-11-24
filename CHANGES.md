@@ -180,6 +180,11 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only weblog Admins can replace, move or delete a custom theme's files.**
+  The scripts, stylesheets and images a custom theme keeps in the media
+  library are part of the weblog's design. Authors still manage their own
+  media files.
+
 - **Templates see only published entries when they look one up by anchor.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
