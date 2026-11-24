@@ -150,6 +150,12 @@ class FrontPageAdminMembershipTest {
             MembersInvite author = inviting(invitee.getUserName(), WeblogPermission.POST);
             assertFalse(author.hasActionErrors(), () -> author.getActionErrors().toString());
         } finally {
+            // remove the invitation first, so no permission is left without its user
+            if (permission(invitee.getUserName()) != null) {
+                users().revokeWeblogPermission(weblog(), user(invitee.getUserName()),
+                        WeblogPermission.ALL_ACTIONS);
+                TestUtils.endSession(true);
+            }
             TestUtils.teardownUser(invitee.getUserName());
             TestUtils.endSession(true);
         }
