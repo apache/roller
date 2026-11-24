@@ -161,8 +161,8 @@ A global admin can make one weblog the site's front page
 (`site.frontpage.weblog.aggregated=true`). That weblog's templates then get the
 `$site` and `$planet` models, which read across every weblog and user by
 design. With custom themes on, its Admins can therefore read and show what
-those models expose about every weblog and user. Templates only get published
-entries, and no user email addresses.
+those models expose about every weblog and user. Entries looked up by anchor
+are published ones only.
 
 So the Admins of the aggregated front-page weblog are trusted, like global
 admins, for what that weblog's templates can read. They are still untrusted for
