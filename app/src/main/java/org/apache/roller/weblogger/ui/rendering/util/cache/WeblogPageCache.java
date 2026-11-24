@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -88,8 +89,9 @@ public final class WeblogPageCache {
     
     
     public Object get(String key, long lastModified) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -114,8 +116,9 @@ public final class WeblogPageCache {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -125,8 +128,9 @@ public final class WeblogPageCache {
     
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         

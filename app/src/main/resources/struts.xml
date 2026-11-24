@@ -321,14 +321,6 @@
             <allowed-methods>execute,save</allowed-methods>
         </action>
 
-        <action name="mediaFileAddExternalInclude"
-                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
-            <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
-            <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
-            <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
-            <allowed-methods>execute,save</allowed-methods>
-        </action>
-
 	    <action name="mediaFileView"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
@@ -632,7 +624,6 @@
 
 	    <action name="mediaFileImageChooser"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
-            <param name="overlayMode">true</param>
             <result name="input" type="tiles">.MediaFileImageChooser</result>
             <result name="error" type="tiles">.MediaFileImageChooser</result>
             <result name="success" type="tiles">.MediaFileImageChooser</result>

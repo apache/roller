@@ -54,6 +54,37 @@
 
 ### Bug fixes
 
+- **New passwords can't be the external-login placeholder.** Registration,
+  the profile page and user administration refuse
+  `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
+  password, and it never works as one. An administrator can set a new password
+  for an account that used it (#304).
+- **Roller UI stylesheets, scripts and images don't start a session** (#310).
+- **The LDAP comment authenticator escapes the commenter's user name** when
+  it builds the bind name (#322).
+- **Changing a password ends the account's other sessions.** Saving a new
+  password in the profile, an administrator's reset, or disabling an account
+  now logs out that user's other browsers at their next Roller UI page; the
+  session that made the change stays logged in (#321).
+- **Profiles of OpenID Connect users can be saved again.** Their random
+  placeholder password was longer than BCrypt accepts, so saving the profile
+  failed (#323).
+- **Later pages of a feed are cached separately.** A feed's `?page=N` now has
+  its own cache entry, and page numbers are kept between 0 and 10,000 (#313).
+- **"nofollow" is added to links that need it.** `addNofollow` only touched
+  links that already had `rel="nofollow"`. It now parses the HTML with jsoup
+  and adds nofollow to each link's own `rel` value, so its output is jsoup's
+  normalized HTML: open tags are closed and attribute values are
+  double-quoted (#318).
+- **HTML comments are cleaned with jsoup.** The HTMLSubset comment plugin
+  and HTML comment e-mails keep the same tags and link schemes, but a tag
+  outside them is now removed, keeping its text, instead of being shown as
+  markup, and a link keeps its address when it has other attributes (#353).
+- **Tags of a scheduled entry are counted once, when it goes live.** Entries
+  posted through AtomPub with a future date showed their tags in tag counts
+  early and counted them twice (#316).
+- **A weblog's only administrator can't resign from it**, and declining an
+  invitation only removes a pending invitation (#322).
 - **Passwords stored with an older encoding are upgraded at login.** With
   `passwds.encryption.lazyUpgradeFrom` set (`SHA` by default), passwords from
   older Roller versions could be used to log in, but they stayed stored in the
@@ -146,6 +177,55 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Weblog templates have render limits.** A page stops rendering, with a
+  logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
+  inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
+  (30 seconds), and the page isn't cached. A `#foreach` of more than 100,000
+  passes fails the same way. `#parse` and `#include` load only the weblog's
+  own templates. Error pages no longer show template ids (#367).
+- **Macros defined in a template belong to that template.** A macro defined
+  inline in a template works in that page and in the templates it
+  `#parse`s, and one weblog's macro no longer replaces another's of the same
+  name. A custom theme that calls a macro defined in a different template,
+  which it doesn't `#parse`, now prints the call as text. Define the macro in
+  the page that calls it, or `#parse` the template that defines it. Library
+  macros (`roller.vm`, `weblog.vm` and a site's own `roller-custom.vm`) stay
+  global (#367).
+- **Entries with scripts or embeds open as HTML.** If an entry contains
+  scripts, frames, embedded objects, event-handler attributes or
+  `javascript:` links, the rich-text editor opens it in the HTML textarea
+  with a notice, and the stored HTML is kept as is (#319).
+- **Names are shown as text.** Screen and full names are HTML-escaped where
+  templates print them and written as plain text in feeds; commenter names
+  and addresses are escaped in HTML notification emails; HTML comments are
+  escaped unless the HTMLSubset plugin applies to them (#318).
+- **Limits on uploads and fetched feeds.** Images with more pixels than
+  `uploads.thumbnail.maxPixels` (50 million) are stored without a thumbnail
+  (#315). Planet stops reading a feed past `planet.aggregator.fetch.maxBytes`
+  (5 MB) or `planet.aggregator.fetch.maxSeconds` (30 seconds), and fetches
+  only http and https URLs (#314).
+- **AtomPub checks.** Publishing an entry through an AtomPub update needs the
+  permission to publish, media uploads over `uploads.file.maxsize` are
+  refused with 413 before they're stored, and entries show the creator's
+  email address only to the creator (also in MetaWeblog responses) (#316).
+- **Search queries are limited to 256 characters**, and a query the search
+  engine can't run finds nothing (#322).
+- **The OpenID Connect identity can't be changed from the profile or
+  registration forms**; only Roller's OpenID Connect login sets it (#322).
+- **Weblog pages ignore a `skipCache` query parameter** (#313).
+- **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
+  Roller no longer takes the site's URL from the first request after a start.
+  New installs save it during setup, and on an upgraded site where it's empty,
+  the first administrator to open the Roller UI saves it from that request,
+  unless it's a local or private address. Check it under Server Admin >
+  Configuration, and correct it if the site is reached through a proxy or more
+  than one host name. While it's empty, each request's own URL is used for its
+  links, cached pages are kept per host name, comment notifications are sent
+  without links, account activation and invitation emails aren't sent, and
+  background tasks such as the planet sync wait for it. Links keep the
+  request's https scheme and port.
+  `WebloggerRuntimeConfig.setAbsoluteContextURL` and
+  `InitFilter.getAbsoluteUrl` are removed (#320).
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
@@ -247,7 +327,7 @@
   on x86-64 processors with AVX-512 (CVE-2026-114938). Sites that run Roller
   on their own server should update their JDK, or set the same option until
   they can; the install guide says how. A `CATALINA_OPTS` passed to the
-  container replaces this default, so include the option in it.
+  container is added to this option.
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
   are no longer shipped. Apache XML-RPC is end of life, and 3.1.3 has an
   unfixed denial-of-service issue (CVE-2016-5004).

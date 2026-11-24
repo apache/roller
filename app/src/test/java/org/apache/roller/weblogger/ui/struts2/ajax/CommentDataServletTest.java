@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +44,7 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -50,6 +53,46 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CommentDataServletTest {
+
+    @Test
+    public void testGetReturnsJson() throws Exception {
+        Weblogger weblogger = mock(Weblogger.class);
+        WeblogEntryManager manager = mock(WeblogEntryManager.class);
+        WeblogEntryComment comment = mock(WeblogEntryComment.class);
+        WeblogEntry entry = mock(WeblogEntry.class);
+        Weblog weblog = mock(Weblog.class);
+        RollerSession session = mock(RollerSession.class);
+        User user = mock(User.class);
+
+        when(weblogger.getWeblogEntryManager()).thenReturn(manager);
+        when(manager.getComment("comment-id")).thenReturn(comment);
+        when(comment.getWeblogEntry()).thenReturn(entry);
+        when(entry.getWebsite()).thenReturn(weblog);
+        when(session.getAuthenticatedUser()).thenReturn(user);
+        when(weblog.hasUserPermission(user, WeblogPermission.POST)).thenReturn(true);
+        when(comment.getId()).thenReturn("comment-id");
+        when(comment.getContent()).thenReturn("<b>\"quoted\"</b> back\\slash\nline");
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("id")).thenReturn("comment-id");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter body = responseBody(response);
+
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<RollerSession> sessions = mockStatic(RollerSession.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            sessions.when(() -> RollerSession.getRollerSession(request)).thenReturn(session);
+
+            new CommentDataServlet().doGet(request, response);
+        }
+
+        verify(response).setContentType("application/json; charset=utf-8");
+        JsonNode json = new ObjectMapper().readTree(body.toString());
+        assertEquals("comment-id", json.get("id").asText());
+        // HTML-escaped, since the page shows it with jQuery's html()
+        assertEquals("&lt;b&gt;&quot;quoted&quot;&lt;/b&gt; back\\slash\nline",
+                json.get("content").asText());
+    }
 
     @Test
     public void testRepeatedSavesReturnFreshResponseSalts() throws Exception {

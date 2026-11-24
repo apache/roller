@@ -187,6 +187,62 @@ public class XMLRPCWeblogPermissionTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void testPostAuthorEmailIsReturnedOnlyToTheCreator() throws Exception {
+        String authorName = author.getUserName();
+        Map<String, Object> seenByAuthor = (Map<String, Object>) metaWeblog.getPost(
+                publishedEntry.getId(), authorName, PASSWORD);
+        assertEquals(owner.getUserName(), seenByAuthor.get("userid"));
+        assertFalse(seenByAuthor.containsKey("author"));
+
+        List<Object> recent = (List<Object>) metaWeblog.getRecentPosts(weblog.getHandle(),
+                authorName, PASSWORD, 20);
+        assertFalse(recent.isEmpty());
+        for (Object post : recent) {
+            Map<String, Object> struct = (Map<String, Object>) post;
+            if (owner.getUserName().equals(struct.get("userid"))) {
+                assertFalse(struct.containsKey("author"));
+            }
+        }
+
+        Map<String, Object> seenByOwner = (Map<String, Object>) metaWeblog.getPost(
+                publishedEntry.getId(), owner.getUserName(), PASSWORD);
+        assertEquals("TestUser@dev.null", seenByOwner.get("author"));
+    }
+
+    /**
+     * A database with a case-insensitive collation finds the user whatever
+     * the case of the login name; the creator still gets their own email.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testPostAuthorEmailIsReturnedToTheCreatorWhateverTheLoginCase()
+            throws Exception {
+        String storedName = owner.getUserName();
+        MetaWeblogAPIHandler caseInsensitive = new MetaWeblogAPIHandler() {
+            @Override
+            protected User validateUser(String username, String password)
+                    throws Exception {
+                return super.validateUser(storedName.equalsIgnoreCase(username)
+                        ? storedName : username, password);
+            }
+        };
+        String login = storedName.toUpperCase();
+
+        Map<String, Object> post = (Map<String, Object>) caseInsensitive.getPost(
+                publishedEntry.getId(), login, PASSWORD);
+        assertEquals("TestUser@dev.null", post.get("author"));
+
+        List<Object> recent = (List<Object>) caseInsensitive.getRecentPosts(
+                weblog.getHandle(), login, PASSWORD, 20);
+        assertFalse(recent.isEmpty());
+        for (Object recentPost : recent) {
+            assertEquals("TestUser@dev.null",
+                    ((Map<String, Object>) recentPost).get("author"));
+        }
+    }
+
+    @Test
     public void testAuthenticationAndWeblogDiscovery() throws Exception {
         @SuppressWarnings("unchecked")
         Hashtable<String, String> userInfo = (Hashtable<String, String>) blogger
@@ -523,6 +579,93 @@ public class XMLRPCWeblogPermissionTest {
         rendition.setTemplateLanguage(TemplateLanguage.VELOCITY);
         weblogManager.saveTemplateRendition(rendition);
         return template;
+    }
+
+    /** A published entry of the owner's with one tag, counted in the tag counts. */
+    private String taggedPublishedEntry(String anchor, String tag) throws Exception {
+        WeblogEntry entry = TestUtils.setupWeblogEntry(anchor,
+                TestUtils.getManagedWebsite(weblog).getWeblogCategories().iterator().next(),
+                PubStatus.PUBLISHED, TestUtils.getManagedWebsite(weblog),
+                TestUtils.getManagedUser(owner));
+        entry.addTag(tag);
+        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(entry);
+        TestUtils.endSession(true);
+        assertEquals(1, tagCount(tag));
+        return entry.getId();
+    }
+
+    private int tagCount(String name) throws Exception {
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        return mgr.getTags(TestUtils.getManagedWebsite(weblog), null, null, 0, -1).stream()
+                .filter(t -> name.equals(t.getName()))
+                .mapToInt(org.apache.roller.weblogger.pojos.TagStat::getCount).sum();
+    }
+
+    private PubStatus status(String id) throws Exception {
+        TestUtils.endSession(true);
+        return WebloggerFactory.getWeblogger().getWeblogEntryManager()
+                .getWeblogEntry(id).getStatus();
+    }
+
+    @Test
+    public void testEditPostWithFutureDateUncountsTagsUntilTheEntryGoesLive() throws Exception {
+        String id = taggedPublishedEntry("xmlrpc-tagged-future", "xmlrpcfuturetag");
+
+        Hashtable<String, Object> struct = postStruct("later");
+        struct.put("dateCreated", new Date(System.currentTimeMillis() + 24L * 60 * 60 * 1000));
+        assertTrue(metaWeblog.editPost(id, owner.getUserName(), PASSWORD, struct, true));
+        assertEquals(PubStatus.SCHEDULED, status(id));
+        assertEquals(0, tagCount("xmlrpcfuturetag"));
+
+        // back to now: published again, counted once
+        struct = postStruct("now");
+        struct.put("dateCreated", new Date());
+        assertTrue(metaWeblog.editPost(id, owner.getUserName(), PASSWORD, struct, true));
+        assertEquals(PubStatus.PUBLISHED, status(id));
+        assertEquals(1, tagCount("xmlrpcfuturetag"));
+    }
+
+    /**
+     * The handler and saveWeblogEntry() each compare the publish time with
+     * the clock; a publish time on the one-minute boundary must not be
+     * scheduled by one and published by the other.
+     */
+    @Test
+    public void testPublishTimeOnTheSchedulingBoundaryIsDecidedOnce() throws Exception {
+        String id = taggedPublishedEntry("xmlrpc-tagged-boundary", "xmlrpcboundarytag");
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntry entry = mgr.getWeblogEntry(id);
+
+        // just over a minute ahead now, under a minute ahead at the save
+        entry.setPubTime(new Timestamp(System.currentTimeMillis() + 60_500L));
+        BloggerAPIHandler.refreshAggregatesIfPublicationChanges(entry, true);
+        Thread.sleep(1000L);
+        mgr.saveWeblogEntry(entry);
+        TestUtils.endSession(true);
+
+        assertEquals(PubStatus.SCHEDULED, status(id));
+        assertEquals(0, tagCount("xmlrpcboundarytag"));
+    }
+
+    @Test
+    public void testEditPostAsDraftUncountsTags() throws Exception {
+        String metaId = taggedPublishedEntry("xmlrpc-tagged-meta", "xmlrpcmetatag");
+        assertTrue(metaWeblog.editPost(metaId, owner.getUserName(), PASSWORD,
+                postStruct("draft"), false));
+        assertEquals(PubStatus.DRAFT, status(metaId));
+        assertEquals(0, tagCount("xmlrpcmetatag"));
+        assertTrue(metaWeblog.editPost(metaId, owner.getUserName(), PASSWORD,
+                postStruct("live"), true));
+        assertEquals(1, tagCount("xmlrpcmetatag"));
+
+        String bloggerId = taggedPublishedEntry("xmlrpc-tagged-blogger", "xmlrpcbloggertag");
+        assertTrue(blogger.editPost("", bloggerId, owner.getUserName(), PASSWORD,
+                "draft", false));
+        assertEquals(PubStatus.DRAFT, status(bloggerId));
+        assertEquals(0, tagCount("xmlrpcbloggertag"));
+        assertTrue(blogger.editPost("", bloggerId, owner.getUserName(), PASSWORD,
+                "live", true));
+        assertEquals(1, tagCount("xmlrpcbloggertag"));
     }
 
     private Hashtable<String, Object> postStruct(String title) {

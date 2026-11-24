@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.struts2.StrutsStatics;
@@ -68,6 +69,11 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
             // so a value bound from request parameters cannot survive.
             RollerSession rses = RollerSession.getRollerSession(request);
             theAction.setAuthenticatedUser(rses != null ? rses.getAuthenticatedUser() : null);
+
+            // the first administrator request after an upgrade fills in an
+            // unset site.absoluteurl, so links and caching don't depend on
+            // the host of each request from then on
+            WebloggerRuntimeConfig.saveAbsoluteContextURLForAdmin(theAction.getAuthenticatedUser());
 
             // Set the action weblog by looking up the weblog handle. Always
             // overwrite (to null when no weblog resolves), so a value bound
