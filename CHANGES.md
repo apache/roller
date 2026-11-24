@@ -54,6 +54,9 @@
 
 ### Bug fixes
 
+- **The comment filter works after editing a comment.** Saving a comment
+  on the Comments page left the filter form with a used-up form token, so
+  filtering then failed with an error.
 - **New passwords can't be the external-login placeholder.** Registration,
   the profile page and user administration refuse
   `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
@@ -179,15 +182,31 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Templates see only published entries when they look one up by anchor.**
+  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
+  a weblog reached through `$site`, now returns null for draft, pending and
+  scheduled entries.
+
+- **Only global admins manage Admin on the aggregated front-page weblog.**
+  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
+  read the whole site, so granting, removing or inviting an Admin there now
+  needs a global admin. Before turning aggregation on, review who is Admin
+  on the front-page weblog.
+
 - **Weblog templates have render limits.** A page stops rendering, with a
-  logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
-  or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
-  stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
-  `#include` load only the weblog's own templates, and macros defined inline
-  in a template stay with the page that defines them and the templates it
-  includes, so weblogs can't affect each other's macros.
-  Library macros such as `roller.vm` and a site's own `roller-custom.vm` stay
-  global. Error pages no longer show template ids (#317).
+  logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
+  inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
+  (30 seconds), and the page isn't cached. A `#foreach` of more than 100,000
+  passes fails the same way. `#parse` and `#include` load only the weblog's
+  own templates. Error pages no longer show template ids (#367).
+- **Macros defined in a template belong to that template.** A macro defined
+  inline in a template works in that page and in the templates it
+  `#parse`s, and one weblog's macro no longer replaces another's of the same
+  name. A custom theme that calls a macro defined in a different template,
+  which it doesn't `#parse`, now prints the call as text. Define the macro in
+  the page that calls it, or `#parse` the template that defines it. Library
+  macros (`roller.vm`, `weblog.vm` and a site's own `roller-custom.vm`) stay
+  global (#367).
 - **Entries with scripts or embeds open as HTML.** If an entry contains
   scripts, frames, embedded objects, event-handler attributes or
   `javascript:` links, the rich-text editor opens it in the HTML textarea

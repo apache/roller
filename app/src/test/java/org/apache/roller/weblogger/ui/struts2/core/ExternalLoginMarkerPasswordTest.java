@@ -127,7 +127,7 @@ class ExternalLoginMarkerPasswordTest {
 
     @Test
     void registrationWithoutAPasswordDoesNotFail() throws Exception {
-        // db-oidc does not require a password when the form is validated
+        // neither a password nor an OpenID URL is typed
         setProperty("authentication.method", "db-oidc");
         Register action = withText(new Register());
         action.getBean().setUserName("newuser");

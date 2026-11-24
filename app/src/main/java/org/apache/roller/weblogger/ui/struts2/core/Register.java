@@ -70,6 +70,10 @@ public class Register extends UIAction {
     private String activationCode = null;
     private ProfileBean bean = new ProfileBean();
 
+    // generated for OIDC users, kept out of the bean so that the form never
+    // renders it
+    private String unusedPassword = null;
+
     public Register() {
         this.pageTitle = "newUser.addNewUser";
     }
@@ -217,7 +221,9 @@ public class Register extends UIAction {
                 ud.setEnabled(Boolean.TRUE);
 
                 // If user set both password and passwordConfirm then reset password
-                if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
+                if (unusedPassword != null) {
+                    ud.resetPassword(unusedPassword);
+                } else if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
                         !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                     ud.resetPassword(getBean().getPasswordText());
                 }
@@ -411,29 +417,35 @@ public class Register extends UIAction {
         }
         
         // check password, it is required if OpenID and SSO are disabled
-        if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
+        if ((AuthMethod.ROLLERDB.name().equals(getAuthMethod())
+                || (AuthMethod.DB_OIDC.name().equals(getAuthMethod())
+                        && StringUtils.isEmpty(getBean().getOpenIdUrl())))
                 && StringUtils.isEmpty(getBean().getPasswordText())) {
-                addError("error.add.user.passwordEmpty");
+                addError("error.add.user.missingPassword");
                 return;
         }
         
         // User.password does not allow null, so generate one for OIDC users
+        unusedPassword = null;
         if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
                 (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
-            String randomString = RollerPasswordEncoders.randomUnusedPassword();
-            getBean().setPasswordText(randomString);
-            getBean().setPasswordConfirm(randomString);
-        }
-        
-        // the external-login marker is stored for users who log in elsewhere
-        // and never matches at login
-        if (!usingSSO && RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
-            addError("error.add.user.reservedPassword");
-        }
+            unusedPassword = RollerPasswordEncoders.randomUnusedPassword();
+        } else {
+            // (with LDAP or CMA the bean holds the marker, not a typed password)
+            if (!usingSSO && RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+                addError("userRegister.error.passwordTooLong");
+            }
 
-        // check that passwords match 
-        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
-            addError("userRegister.error.mismatchedPasswords");
+            // the external-login marker is stored for users who log in
+            // elsewhere and never matches at login
+            if (!usingSSO && RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+                addError("error.add.user.reservedPassword");
+            }
+
+            // check that passwords match
+            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+                addError("userRegister.error.mismatchedPasswords");
+            }
         }
         
         // check that username is not taken
