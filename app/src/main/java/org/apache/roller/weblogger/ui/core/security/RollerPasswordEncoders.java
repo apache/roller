@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.ui.core.security;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -165,7 +166,9 @@ public final class RollerPasswordEncoders {
 
         @Override
         public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            if (rawPassword == null || rawPassword.length() == 0) {
+            // a missing or empty stored value never matches, whatever the delegate does
+            if (rawPassword == null || rawPassword.length() == 0
+                    || encodedPassword == null || encodedPassword.isEmpty()) {
                 return false;
             }
             Set<String> markers = externalLoginMarkers();
@@ -183,14 +186,23 @@ public final class RollerPasswordEncoders {
             }
             // BCrypt, for one, treats some other passwords as equal to a
             // marker, so refuse any password whose stored value a marker
-            // matches too
-            for (String marker : markers) {
-                if (delegate.matches(marker, encodedPassword)) {
-                    logRefusal();
-                    return false;
+            // matches too. BCrypt repeats its key with a NUL after each copy
+            // and reads at most 72 bytes, so only a password with a NUL, or of
+            // 72 bytes or more, can collide; the rest skip the extra hashes.
+            if (mayCollideWithAMarker(rawPassword.toString())) {
+                for (String marker : markers) {
+                    if (delegate.matches(marker, encodedPassword)) {
+                        logRefusal();
+                        return false;
+                    }
                 }
             }
             return true;
+        }
+
+        private static boolean mayCollideWithAMarker(String rawPassword) {
+            return rawPassword.indexOf('\0') >= 0
+                    || rawPassword.getBytes(StandardCharsets.UTF_8).length >= 72;
         }
 
         private static void logRefusal() {

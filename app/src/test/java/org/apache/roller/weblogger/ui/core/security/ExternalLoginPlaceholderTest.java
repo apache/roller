@@ -273,6 +273,13 @@ class ExternalLoginPlaceholderTest {
         assertTrue(encoder.matches("<old>x", encoder.encode("<old>x")));
     }
 
+    @Test
+    void aMissingOrEmptyStoredPasswordNeverMatches() {
+        PasswordEncoder encoder = RollerPasswordEncoders.create();
+        assertFalse(encoder.matches("secret", null));
+        assertFalse(encoder.matches("secret", ""));
+    }
+
     private static DaoAuthenticationProvider provider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(new RollerUserDetailsService());
         provider.setPasswordEncoder(RollerPasswordEncoders.create());
