@@ -8,6 +8,11 @@
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
   scheduled entries.
+- **Only global admins manage Admin on the aggregated front-page weblog.**
+  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
+  read the whole site, so granting, removing or inviting an Admin there now
+  needs a global admin. Before turning aggregation on, review who is Admin
+  on the front-page weblog.
 
 - **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
   and the OAuth keys page answer only when AtomPub is enabled and its
@@ -113,6 +118,9 @@
 
 ### Bug fixes
 
+- **The comment filter works after editing a comment.** Saving a comment
+  on the Comments page left the filter form with a used-up form token, so
+  filtering then failed with an error.
 - **Media filenames keep their punctuation** when inserted into an entry.
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account
