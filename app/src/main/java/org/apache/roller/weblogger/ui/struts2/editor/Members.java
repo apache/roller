@@ -125,7 +125,7 @@ public class Members extends UIAction implements ParametersAware {
             }
             if (!error && isAdminMembershipLocked()) {
                 for (WeblogPermission perms : permsList) {
-                    String sval = getParameter("perm-" + perms.getUser().getId());
+                    String sval = getParameter("perm-" + perms.getId());
                     if (sval != null && !perms.hasAction(sval)
                             && (perms.hasAction(WeblogPermission.ADMIN)
                                 || Utilities.stringToStringList(sval, ",").contains(WeblogPermission.ADMIN))) {
