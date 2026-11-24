@@ -4,6 +4,12 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only global admins manage Admin on the aggregated front-page weblog.**
+  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
+  read the whole site, so granting, removing or inviting an Admin there now
+  needs a global admin. Before turning aggregation on, review who is Admin
+  on the front-page weblog.
+
 - **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
   and the OAuth keys page answer only when AtomPub is enabled and its
   authentication is set to OAuth. A request token is issued only for a
