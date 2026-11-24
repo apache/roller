@@ -54,6 +54,9 @@
 
 ### Bug fixes
 
+- **The comment filter works after editing a comment.** Saving a comment
+  on the Comments page left the filter form with a used-up form token, so
+  filtering then failed with an error.
 - **New passwords can't be the external-login placeholder.** Registration,
   the profile page and user administration refuse
   `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
@@ -176,6 +179,11 @@
     is; in an embedded SVG it used to become an emoji.
 
 ### Behaviour changes worth reading before upgrading
+
+- **Templates see only published entries when they look one up by anchor.**
+  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
+  a weblog reached through `$site`, now returns null for draft, pending and
+  scheduled entries.
 
 - **Only global admins manage Admin on the aggregated front-page weblog.**
   With `site.frontpage.weblog.aggregated=true`, that weblog's templates can

@@ -101,6 +101,25 @@ class PasswordUpgradeTest {
     }
 
     @Test
+    void aPasswordTooLongToReEncodeStillLogsIn() throws Exception {
+        // 73 bytes, one more than BCrypt encodes
+        String longPassword = "a".repeat(73);
+        String longHash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1")
+                .digest(longPassword.getBytes(StandardCharsets.UTF_8)));
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User user = mgr.getUserByUserName(userName);
+        user.setPassword(longHash);
+        mgr.saveUser(user);
+        TestUtils.endSession(true);
+
+        assertTrue(provider().authenticate(UsernamePasswordAuthenticationToken.unauthenticated(
+                userName, longPassword)).isAuthenticated());
+        TestUtils.endSession(true);
+
+        assertEquals(longHash, storedPassword());
+    }
+
+    @Test
     void failedLoginLeavesThePasswordAlone() throws Exception {
         assertThrows(BadCredentialsException.class, () -> provider().authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(userName, "wrong")));
