@@ -20,6 +20,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
@@ -77,12 +78,20 @@ public final class UserWrapper {
     
     
     /**
-     * Names are stored as typed when weblog admins are trusted, and already
-     * html encoded by the sanitizer when they aren't, so decode any entities
-     * before escaping to encode them exactly once.
+     * Names are stored as typed when weblog admins are trusted. When they
+     * aren't, the sanitizer may encode angle brackets, quotes and
+     * non-breaking spaces but leaves ampersands as they are, so decode just
+     * those entities before escaping to encode them exactly once. They are
+     * decoded whatever the setting is now, since a name keeps the encoding
+     * it was saved with. Any other entity, such as a literal {@code &amp;},
+     * was typed that way and is shown as typed. Apostrophes are encoded too,
+     * so that a name is also safe inside a single-quoted attribute.
      */
     private static String escapeOnce(String name) {
-        return StringEscapeUtils.escapeHtml4(StringEscapeUtils.unescapeHtml4(name));
+        String decoded = StringUtils.replaceEach(name,
+                new String[] {"&lt;", "&gt;", "&quot;", "&#39;", "&nbsp;"},
+                new String[] {"<", ">", "\"", "'", "\u00A0"});
+        return StringUtils.replace(StringEscapeUtils.escapeHtml4(decoded), "'", "&#39;");
     }
     
     
