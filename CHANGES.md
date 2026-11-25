@@ -54,6 +54,9 @@
 
 ### Bug fixes
 
+- **The comment filter works after editing a comment.** Saving a comment
+  on the Comments page left the filter form with a used-up form token, so
+  filtering then failed with an error.
 - **New passwords can't be the external-login placeholder.** Registration,
   the profile page and user administration refuse
   `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
@@ -92,6 +95,15 @@
   `passwds.encryption.algorithm`, bcrypt by default. Nothing is rewritten when
   that would store plain text, that is while `passwds.encryption.enabled` is
   off or the algorithm is `noop`.
+- **A form submitted after the session expired no longer ends in an error
+  after logging in.** Roller used to send the browser back to the form's
+  address with the old submission, which its form check then refused with an
+  "Unexpected Exception" page. The login now goes to the usual start page;
+  only pages opened with a plain link are returned to.
+- **"Remember me" on the login page works again.** The checkbox still used
+  Spring Security 3's parameter name, so ticking it set no remember-me cookie
+  on sites with `rememberme.enabled=true`. It isn't offered with LDAP login,
+  since a remembered login couldn't be checked against the directory.
 - **Weblogs no longer advertise XML-RPC while it is switched off.** With
   `webservices.enableXmlRpc` off, each weblog page still linked to an RSD
   document listing the Blogger and MetaWeblog endpoints, which then answered
@@ -129,6 +141,12 @@
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
   trusted.
+- **Saving the "Create weblog" form follows the site setting.** When "Allow
+  users to create weblogs" is off, saving the form now refuses, as opening it
+  already did.
+- **Only the site's first account becomes an administrator.** With
+  `users.firstUserAdmin` on, a new account was made an administrator whenever
+  no enabled account existed. Disabled accounts now count too.
 - **A database password made only of hex digits no longer stops Roller from
   starting.** EclipseLink mistook such a password for an encrypted one and
   failed with "Database password was encrypted by deprecated algorithm".
@@ -177,15 +195,47 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
+
+- **Templates see only published entries and approved comments.**
+  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
+  a weblog reached through `$site`, now returns null for draft, pending and
+  scheduled entries. A category's `retrieveWeblogEntries(...)` returns only
+  published entries, and an entry's `getComments(...)` only approved comments,
+  whatever arguments the template passes.
+
+- **The Admins of an aggregated front-page weblog are trusted, and only global
+  admins manage them.** With `site.frontpage.weblog.aggregated=true` and
+  custom themes on, that weblog's templates can read the whole site through
+  `$site` and `$planet`, so the security model trusts its Admins for what
+  those templates read. While aggregation is on, only a global admin can
+  grant, invite, change or remove Admin there. Review that weblog's Admins
+  and pending invitations whenever you turn aggregation on or change the
+  front-page weblog (`docs/security-model.md`).
+
+- **The front-page weblog's other Admins can't resign, and an invitation
+  offers one role.** While aggregation is on, only a global admin can remove
+  an Admin of the front-page weblog, including the Admin's own role.
+  Inviting a member accepts only Admin, Author or Limited.
+
 - **Weblog templates have render limits.** A page stops rendering, with a
-  logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
-  or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
-  stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
-  `#include` load only the weblog's own templates, and macros defined inline
-  in a template stay with the page that defines them and the templates it
-  includes, so weblogs can't affect each other's macros.
-  Library macros such as `roller.vm` and a site's own `roller-custom.vm` stay
-  global. Error pages no longer show template ids (#317).
+  logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
+  inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
+  (30 seconds), and the page isn't cached. A `#foreach` of more than 100,000
+  passes fails the same way. `#parse` and `#include` load only the weblog's
+  own templates. Error pages no longer show template ids (#367).
+- **Macros defined in a template belong to that template.** A macro defined
+  inline in a template works in that page and in the templates it
+  `#parse`s, and one weblog's macro no longer replaces another's of the same
+  name. A custom theme that calls a macro defined in a different template,
+  which it doesn't `#parse`, now prints the call as text. Define the macro in
+  the page that calls it, or `#parse` the template that defines it. Library
+  macros (`roller.vm`, `weblog.vm` and a site's own `roller-custom.vm`) stay
+  global (#367).
 - **Entries with scripts or embeds open as HTML.** If an entry contains
   scripts, frames, embedded objects, event-handler attributes or
   `javascript:` links, the rich-text editor opens it in the HTML textarea
@@ -314,6 +364,38 @@
   change the limit. The bundled `bannedwordslist.txt` rules match the same
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
+- **Spring Security is configured in Java; `WEB-INF/security.xml` is gone.**
+  Sites that edited that file move their changes to `roller-custom.properties`:
+  - LDAP login is set with `authentication.method=ldap` and the new
+    `users.ldap.url`, `users.ldap.managerDn`, `users.ldap.managerPassword`,
+    `users.ldap.userSearchBase`, `users.ldap.userSearchFilter` and
+    `users.ldap.defaultRole` properties, instead of uncommenting beans. A
+    blank `users.ldap.defaultRole` gives directory users only the roles Roller
+    has for them. With `ldap`, every login goes to the directory, so database
+    passwords, including administrators', are no longer checked. Directory
+    connections time out (`users.ldap.connectTimeout`, `users.ldap.readTimeout`),
+    and other JNDI settings are `users.ldap.env.<name>` properties.
+  - Extra URL rules, such as a private weblog for one role, are
+    `security.access.<path>=<roles>` properties, for example
+    `security.access./family/**=family`. These rules match paths without
+    regard to case, the most specific one applies, and they add to Roller's
+    own rules rather than replacing them. They also apply to the addresses
+    Roller renders the weblog at internally. They don't cover the login page or
+    the files it loads, nor the install, upgrade and first-registration pages
+    while Roller is being set up, so a rule for `/**` leaves login and setup
+    working.
+  - `webjars` and `oauth2` are now reserved like `theme` and `images`, and
+    can't be used as weblog handles. A weblog that already has one of those
+    handles is no longer shown at its address.
+  - Roller refuses to start while a `WEB-INF/security.xml` is still in
+    place, so a customized copy can't be ignored without notice.
+- **The login form needs Spring Security's CSRF token.** Roller's login page
+  includes it. A theme or script that posts straight to
+  `/roller_j_security_check` has to read the `_csrf` field from the login
+  page first and send it back. A login posted without a valid token, for
+  example from a login page left open past the session timeout, goes back to
+  the login page with a message to try again. Other forms keep using Roller's
+  own salt check.
 
 ### Build and packaging
 

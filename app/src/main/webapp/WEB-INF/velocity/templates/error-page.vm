@@ -70,11 +70,7 @@
         </tr>
         <tr>
           <td class="dottedtable" width="20%">Message</td>
-          <td class="dottedtable">$utils.autoformat($utils.escapeHTML($exception.getMessage()))</td>
-        </tr>
-        <tr>
-          <td class="dottedtable" width="20%">Type</td>
-          <td class="dottedtable">$exceptionSource</td>
+          <td class="dottedtable">$utils.autoformat($utils.escapeHTML($exceptionMessage))</td>
         </tr>
         <tr>
           <td class="dottedtable" width="20%">Exception</td>

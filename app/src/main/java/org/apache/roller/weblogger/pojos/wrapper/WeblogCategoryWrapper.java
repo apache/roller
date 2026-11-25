@@ -83,8 +83,12 @@ public final class WeblogCategoryWrapper {
         return WeblogWrapper.wrap(this.pojo.getWeblog(), urlStrategy);
     }
 
+    /**
+     * The category's published entries. Templates never see drafts, pending
+     * or scheduled entries, so the argument is kept only for compatibility.
+     */
     public List<WeblogEntryWrapper> retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
-        return this.pojo.retrieveWeblogEntries(publishedOnly).stream()
+        return this.pojo.retrieveWeblogEntries(true).stream()
                 .map(entry -> WeblogEntryWrapper.wrap(entry, urlStrategy))
                 .collect(Collectors.toList());
     }

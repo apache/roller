@@ -159,6 +159,18 @@ public abstract class UIAction extends ActionSupport
     }
 
     /**
+     * Whether Admin membership of the action weblog is closed to this user.
+     * On the aggregated front-page weblog, whose templates read the whole
+     * site, only global admins may grant, change or remove Admin.
+     */
+    protected boolean isAdminMembershipLocked() {
+        Weblog weblog = getActionWeblog();
+        return weblog != null
+                && WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())
+                && !isUserIsAdmin();
+    }
+
+    /**
      * Cancel.
      *
      * @return "CANCEL" string constant.

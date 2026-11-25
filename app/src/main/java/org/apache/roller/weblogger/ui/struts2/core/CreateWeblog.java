@@ -32,9 +32,9 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -70,9 +70,7 @@ public class CreateWeblog extends UIAction {
     @Override
     public String execute() {
 
-        // check if blog administrator has enabled creation of new blogs
-        if(!WebloggerRuntimeConfig.getBooleanProperty("site.allowUserWeblogCreation")) {
-            addError("createWebsite.disabled");
+        if (!isWeblogCreationAllowed()) {
             return DISABLED_RETURN_CODE;
         }
 
@@ -105,7 +103,11 @@ public class CreateWeblog extends UIAction {
     
     
     public String save() {
-        
+
+        if (!isWeblogCreationAllowed()) {
+            return DISABLED_RETURN_CODE;
+        }
+
         User user = getAuthenticatedUser();
         try {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
@@ -163,6 +165,19 @@ public class CreateWeblog extends UIAction {
     }
     
     
+    /**
+     * True when the site lets users create weblogs. The form and its save
+     * both follow the site setting.
+     */
+    private boolean isWeblogCreationAllowed() {
+        if (!WebloggerRuntimeConfig.getBooleanProperty("site.allowUserWeblogCreation")) {
+            addError("createWebsite.disabled");
+            return false;
+        }
+        return true;
+    }
+
+
     public void myValidate()  {
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
@@ -177,6 +192,12 @@ public class CreateWeblog extends UIAction {
             return;
         }
         
+        // make sure the handle isn't a path Roller uses for something else
+        if (WeblogRequestMapper.isReservedHandle(getBean().getHandle())) {
+            addError("createWeblog.error.handleReserved");
+            return;
+        }
+
         // make sure theme was specified and is a valid value
         
         // make sure handle isn't already taken

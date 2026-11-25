@@ -154,7 +154,7 @@ public class RollerSession
                     User user = findUser(umgr, principal);
 
                     // try one time to auto-provision, only happens if user==null
-                    // which means installation has LDAP enabled in security.xml
+                    // which means the installation uses LDAP (authentication.method=ldap)
                     if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {
                         
                         // provisioning enabled, get provisioner and execute

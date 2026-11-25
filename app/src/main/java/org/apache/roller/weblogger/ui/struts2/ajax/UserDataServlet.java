@@ -49,8 +49,8 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  * usernameN, emailaddressN <br/>
  * 
  * web.xml: <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
- * security.xml: <intercept-url pattern="/roller-ui/authoring/**"
- * access="admin,editor"/>
+ * SecurityConfig: /roller-ui/authoring/** requires the admin or editor
+ * authority.
  */
 public class UserDataServlet extends HttpServlet {
 
