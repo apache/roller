@@ -20,6 +20,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +51,10 @@ public class MembersInvite extends UIAction {
     
     // permissions being given to user
     private String permissionString = null;
+
+    /** The roles an invitation can offer, one per invitation. */
+    private static final List<String> INVITE_PERMISSIONS = List.of(
+            WeblogPermission.ADMIN, WeblogPermission.POST, WeblogPermission.EDIT_DRAFT);
     
     
     public MembersInvite() {
@@ -100,7 +105,9 @@ public class MembersInvite extends UIAction {
             addError("Error looking up invitee");
         }
         
-        if (WeblogPermission.ADMIN.equals(getPermissionString()) && isAdminMembershipLocked()) {
+        if (getPermissionString() == null || !INVITE_PERMISSIONS.contains(getPermissionString())) {
+            addError("inviteMember.error.unknownPermission");
+        } else if (WeblogPermission.ADMIN.equals(getPermissionString()) && isAdminMembershipLocked()) {
             addError("memberPermissions.frontPageAdminsGlobalOnly");
         }
 

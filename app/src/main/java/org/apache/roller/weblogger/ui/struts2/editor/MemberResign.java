@@ -66,6 +66,12 @@ public class MemberResign extends UIAction {
      * Resign from a weblog
      */
     public String resign() {
+        // removing your own Admin role is a change of Admin too
+        if (isAdminMembershipLocked()
+                && getActionWeblog().hasUserPermission(getAuthenticatedUser(), WeblogPermission.ADMIN)) {
+            addError("memberPermissions.frontPageAdminsGlobalOnly");
+            return SUCCESS;
+        }
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             // TODO: notify website members that user has resigned

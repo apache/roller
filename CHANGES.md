@@ -132,6 +132,12 @@
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
   trusted.
+- **Saving the "Create weblog" form follows the site setting.** When "Allow
+  users to create weblogs" is off, saving the form now refuses, as opening it
+  already did.
+- **Only the site's first account becomes an administrator.** With
+  `users.firstUserAdmin` on, a new account was made an administrator whenever
+  no enabled account existed. Disabled accounts now count too.
 - **A database password made only of hex digits no longer stops Roller from
   starting.** EclipseLink mistook such a password for an encrypted one and
   failed with "Database password was encrypted by deprecated algorithm".
@@ -180,10 +186,18 @@
 
 ### Behaviour changes worth reading before upgrading
 
-- **Templates see only published entries when they look one up by anchor.**
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
+
+- **Templates see only published entries and approved comments.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
-  scheduled entries.
+  scheduled entries. A category's `retrieveWeblogEntries(...)` returns only
+  published entries, and an entry's `getComments(...)` only approved comments,
+  whatever arguments the template passes.
 
 - **The Admins of an aggregated front-page weblog are trusted, and only global
   admins manage them.** With `site.frontpage.weblog.aggregated=true` and
@@ -193,6 +207,11 @@
   grant, invite, change or remove Admin there. Review that weblog's Admins
   and pending invitations whenever you turn aggregation on or change the
   front-page weblog (`docs/security-model.md`).
+
+- **The front-page weblog's other Admins can't resign, and an invitation
+  offers one role.** While aggregation is on, only a global admin can remove
+  an Admin of the front-page weblog, including the Admin's own role.
+  Inviting a member accepts only Admin, Author or Limited.
 
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
