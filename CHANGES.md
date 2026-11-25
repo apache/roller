@@ -136,6 +136,9 @@
   on the Comments page left the filter form with a used-up form token, so
   filtering then failed with an error.
 - **Media filenames keep their punctuation** when inserted into an entry.
+- **"Upload more" and "Cancel" work after a media upload.** Both buttons on
+  the upload-complete page failed with a script error instead of opening the
+  upload form or the media folder.
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account
   now logs out that user's other browsers at their next Roller UI page; the

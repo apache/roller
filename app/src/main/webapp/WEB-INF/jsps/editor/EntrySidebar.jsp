@@ -28,7 +28,7 @@
                 <h3><s:text name="weblogEdit.comments" /></h3>
 
                 <s:if test="bean.commentCount > 0">
-                    <s:url action="comments" var="commentsURL">
+                    <s:url action="comments" var="commentsURL" escapeAmp="false">
                        <s:param name="bean.entryId" value="bean.id" />
                        <s:param name="weblog" value="weblog" />
                     </s:url>
