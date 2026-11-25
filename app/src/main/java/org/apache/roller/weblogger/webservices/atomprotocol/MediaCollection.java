@@ -428,6 +428,9 @@ public class MediaCollection {
             MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
             Weblog website = wmgr.getWeblogByHandle(handle);
+            if (website == null) {
+                throw new AtomNotFoundException("Cannot find weblog: " + handle);
+            }
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }

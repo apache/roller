@@ -56,11 +56,18 @@ public class MediaFileBase extends UIAction {
     }
 
     /**
-     * Whether the current user may replace, move or delete the file. Theme
-     * files can be changed only by the weblog's Admins.
+     * Whether the current user may replace, rename, move or delete the file.
+     * A custom theme's scripts and stylesheets can be changed only by the
+     * weblog's Admins.
      */
     protected boolean mayChange(MediaFile mediaFile) {
         return ThemeMediaFiles.mayChange(getActionWeblog(), getAuthenticatedUser(), mediaFile);
+    }
+
+    /** Whether the current user may change a file's original path to the given value. */
+    protected boolean mayChangeOriginalPath(MediaFile mediaFile, String newPath) {
+        return ThemeMediaFiles.mayChangeOriginalPath(getActionWeblog(), getAuthenticatedUser(),
+                mediaFile.getOriginalPath(), newPath);
     }
 
     /**
