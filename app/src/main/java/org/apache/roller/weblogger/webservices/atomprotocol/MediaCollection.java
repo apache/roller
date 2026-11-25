@@ -17,6 +17,7 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
+import org.apache.roller.weblogger.business.ThemeMediaFiles;
 import com.rometools.propono.atom.common.rome.AppModule;
 import com.rometools.propono.atom.common.rome.AppModuleImpl;
 import com.rometools.propono.atom.server.AtomException;
@@ -443,6 +444,9 @@ public class MediaCollection {
             MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
             Weblog website = wmgr.getWeblogByHandle(handle);
+            if (website == null) {
+                throw new AtomNotFoundException("Cannot find weblog: " + handle);
+            }
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -456,6 +460,9 @@ public class MediaCollection {
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
                     if (mf == null) {
                         throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+                    if (!ThemeMediaFiles.mayChange(website, user, mf)) {
+                        throw new AtomNotAuthorizedException("Not authorized to change theme file: " + path);
                     }
 
                     tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
@@ -522,10 +529,18 @@ public class MediaCollection {
                     String fileName = path.substring(0, path.length() - ".media-link".length());
                     MediaFileManager fmgr = roller.getMediaFileManager();
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+                    if (!ThemeMediaFiles.mayChange(website, user, mf)) {
+                        throw new AtomNotAuthorizedException("Not authorized to change theme file: " + path);
+                    }
                     fmgr.removeMediaFile(website, mf);
                     log.debug("Deleted media entry: " + fileName);
                     return;
                     
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (Exception e) {
                     String msg = "ERROR deleting media entry";
                     log.error(msg, e);

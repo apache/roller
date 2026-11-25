@@ -4,6 +4,12 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
+
 - **Templates see only published entries and approved comments.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
