@@ -260,7 +260,16 @@ abstract class BaseIT {
     private static final String ENTRY_TITLE_FIELD = "#entry_bean_title";
     private static final String ENTRY_RICH_TEXT = ".note-editable";
     private static final String ENTRY_TEXTAREA = "#edit_content";
+    private static final String ENTRY_HTML_NOTICE = "#edit_content_html_notice";
     private static final String ENTRY_POST_BUTTON = "input.btn-success[type='submit']";
+
+    // the weblog settings form
+    private static final String WEBLOG_EDITOR_SELECT = "select[name='bean.editorPage']";
+    private static final String WEBLOG_CONFIG_SAVE = "form[action*='weblogConfig'] input.btn-success[type='submit']";
+    private static final String SAVED_MESSAGE = "#messages";
+    private static final String TEXT_EDITOR = "editor-text.jsp";
+    // Summernote kept the id of the Xinha editor it replaced
+    private static final String RICH_EDITOR = "editor-xinha.jsp";
 
     // the rendered weblog
     private static final String RENDERED_ENTRY_TITLE = "p.entryTitle, .entryTitle";
@@ -332,6 +341,18 @@ abstract class BaseIT {
      */
     protected void insertMediaFileThroughDialog(String weblogHandle) {
         goTo("roller-ui/authoring/entryAdd.rol?weblog=" + weblogHandle);
+        chooseFirstMediaFile();
+
+        var richText = page.locator(ENTRY_RICH_TEXT);
+        if (richText.count() > 0) {
+            assertThat(richText.first().locator("img")).hasCount(1);
+        } else {
+            assertThat(page.locator(ENTRY_TEXTAREA)).hasValue(Pattern.compile("<img src=\"[^\"]+\""));
+        }
+    }
+
+    /** Picks the weblog's first media file in the editor's Insert Media File dialog. */
+    protected void chooseFirstMediaFile() {
         // Bootstrap ignores hide() while a modal is still fading in, and the
         // chooser can load faster than that, so wait for the shown event
         page.evaluate("sel => document.querySelector(sel).addEventListener('shown.bs.modal',"
@@ -342,13 +363,64 @@ abstract class BaseIT {
 
         page.frameLocator(MEDIA_CHOOSER_FRAME).locator(MEDIA_CHOOSER_FILE).first().click();
         assertThat(page.locator(MEDIA_INSERT_DIALOG)).isHidden();
+    }
 
-        var richText = page.locator(ENTRY_RICH_TEXT);
-        if (richText.count() > 0) {
-            assertThat(richText.first().locator("img")).hasCount(1);
-        } else {
-            assertThat(page.locator(ENTRY_TEXTAREA)).hasValue(Pattern.compile("<img src=\"[^\"]+\""));
-        }
+    /**
+     * Publishes an entry with HTML the rich editor would run or drop, then
+     * switches the weblog to the rich editor, where the entry opens in the
+     * HTML textarea. Checks that the page warns before leaving once the
+     * textarea is edited: while the author is still typing in it, and after a
+     * media file is inserted.
+     */
+    protected void editEntryInTheHtmlTextarea(String weblogHandle) {
+        setWeblogEditor(weblogHandle, TEXT_EDITOR);
+        publishEntry(weblogHandle, "An entry with a click handler", "<p onclick=\"void 0\">Click me</p>");
+        String editPage = "roller-ui/authoring/entryEdit.rol?weblog=" + weblogHandle
+                + "&bean.id=" + page.locator("input[name='bean.id']").first().inputValue();
+        setWeblogEditor(weblogHandle, RICH_EDITOR);
+
+        goTo(editPage);
+        assertThat(page.locator(ENTRY_HTML_NOTICE)).isVisible();
+        assertThat(page.locator(ENTRY_RICH_TEXT)).hasCount(0);
+        org.junit.jupiter.api.Assertions.assertFalse(warnsBeforeLeaving(),
+                "an unedited entry should not warn before leaving");
+        page.locator(ENTRY_TEXTAREA).click();
+        page.keyboard().type(" more");
+        org.junit.jupiter.api.Assertions.assertTrue(warnsBeforeLeaving(),
+                "typing in the HTML textarea should warn before leaving");
+        stopWarningBeforeLeaving();
+
+        goTo(editPage);
+        chooseFirstMediaFile();
+        assertThat(page.locator(ENTRY_TEXTAREA)).hasValue(Pattern.compile("<img src=\"[^\"]+\""));
+        org.junit.jupiter.api.Assertions.assertTrue(warnsBeforeLeaving(),
+                "inserting a media file in the HTML textarea should warn before leaving");
+        stopWarningBeforeLeaving();
+
+        setWeblogEditor(weblogHandle, TEXT_EDITOR);
+    }
+
+    /** Picks the weblog's entry editor on its settings page. */
+    private void setWeblogEditor(String weblogHandle, String editor) {
+        goTo("roller-ui/authoring/weblogConfig.rol?weblog=" + weblogHandle);
+        page.locator(WEBLOG_EDITOR_SELECT).selectOption(editor);
+        page.locator(WEBLOG_CONFIG_SAVE).click();
+        assertThat(page.locator(SAVED_MESSAGE)).isVisible();
+        assertThat(page.locator(WEBLOG_EDITOR_SELECT)).hasValue(editor);
+    }
+
+    /** Whether leaving the page now would ask the author to confirm. */
+    private boolean warnsBeforeLeaving() {
+        return (Boolean) page.evaluate("() => {"
+                + " const event = document.createEvent('BeforeUnloadEvent');"
+                + " event.initEvent('beforeunload', false, true);"
+                + " window.dispatchEvent(event);"
+                + " return event.defaultPrevented || !!event.returnValue; }");
+    }
+
+    /** Removes the leave-page warning, so the next navigation isn't held up. */
+    private void stopWarningBeforeLeaving() {
+        page.evaluate("() => $(window).off('beforeunload')");
     }
 
     /**

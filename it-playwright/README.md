@@ -28,6 +28,7 @@ The suite points at a running Roller and adapts to how it is configured:
 * `NewUserJourneyIT` covers what the old Selenium suite did: register the first user, sign in, create a weblog, publish an entry, read it back on the blog and comment on it, signed in and as a visitor. Roller only accepts registrations while it has no users, so this test skips itself on an instance that already has one, and on an instance that delegates login to an identity provider.
 * `OidcLoginIT` signs in through an external OIDC provider as an administrator and as a regular user, checks that only the administrator can reach server administration, and that a signed-in OIDC user can create a weblog and see it rendered. It skips itself when no provider is configured.
 * `LoginPageIT` checks the login page offers exactly the sign-in mechanisms of the configured authentication method. It only runs when you declare that method (see below).
+* `RichEditorContentIT` runs the entry editor's `rich-editor-content.js` in a blank page, so it needs no running Roller: which entries open in the HTML textarea instead of the rich editor, and where media files go in that textarea. Run it on its own with `mvn verify -Dit.test=RichEditorContentIT`.
 
 Skipping keeps casual local runs friendly, but it also means a misconfigured instance could pass with everything skipped.
 Declare what the instance is supposed to be and mismatches become failures instead:
