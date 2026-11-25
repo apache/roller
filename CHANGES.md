@@ -197,6 +197,11 @@
   needs a global admin. Before turning aggregation on, review who is Admin
   on the front-page weblog.
 
+- **The front-page weblog's other Admins can't resign, and an invitation
+  offers one role.** While aggregation is on, only a global admin can remove
+  an Admin of the front-page weblog, including the Admin's own role.
+  Inviting a member accepts only Admin, Author or Limited.
+
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB),
   inserts a longer string, or runs longer than `rendering.maxRenderSeconds`
