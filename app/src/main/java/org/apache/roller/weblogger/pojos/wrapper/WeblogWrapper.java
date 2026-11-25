@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.util.HTMLSanitizer;
 import java.util.stream.Collectors;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 
 /**
@@ -273,8 +274,16 @@ public final class WeblogWrapper {
     }
     
     
+    /**
+     * The published entry with this anchor, or null. Templates never see
+     * draft, pending or scheduled entries through this lookup.
+     */
     public WeblogEntryWrapper getWeblogEntry(String anchor) {
-        return WeblogEntryWrapper.wrap(this.pojo.getWeblogEntry(anchor), urlStrategy);
+        WeblogEntry entry = this.pojo.getWeblogEntry(anchor);
+        if (entry == null || !entry.isPublished()) {
+            return null;
+        }
+        return WeblogEntryWrapper.wrap(entry, urlStrategy);
     }
 
 
