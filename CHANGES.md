@@ -186,10 +186,12 @@
   `$planet`, so its Admins are trusted for what those templates read. Only a
   global admin can assign them; review them before turning aggregation on
   (`docs/security-model.md`).
-- **Templates see only published entries when they look one up by anchor.**
+- **Templates see only published entries and approved comments.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
-  scheduled entries.
+  scheduled entries. A category's `retrieveWeblogEntries(...)` returns only
+  published entries, and an entry's `getComments(...)` only approved comments,
+  whatever arguments the template passes.
 
 - **Only global admins manage Admin on the aggregated front-page weblog.**
   With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
