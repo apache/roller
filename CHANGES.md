@@ -180,11 +180,18 @@
 
 ### Behaviour changes worth reading before upgrading
 
-- **Only weblog Admins can replace, move or delete a custom theme's files.**
-  The scripts, stylesheets and images a custom theme keeps in the media
-  library are part of the weblog's design. Authors still manage their own
-  media files.
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
 
+- **The security model trusts the Admins of an aggregated front-page
+  weblog.** With `site.frontpage.weblog.aggregated=true` and custom themes
+  on, that weblog's templates can read the whole site through `$site` and
+  `$planet`, so its Admins are trusted for what those templates read. Only a
+  global admin can assign them; review them before turning aggregation on
+  (`docs/security-model.md`).
 - **Templates see only published entries when they look one up by anchor.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
