@@ -57,6 +57,8 @@ class JspOutputEncodingTest {
             Pattern.compile("<s:text\\b((?:[^>/]|/(?!>))*)>(.*?)</s:text>", Pattern.DOTALL);
     private static final Pattern SINGLE_QUOTED_ATTRIBUTE =
             Pattern.compile("[\\w:.-]+\\s*=\\s*'[^']*<s:property", Pattern.DOTALL);
+    private static final Pattern URL_WITH_BODY =
+            Pattern.compile("<s:url\\b((?:[^>/]|/(?!>))*)>(.*?)</s:url>", Pattern.DOTALL);
     private static final Pattern INLINE_HANDLER_PROPERTY =
             Pattern.compile("(?<![\\w:.-])on[a-z]+\\s*=\\s*\"[^\"]*<s:property",
                     Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
@@ -155,6 +157,38 @@ class JspOutputEncodingTest {
             while (text.find()) {
                 if (text.group(1).contains("escapeHtml=\"true\"") && text.group(2).contains("<s:param")) {
                     problems.add(name(jsp) + ": " + oneLine(text.group(1)));
+                }
+            }
+        }
+        assertEquals(Collections.emptyList(), problems);
+    }
+
+    /**
+     * {@code <s:url>} writes "&" as "&amp;" unless escapeAmp is false, and
+     * {@code <s:property>} and the {@code <s:param>} strings of an
+     * {@code <s:text>} escape it again. A link built that way reaches the
+     * browser with "&amp;" in it and loses every parameter after the first.
+     */
+    @Test
+    void urlsWithParamsAreNotEscapedTwice() throws IOException {
+        List<String> problems = new ArrayList<>();
+        for (Path jsp : jsps) {
+            String text = read(jsp);
+            Matcher url = URL_WITH_BODY.matcher(text);
+            while (url.find()) {
+                Matcher var = Pattern.compile("\\bvar=\"([^\"]+)\"").matcher(url.group(1));
+                if (!var.find() || url.group(1).contains("escapeAmp=\"false\"")
+                        || url.group(2).split("<s:param\\b", -1).length < 3) {
+                    continue;
+                }
+                Pattern use = Pattern.compile("<s:(property|param)\\b[^>]*value=[\"'](%\\{)?"
+                        + Pattern.quote(var.group(1)) + "\\}?[\"'][^>]*>");
+                Matcher written = use.matcher(text);
+                while (written.find()) {
+                    if (!written.group().contains("escapeHtml=\"false\"")) {
+                        problems.add(name(jsp) + ": " + var.group(1));
+                        break;
+                    }
                 }
             }
         }
