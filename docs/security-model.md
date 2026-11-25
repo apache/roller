@@ -309,7 +309,7 @@ A bug in an optional feature is a vulnerability when the feature is enabled.
 
 | Setting | What it changes |
 | --- | --- |
-| `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
+| `weblogAdminsUntrusted` | `true` (default) sanitizes HTML from weblog members and matches a weblog's banned words as plain words rather than regular expressions. Set `false` only when every weblog admin is trusted, such as on a solo blog. |
 | `themes.customtheme.allowed` | Lets weblog Admins edit templates. Templates stay in the sandbox, but can use a lot of CPU and memory (see Not vulnerabilities). |
 | `site.frontpage.weblog.aggregated` | Gives the front-page weblog's templates the site-wide `$site` and `$planet` models. With custom themes on, its Admins, whom only a global admin assigns, become trusted for what those templates read (see [The aggregated front-page weblog](#the-aggregated-front-page-weblog)). |
 | `uploads.enabled` | Lets members upload media files. |

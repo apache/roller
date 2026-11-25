@@ -110,6 +110,7 @@ public class WeblogConfig extends UIAction {
         
         // load bean with data from weblog
         getBean().copyFrom(getActionWeblog());
+        listRulesMatchedAsText();
         
         return INPUT;
     }
@@ -207,14 +208,38 @@ public class WeblogConfig extends UIAction {
         List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null);
-            addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
+            if (!weblogAdminsUntrusted) {
+                Bannedwordslist.validateRules(getBean().getBannedwordslist());
+            }
+            Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null,
+                    weblogAdminsUntrusted);
+            if (weblogAdminsUntrusted) {
+                addMessage("websiteSettings.acceptedBannedwordsAsWords", List.of(""+regexRules.size()));
+                listRulesMatchedAsText();
+            } else {
+                addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
+            }
         } catch (Exception e) {
             addError("websiteSettings.error.processingBannedwordslist", e.getMessage());
         }
     }
     
     
+    /**
+     * Tells the weblog admin which banned words look like regular
+     * expressions, since with untrusted weblog admins they are matched as
+     * plain text; a list from an earlier version may have such lines.
+     */
+    private void listRulesMatchedAsText() {
+        if (weblogAdminsUntrusted) {
+            List<String> rules = Bannedwordslist.regexStyleRules(getBean().getBannedwordslist());
+            if (!rules.isEmpty()) {
+                addMessage("websiteSettings.bannedwordsMatchedAsText", String.join(", ", rules));
+            }
+        }
+    }
+
+
     @StrutsParameter(depth = 1)
     public WeblogConfigBean getBean() {
         return bean;

@@ -27,8 +27,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -105,6 +111,175 @@ public class BannedwordslistTest  {
                 assertFalse(bannedwordslist.isBannedwordslisted(text), unit);
             }
         });
+    }
+
+    // a weblog's rule that backtracks without end can't hold up the check;
+    // the text counts as a match, so a comment with it is caught as spam
+    @Test
+    public void testRuleThatBacktracksIsStopped() {
+        String text = "x".repeat(40) + "!";
+        // a regex rule, and a word rule, which is also used as a regex
+        for (String rule : new String[] {"((x+)+)+y", "x((x+)+)+y"}) {
+            List<String> stringRules = new ArrayList<>();
+            List<Pattern> regexRules = new ArrayList<>();
+            Bannedwordslist.populateSpamRules(rule, stringRules, regexRules, null);
+            assertTimeoutPreemptively(Duration.ofSeconds(8), () -> {
+                assertTrue(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules), rule);
+                assertTrue(bannedwordslist.isBannedwordslisted(text, stringRules, regexRules), rule);
+            }, rule);
+        }
+        // the limit applies to each value, not to every check that follows
+        assertFalse(bannedwordslist.isBannedwordslisted("an ordinary comment"));
+    }
+
+    // with weblogAdminsUntrusted, a weblog's own rules are matched as words,
+    // not as regular expressions; the site-wide rules are still regexes
+    @Test
+    public void testWeblogRulesAsWords() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(a|b)\nViagra\n(foo)\nexample.com/", stringRules, regexRules,
+                "(qq|zz)", true);
+        assertFalse(Bannedwordslist.matchesRulesOnly("a", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("spam (a|b) here", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("buy VIAGRA now", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("viagraphone", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("see (foo) now", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("http://example.com/x", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("http://example.org/x", stringRules, regexRules));
+        // the site-wide rule is still a regex
+        assertTrue(Bannedwordslist.matchesRulesOnly("zz", stringRules, regexRules));
+
+        // with the setting off, the weblog's rules are regexes as before
+        stringRules.clear();
+        regexRules.clear();
+        Bannedwordslist.populateSpamRules("(a|b)", stringRules, regexRules, null, false);
+        assertTrue(Bannedwordslist.matchesRulesOnly("a", stringRules, regexRules));
+    }
+
+    @Test
+    public void testWeblogRulesAsUnicodeWords() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        // "café" is cafe with an acute accent, "élan" is elan
+        Bannedwordslist.populateSpamRules("café\nélan", stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("at the café now", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("AT THE CAFÉ NOW", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("too much caféine", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("with ÉLAN", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("réélan", stringRules, regexRules));
+    }
+
+    // scripts written without spaces between words have no word edges to check
+    @Test
+    public void testWeblogRulesInScriptsWithoutSpaces() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        // "赌场" is casino in Chinese, "カジノ" in Japanese, "คาสิโน" in Thai
+        Bannedwordslist.populateSpamRules("赌场\nカジノ\nคาสิโน\ncasino", stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("在线赌场网站", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("オンラインカジノです", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("เล่นคาสิโนออนไลน์", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("赌场casino", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("casinos", stringRules, regexRules));
+    }
+
+    // a line that looks blank, such as one non-breaking space, is not a rule
+    @Test
+    public void testBlankLinesAreNotRules() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("foo\n\u00A0\n\u3000\nbar", stringRules, regexRules, null, true);
+        assertEquals(2, regexRules.size());
+        assertFalse(Bannedwordslist.matchesRulesOnly("price:\u00A010 EUR", stringRules, regexRules));
+
+        // a browser ends lines with \r\n, so an empty line leaves "\r"
+        stringRules.clear();
+        regexRules.clear();
+        Bannedwordslist.populateSpamRules("foo\r\n\r\nbar", stringRules, regexRules, null, false);
+        assertEquals(List.of("foo", "bar"), stringRules);
+        assertFalse(Bannedwordslist.matchesRulesOnly("a perfectly ordinary comment", stringRules, regexRules));
+    }
+
+    // a line saved as a plain word while weblog admins were untrusted isn't
+    // always a valid regex once they are trusted; it is then matched as text
+    @Test
+    public void testInvalidRegexRuleIsMatchedAsText() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(18+", stringRules, regexRules, null, false);
+        assertTrue(Bannedwordslist.matchesRulesOnly("only (18+ here", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("only 18 here", stringRules, regexRules));
+        // saving the list as regexes still refuses it
+        assertThrows(PatternSyntaxException.class, () -> Bannedwordslist.validateRules("(18+"));
+        Bannedwordslist.validateRules("(casino)\nviagra");
+    }
+
+    // lines that only mean something as a regex are listed for the weblog admin
+    @Test
+    public void testRegexStyleRules() {
+        assertEquals(List.of("(casino|poker)", "viagra|cialis", "poker-?online", "(18+"),
+                Bannedwordslist.regexStyleRules("casino\n(casino)\n(casino|poker)\nviagra|cialis\n"
+                        + "# (comment)\nexample.com\npoker-?online\n(online poker)\n(18+\n"));
+        assertEquals(List.of(), Bannedwordslist.regexStyleRules(null));
+    }
+
+    // a weblog line that is only letters, digits and spaces in parentheses,
+    // as written for earlier versions, matches that text anywhere, in any case
+    @Test
+    public void testWeblogRuleInParenthesesMatchesTextAnywhere() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(casino)\n(Online Poker 24)\n(casino|poker)\n( )",
+                stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("http://onlinecasino.example", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("BEST CASINOS", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("play online poker 24/7", stringRules, regexRules));
+        // a line with other regex syntax is still literal text
+        assertFalse(Bannedwordslist.matchesRulesOnly("poker night", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("see (casino|poker)", stringRules, regexRules));
+        // parentheses around spaces only are not unwrapped
+        assertFalse(Bannedwordslist.matchesRulesOnly("an ordinary comment", stringRules, regexRules));
+    }
+
+    // each rule has its own time limit, so a long list of plain words
+    // against a long comment is slow but isn't counted as a match
+    @Test
+    public void testTimeLimitIsPerRule() {
+        StringBuilder rules = new StringBuilder();
+        for (int i = 0; i < 20000; i++) {
+            rules.append("spamword").append(i).append('\n');
+        }
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules(rules.toString(), stringRules, regexRules, null, true);
+        String text = "an ordinary comment ".repeat(500);
+        assertTimeoutPreemptively(Duration.ofSeconds(60), () ->
+                assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules)));
+    }
+
+    // a referrer that can't be checked in time is let through, since the
+    // reader would otherwise be refused the page
+    @Test
+    public void testReferrerThatCantBeCheckedIsNoMatch() {
+        String text = "x".repeat(40) + "!";
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("((x+)+)+y", stringRules, regexRules, null);
+        assertTimeoutPreemptively(Duration.ofSeconds(8), () ->
+                assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules, false)));
+    }
+
+    // a rule that recurses once per repetition can run out of stack on long
+    // text; the text is then handled as if the time limit had passed
+    @Test
+    public void testRuleThatRunsOutOfStack() {
+        String text = "ab".repeat(50000);
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(a|b)+c", stringRules, regexRules, null);
+        assertTrue(bannedwordslist.isBannedwordslisted(text, stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules, false));
     }
 
 }

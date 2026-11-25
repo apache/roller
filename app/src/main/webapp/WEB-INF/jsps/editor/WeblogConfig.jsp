@@ -130,8 +130,14 @@
 
     <h3><s:text name="websiteSettings.spamPrevention"/></h3>
 
-    <s:textarea name="bean.bannedwordslist" rows="7" cols="40"
-                label="%{getText('websiteSettings.bannedWordsList')}"/>
+    <s:if test="weblogAdminsUntrusted">
+        <s:textarea name="bean.bannedwordslist" rows="7" cols="40"
+                    label="%{getText('websiteSettings.bannedWordsListAsWords')}"/>
+    </s:if>
+    <s:else>
+        <s:textarea name="bean.bannedwordslist" rows="7" cols="40"
+                    label="%{getText('websiteSettings.bannedWordsList')}"/>
+    </s:else>
 
     <%-- ***** Web analytics settings ***** --%>
 
