@@ -161,6 +161,79 @@ class FrontPageAdminMembershipTest {
         }
     }
 
+    @Test
+    void weblogAdminCannotInviteAnAdminAlongsideAnotherRole() throws Exception {
+        assertInvitationRefused(true, "admin,post", "post,admin", "admin,", ",admin");
+    }
+
+    @Test
+    void anInvitationOffersOnlyOneKnownRole() throws Exception {
+        setProperty("site.frontpage.weblog.aggregated", "false");
+        assertInvitationRefused(false, "admin,post", "editor", "", null);
+    }
+
+    @Test
+    void weblogAdminCannotResignAdmin() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.ADMIN));
+        TestUtils.endSession(true);
+        MemberResign action = resigning(memberName);
+        assertEquals(List.of(LOCKED), List.copyOf(action.getActionErrors()));
+        assertTrue(permission(memberName).hasAction(WeblogPermission.ADMIN));
+    }
+
+    @Test
+    void authorCanStillResign() throws Exception {
+        MemberResign action = resigning(memberName);
+        assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
+        assertNull(permission(memberName));
+    }
+
+    @Test
+    void withoutAggregationAnAdminCanResign() throws Exception {
+        setProperty("site.frontpage.weblog.aggregated", "false");
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.ADMIN));
+        TestUtils.endSession(true);
+        MemberResign action = resigning(memberName);
+        assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
+        assertNull(permission(memberName));
+    }
+
+    private void assertInvitationRefused(boolean locked, String... permissions) throws Exception {
+        User invitee = TestUtils.setupUser("frontpageinvitee");
+        TestUtils.endSession(true);
+        try {
+            for (String permission : permissions) {
+                MembersInvite action = inviting(invitee.getUserName(), permission);
+                assertEquals(List.of("inviteMember.error.unknownPermission"),
+                        List.copyOf(action.getActionErrors()), String.valueOf(permission));
+                assertNull(permission(invitee.getUserName()), String.valueOf(permission));
+            }
+            if (locked) {
+                MembersInvite admin = inviting(invitee.getUserName(), WeblogPermission.ADMIN);
+                assertEquals(List.of(LOCKED), List.copyOf(admin.getActionErrors()));
+            }
+        } finally {
+            if (permission(invitee.getUserName()) != null) {
+                users().revokeWeblogPermission(weblog(), user(invitee.getUserName()),
+                        WeblogPermission.ALL_ACTIONS);
+                TestUtils.endSession(true);
+            }
+            TestUtils.teardownUser(invitee.getUserName());
+            TestUtils.endSession(true);
+        }
+    }
+
+    private MemberResign resigning(String name) throws Exception {
+        MemberResign action = spy(new MemberResign());
+        stubText(action);
+        action.setAuthenticatedUser(user(name));
+        action.setActionWeblog(weblog());
+        action.setWeblog(handle);
+        action.resign();
+        TestUtils.endSession(true);
+        return action;
+    }
+
     private MembersInvite inviting(String name, String permission) throws Exception {
         MembersInvite action = spy(new MembersInvite());
         stubText(action);

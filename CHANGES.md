@@ -15,9 +15,12 @@
   custom themes on, that weblog's templates can read the whole site through
   `$site` and `$planet`, so the security model trusts its Admins for what
   those templates read. While aggregation is on, only a global admin can
-  grant, invite, change or remove Admin there. Review that weblog's Admins
-  and pending invitations whenever you turn aggregation on or change the
-  front-page weblog (`docs/security-model.md`).
+  grant, invite, change or remove Admin there, and its other Admins can't
+  resign. Review that weblog's Admins and pending invitations whenever you
+  turn aggregation on or change the front-page weblog
+  (`docs/security-model.md`).
+- **An invitation offers one role.** Inviting a member accepts only Admin,
+  Author or Limited.
 
 - **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
   and the OAuth keys page answer only when AtomPub is enabled and its
