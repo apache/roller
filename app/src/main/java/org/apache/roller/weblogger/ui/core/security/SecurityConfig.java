@@ -168,6 +168,11 @@ public class SecurityConfig {
                 .usernameParameter("j_username")
                 .passwordParameter("j_password")
                 .failureUrl(LOGIN_PAGE + "?error=true")
+                // records the login in its session, so a later password
+                // change ends that session, then sends the user on to the
+                // request that triggered login
+                .successHandler(new RollerLoginSuccessHandler(
+                        new SavedRequestAwareAuthenticationSuccessHandler()))
                 .loginProcessingUrl(LOGIN_PROCESSING_URL));
 
         LoginUrlAuthenticationEntryPoint entryPoint = new LoginUrlAuthenticationEntryPoint(LOGIN_PAGE);
@@ -198,7 +203,7 @@ public class SecurityConfig {
         http.oauth2Login(oauth2 -> oauth2
                 .clientRegistrationRepository(clientRegistrationRepository)
                 .userInfoEndpoint(userInfo -> userInfo.oidcUserService(rollerOidcUserService))
-                .successHandler(oidcSuccess)
+                .successHandler(new RollerLoginSuccessHandler(oidcSuccess))
                 // OIDC failures get their own marker so the login page does
                 // not diagnose them as a wrong password
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler(LOGIN_PAGE + "?error=oidc"))

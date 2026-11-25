@@ -633,6 +633,52 @@ class SecurityConfigTest {
                 .noneMatch(RememberMeAuthenticationFilter.class::isInstance));
     }
 
+    // Every way of logging in records the login in its session, which is what
+    // lets a later password change end that session.
+
+    @Test
+    void formLoginRecordsTheLogin() throws Exception {
+        List<Object> forms = filters(chain(WithUser.class)).stream()
+                .filter(UsernamePasswordAuthenticationFilter.class::isInstance).toList();
+        assertEquals(1, forms.size(), "one form login");
+        assertTrue(successHandler(forms.get(0)) instanceof RollerLoginSuccessHandler);
+    }
+
+    @Test
+    void everyLoginFilterRecordsTheLogin() throws Exception {
+        List<Object> logins = filters(chain(WithUser.class)).stream()
+                .filter(AbstractAuthenticationProcessingFilter.class::isInstance).toList();
+        // the login form and single sign-on
+        assertTrue(logins.size() >= 2, "expected the form and single sign-on filters, found " + logins);
+        for (Object login : logins) {
+            assertTrue(successHandler(login) instanceof RollerLoginSuccessHandler,
+                    login.getClass().getSimpleName() + " should record the login");
+        }
+    }
+
+    @Test
+    void rememberMeRecordsTheLogin() throws Exception {
+        setProperty("rememberme.enabled", "true");
+        setProperty("rememberme.key", "test-remember-me-key");
+        List<Object> rememberMe = filters(chain(WithUser.class)).stream()
+                .filter(RememberMeAuthenticationFilter.class::isInstance).toList();
+        assertEquals(1, rememberMe.size(), "one remember-me filter");
+        assertTrue(((RememberMeAuthenticationFilter) rememberMe.get(0)).getRememberMeServices()
+                instanceof RollerRememberMeServices);
+    }
+
+    private static List<Object> filters(FilterChainProxy chain) {
+        List<Object> filters = new ArrayList<>();
+        chain.getFilterChains().forEach(c -> filters.addAll(c.getFilters()));
+        return filters;
+    }
+
+    private static Object successHandler(Object filter) throws ReflectiveOperationException {
+        Field field = AbstractAuthenticationProcessingFilter.class.getDeclaredField("successHandler");
+        field.setAccessible(true);
+        return field.get(filter);
+    }
+
     @Test
     void ldapConnectionsTimeOut() {
         setPropertyUnchecked("users.ldap.readTimeout", "2000");

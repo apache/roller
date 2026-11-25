@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
@@ -143,6 +144,7 @@ public class UserEdit extends UIAction {
         myValidate();
         
         if (!hasActionErrors()) {
+            String previousOpenIdUrl = user.getOpenIdUrl();
             getBean().copyTo(user);
 
             if (authMethod == AuthMethod.DB_OIDC) {
@@ -158,9 +160,14 @@ public class UserEdit extends UIAction {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OIDC) ||
-                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OIDC) ||
+                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(user.getPassword())
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(user.getOpenIdUrl(), "/")))) {
                 String randomString = RollerPasswordEncoders.randomUnusedPassword();
                 user.resetPassword(randomString);
             }
@@ -191,6 +198,9 @@ public class UserEdit extends UIAction {
                     // save new user
                     mgr.addUser(user);
                 } else {
+                    if (isUserEditingSelf()) {
+                        RollerSession.savingPassword(getServletRequest(), user);
+                    }
                     mgr.saveUser(user);
                 }
 
@@ -213,6 +223,12 @@ public class UserEdit extends UIAction {
                     mgr.grantRole("admin", user);
                 }
                 WebloggerFactory.getWeblogger().flush();
+
+                // a password change ends the user's sessions, except this one
+                // when the administrator edits their own account
+                if (!isAdd() && isUserEditingSelf()) {
+                    RollerSession.refreshPassword(getServletRequest(), user);
+                }
 
                 // successful add or edit: send user back to user admin page
                 bean = new CreateUserBean();

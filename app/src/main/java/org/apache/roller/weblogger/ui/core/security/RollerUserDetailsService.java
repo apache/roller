@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -113,6 +114,8 @@ public class RollerUserDetailsService implements UserDetailsService, UserDetails
                         + ", which changed while they logged in");
                 return user;
             }
+            // the password did not change, so the user's sessions stay
+            RollerSession.passwordReencoded(userData.getUserName(), userData.getPassword(), newPassword);
             userData.setPassword(newPassword);
             umgr.saveUser(userData);
             roller.flush();

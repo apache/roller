@@ -22,8 +22,13 @@ package org.apache.roller.weblogger.ui.core.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
@@ -42,5 +47,16 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
         }
 
         log.debug("initialized: RollerRememberMeServices with key");
+    }
+
+    /**
+     * Records the login a remember-me cookie stands for in its session, as a
+     * login form does.
+     */
+    @Override
+    protected Authentication createSuccessfulAuthentication(HttpServletRequest request, UserDetails user) {
+        Authentication login = super.createSuccessfulAuthentication(request, user);
+        RollerSession.loggedIn(request, login);
+        return login;
     }
 }
