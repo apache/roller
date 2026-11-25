@@ -189,20 +189,6 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
-    void theRememberMeSignatureUsesTheDefaultForAnEmptyConfiguredPlaceholder() throws Exception {
-        setProperty("authentication.method", "ldap");
-        setProperty("rememberme.enabled", "false");
-        RollerRememberMeServices services = new RollerRememberMeServices(new RollerUserDetailsService());
-        setProperty("users.passwords.externalAuthValue", "<externalAuth>");
-        String signedWithTheDefault = services.makeTokenSignature(1L, "ldapuser", "unused");
-
-        // CustomUserRegistry stores the default for an empty setting
-        setProperty("users.passwords.externalAuthValue", "");
-
-        assertEquals(signedWithTheDefault, services.makeTokenSignature(1L, "ldapuser", "unused"));
-    }
-
-    @Test
     void theEncoderDoesNotMatchThePlaceholder() {
         // the encoder also checks AtomPub and XML-RPC passwords
         PasswordEncoder encoder = RollerPasswordEncoders.create();

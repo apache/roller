@@ -36,7 +36,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
  * Handle user logins.
  *
  * The standard blog login buttons route to login-redirect.rol, which is
- * intercepted by the Spring security.xml to first require a standard login (this class).
+ * intercepted by Spring Security (SecurityConfig) to first require a standard login (this class).
  * After successful authentication, login-redirect will either route the user to
  * registration (if the user logged in via an external method such as LDAP and doesn't
  * yet have a Roller account), or directly to the user's blog.
@@ -94,9 +94,15 @@ public class Login extends UIAction {
     public String execute() {
 
         // set action error message if there was login error; OAuth2/OIDC
-        // failures redirect here with error=oidc, form login with error=true
+        // failures redirect here with error=oidc, a login post without a
+        // valid token with error=expired, and a failed form login with
+        // error=true
         if (getError() != null) {
-            addError("oidc".equals(getError()) ? "error.oidc.login" : "error.password.mismatch");
+            switch (getError()) {
+                case "oidc" -> addError("error.oidc.login");
+                case "expired" -> addError("error.login.expired");
+                default -> addError("error.password.mismatch");
+            }
         }
 
         return SUCCESS;

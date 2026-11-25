@@ -32,9 +32,9 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -192,6 +192,12 @@ public class CreateWeblog extends UIAction {
             return;
         }
         
+        // make sure the handle isn't a path Roller uses for something else
+        if (WeblogRequestMapper.isReservedHandle(getBean().getHandle())) {
+            addError("createWeblog.error.handleReserved");
+            return;
+        }
+
         // make sure theme was specified and is a valid value
         
         // make sure handle isn't already taken

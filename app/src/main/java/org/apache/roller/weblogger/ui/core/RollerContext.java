@@ -27,12 +27,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 import org.apache.roller.weblogger.business.Weblogger;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserCache;
-import org.springframework.security.authentication.RememberMeAuthenticationProvider;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -46,8 +41,7 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
-import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
-import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
+import org.apache.roller.weblogger.ui.core.security.SecurityConfig;
 import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -260,43 +254,17 @@ public class RollerContext extends ContextLoaderListener
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-        String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
-        boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
-        log.info("Remember Me enabled: " + rememberMeEnabled);
-        context.setAttribute("rememberMeEnabled", rememberMe);
+        boolean rememberMe = SecurityConfig.rememberMeEnabled();
+        log.info("Remember Me enabled: " + rememberMe);
+        context.setAttribute("rememberMeEnabled", String.valueOf(rememberMe));
 
-        if (!rememberMeEnabled) {
-            ProviderManager provider =
-                (ProviderManager) ctx.getBean("org.springframework.security.authenticationManager");
-            for (AuthenticationProvider authProvider : provider.getProviders()) {
-                if (authProvider instanceof RememberMeAuthenticationProvider) {
-                    provider.getProviders().remove(authProvider);
-                }
-            }
-        }
-
-        encoder = RollerPasswordEncoders.create();
-
-        String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
-
-        // for LDAP-only authentication, no daoBeanName (i.e., UserDetailsService) may be provided in security.xml.
-        if (ctx.containsBean(daoBeanName)) {
-            DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
-            provider.setPasswordEncoder(encoder);
-            // store passwords re-encoded after login (passwds.encryption.lazyUpgradeFrom)
-            provider.setUserDetailsPasswordService(
-                    ctx.getBean("rollerUserService", RollerUserDetailsService.class));
-        }
-
-        if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
-            LoginUrlAuthenticationEntryPoint entryPoint =
-                    (LoginUrlAuthenticationEntryPoint) ctx.getBean("_formLoginEntryPoint");
-            entryPoint.setForceHttps(true);
-        }
+        // the encoder SecurityConfig gave the login provider
+        encoder = ctx.getBean(PasswordEncoder.class);
     }
 
+
     /**
-     * The OIDC client registrations declared in security.xml, or null when
+     * The OIDC client registrations configured in SecurityConfig, or null when
      * OIDC is not configured.
      */
     public static RollerClientRegistrationRepository getClientRegistrationRepository() {
