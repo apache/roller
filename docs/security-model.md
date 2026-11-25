@@ -372,10 +372,9 @@ Roller does not protect against:
 - If the front page aggregates the site and custom themes are on, give Admin
   on the front-page weblog only to people you trust as global admins. Review
   that weblog's Admins and pending invitations whenever you turn aggregation
-  on or choose or change the front-page weblog. Before you remove the
-  front-page weblog, change or clear `site.frontpage.weblog.handle`;
-  otherwise a user who can create weblogs can create one with that handle and
-  become its Admin.
+  on or choose or change the front-page weblog. Deleting the front-page
+  weblog clears `site.frontpage.weblog.handle`, so a new weblog with the same
+  handle doesn't become the front page.
 - Restrict access to the server log. It holds the setup token during
   installation and upgrades.
 - Keep the database, data directories and `roller-custom.properties` private.
