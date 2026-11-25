@@ -72,6 +72,9 @@
         <named-query name="User.getCountByUserNameLike">
             <query>SELECT COUNT(u) FROM User u WHERE UPPER(u.userName) LIKE ?1</query>
         </named-query>
+        <named-query name="User.getCount">
+            <query>SELECT COUNT(u) FROM User u</query>
+        </named-query>
         <named-query name="User.getCountEnabledDistinct">
             <!--
             DISTINCT is not required for this query as no duplicate User would be retrieved
