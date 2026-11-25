@@ -180,6 +180,12 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
+
 - **The security model trusts the Admins of an aggregated front-page
   weblog.** With `site.frontpage.weblog.aggregated=true` and custom themes
   on, that weblog's templates can read the whole site through `$site` and

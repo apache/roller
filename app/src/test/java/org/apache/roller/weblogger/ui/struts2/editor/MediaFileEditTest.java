@@ -22,7 +22,9 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,7 @@ class MediaFileEditTest {
     private MediaFileManager media;
     private Weblog weblog;
     private MediaFile mediaFile;
+    private User admin;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -64,6 +67,9 @@ class MediaFileEditTest {
         factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
 
         weblog = mock(Weblog.class);
+        admin = new User();
+        admin.setUserName("admin");
+        when(weblog.hasUserPermission(admin, WeblogPermission.ADMIN)).thenReturn(true);
         MediaFileDirectory directory = mock(MediaFileDirectory.class);
         when(directory.getId()).thenReturn("dir-1");
 
@@ -90,7 +96,7 @@ class MediaFileEditTest {
     }
 
     @Test
-    void saveSetsTheOriginalPathWhenEditingIsOn() throws Exception {
+    void saveSetsTheOriginalPathForAnAdminWhenEditingIsOn() throws Exception {
         MediaFileEdit action = action(true, "/css/main.css");
 
         assertEquals(MediaFileEdit.SUCCESS, action.save());
@@ -103,6 +109,7 @@ class MediaFileEditTest {
         doAnswer(call -> call.getArgument(0)).when(action).getText(anyString(), anyList());
         doReturn(editEnabled).when(action).getBooleanProp(EDIT_ENABLED);
         action.setActionWeblog(weblog);
+        action.setAuthenticatedUser(admin);
         action.setMediaFileId("file-1");
         action.setDirectory(mediaFile.getDirectory());
 
