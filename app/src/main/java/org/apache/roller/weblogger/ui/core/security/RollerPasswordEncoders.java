@@ -19,9 +19,12 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -57,14 +60,33 @@ public final class RollerPasswordEncoders {
     }
 
     /**
-     * Whether a password is the configured external-login marker or the
-     * default one, which accounts may still have stored from before the
-     * setting changed. Neither matches at login, so neither can be chosen as a
-     * Roller password.
+     * Whether a password is the configured external-login marker, the default
+     * one, or one listed in users.passwords.externalAuthValue.previous, which
+     * accounts may still have stored from before the setting changed. None of
+     * them matches at login, so none can be chosen as a Roller password.
      */
     public static boolean isExternalLoginMarker(CharSequence password) {
-        return password != null && (externalLoginMarker().contentEquals(password)
-                || DEFAULT_EXTERNAL_LOGIN_MARKER.contentEquals(password));
+        return password != null && externalLoginMarkers().contains(password.toString());
+    }
+
+    /**
+     * The configured marker, the default one and the previous ones. The
+     * previous ones are a comma-separated list, so a marker that contains a
+     * comma can't be listed there.
+     */
+    private static Set<String> externalLoginMarkers() {
+        Set<String> markers = new LinkedHashSet<>();
+        markers.add(externalLoginMarker());
+        markers.add(DEFAULT_EXTERNAL_LOGIN_MARKER);
+        String previous = WebloggerConfig.getProperty("users.passwords.externalAuthValue.previous");
+        for (String marker : StringUtils.split(StringUtils.defaultString(previous), ',')) {
+            // an empty entry is never a marker, so an empty password isn't one
+            String trimmed = marker.trim();
+            if (!trimmed.isEmpty()) {
+                markers.add(trimmed);
+            }
+        }
+        return markers;
     }
 
     @SuppressWarnings("deprecation")
@@ -119,6 +141,11 @@ public final class RollerPasswordEncoders {
 
         log.info("Password Encryption Algorithm set to '" + algorithm + "'");
 
+        if (externalLoginMarker().contains(",")) {
+            log.warn("users.passwords.externalAuthValue contains a comma, so it can't be listed in"
+                    + " users.passwords.externalAuthValue.previous if the setting changes later.");
+        }
+
         return new ExternalLoginAware(new DelegatingPasswordEncoder(algorithm, encoders));
     }
 
@@ -126,7 +153,8 @@ public final class RollerPasswordEncoders {
      * Users who log in through LDAP or the servlet container have no Roller
      * password; Roller stores users.passwords.externalAuthValue in its place.
      * That placeholder is not a password, so it never matches, and neither do
-     * the default placeholder and an empty password.
+     * the default or a previous placeholder, a password the delegate treats as
+     * equal to one of them, and an empty password.
      */
     private record ExternalLoginAware(PasswordEncoder delegate) implements PasswordEncoder {
 
@@ -150,13 +178,50 @@ public final class RollerPasswordEncoders {
 
         @Override
         public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            // a stored marker is checked before the delegate sees it, since a
-            // marker such as {noop}secret would otherwise match its own suffix
-            if (rawPassword == null || rawPassword.length() == 0 || isExternalLoginMarker(rawPassword)
-                    || isExternalLoginMarker(encodedPassword)) {
+            // a missing or empty stored value never matches, whatever the delegate does
+            if (rawPassword == null || rawPassword.length() == 0
+                    || encodedPassword == null || encodedPassword.isEmpty()) {
                 return false;
             }
-            return delegate.matches(rawPassword, encodedPassword);
+            Set<String> markers = externalLoginMarkers();
+            // a stored marker is checked before the delegate sees it, since a
+            // marker such as {noop}secret would otherwise match its own suffix
+            if (markers.contains(encodedPassword)) {
+                return false;
+            }
+            if (markers.contains(rawPassword.toString())) {
+                logRefusal();
+                return false;
+            }
+            if (!delegate.matches(rawPassword, encodedPassword)) {
+                return false;
+            }
+            // BCrypt, for one, treats some other passwords as equal to a
+            // marker, so refuse any password whose stored value a marker
+            // matches too. BCrypt repeats its key with a NUL after each copy
+            // and reads at most 72 bytes, so only a password with a NUL, or of
+            // 72 bytes or more, can collide; the rest skip the extra hashes.
+            if (mayCollideWithAMarker(rawPassword.toString())) {
+                for (String marker : markers) {
+                    if (delegate.matches(marker, encodedPassword)) {
+                        logRefusal();
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private static boolean mayCollideWithAMarker(String rawPassword) {
+            return rawPassword.indexOf('\0') >= 0
+                    || rawPassword.getBytes(StandardCharsets.UTF_8).length >= 72;
+        }
+
+        private static void logRefusal() {
+            // the password itself is never logged
+            log.info("Refused a password that Roller treats as an external-login marker"
+                    + " (users.passwords.externalAuthValue or its .previous list). An"
+                    + " administrator can set a new password for an account that uses one.");
         }
 
         @Override

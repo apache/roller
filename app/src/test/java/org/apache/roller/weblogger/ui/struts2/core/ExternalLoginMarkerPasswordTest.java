@@ -75,15 +75,20 @@ class ExternalLoginMarkerPasswordTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        factory.close();
-        Properties config = config();
-        savedProperties.forEach((k, v) -> {
-            if (v == null) {
-                config.remove(k);
-            } else {
-                config.setProperty(k, v);
+        try {
+            if (factory != null) {
+                factory.close();
             }
-        });
+        } finally {
+            Properties config = config();
+            savedProperties.forEach((k, v) -> {
+                if (v == null) {
+                    config.remove(k);
+                } else {
+                    config.setProperty(k, v);
+                }
+            });
+        }
     }
 
     @Test
@@ -189,6 +194,42 @@ class ExternalLoginMarkerPasswordTest {
         assertEquals(UIAction.INPUT, action.save());
 
         assertTrue(action.getActionErrors().contains(RESERVED));
+        verify(users, never()).addUser(any());
+    }
+
+    @Test
+    void theFormsRejectAPreviousMarker() throws Exception {
+        setProperty("users.passwords.externalAuthValue.previous", "<older>, <old>");
+
+        Register register = withText(new Register());
+        register.getBean().setUserName("newuser");
+        register.getBean().setPasswordText("<old>");
+        register.getBean().setPasswordConfirm("<old>");
+        register.myValidate();
+        assertTrue(register.getActionErrors().contains(RESERVED));
+
+        User user = new User();
+        user.setUserName("dbuser");
+        user.setPassword("{bcrypt}existing");
+        Profile profile = withText(new Profile());
+        profile.setAuthenticatedUser(user);
+        profile.getBean().setPasswordText("<old>");
+        profile.getBean().setPasswordConfirm("<old>");
+        assertEquals(UIAction.INPUT, profile.save());
+        assertTrue(profile.getActionErrors().contains(RESERVED));
+
+        User admin = new User();
+        admin.setUserName("admin");
+        UserEdit userEdit = withText(new UserEdit());
+        userEdit.setActionName("createUser");
+        userEdit.setAuthenticatedUser(admin);
+        userEdit.myPrepare();
+        userEdit.getBean().setUserName("newuser");
+        userEdit.getBean().setPassword("<old>");
+        assertEquals(UIAction.INPUT, userEdit.save());
+        assertTrue(userEdit.getActionErrors().contains(RESERVED));
+
+        verify(users, never()).saveUser(any());
         verify(users, never()).addUser(any());
     }
 
