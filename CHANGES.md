@@ -10,16 +10,6 @@
   any file's original path. Authors still manage their own media files,
   including uploads migrated from older versions.
 
-- **Templates see only published entries when they look one up by anchor.**
-  `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
-  a weblog reached through `$site`, now returns null for draft, pending and
-  scheduled entries.
-
-- **Only global admins manage Admin on the aggregated front-page weblog.**
-  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
-  read the whole site, so granting, removing or inviting an Admin there now
-  needs a global admin. Before turning aggregation on, review who is Admin
-  on the front-page weblog.
 - **Templates see only published entries and approved comments.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
