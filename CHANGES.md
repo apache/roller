@@ -201,12 +201,6 @@
   any file's original path. Authors still manage their own media files,
   including uploads migrated from older versions.
 
-- **The security model trusts the Admins of an aggregated front-page
-  weblog.** With `site.frontpage.weblog.aggregated=true` and custom themes
-  on, that weblog's templates can read the whole site through `$site` and
-  `$planet`, so its Admins are trusted for what those templates read. Only a
-  global admin can assign them; review them before turning aggregation on
-  (`docs/security-model.md`).
 - **Templates see only published entries and approved comments.**
   `$weblog.getWeblogEntry(anchor)` in a custom template, and the same call on
   a weblog reached through `$site`, now returns null for draft, pending and
@@ -214,11 +208,14 @@
   published entries, and an entry's `getComments(...)` only approved comments,
   whatever arguments the template passes.
 
-- **Only global admins manage Admin on the aggregated front-page weblog.**
-  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
-  read the whole site, so granting, removing or inviting an Admin there now
-  needs a global admin. Before turning aggregation on, review who is Admin
-  on the front-page weblog.
+- **The Admins of an aggregated front-page weblog are trusted, and only global
+  admins manage them.** With `site.frontpage.weblog.aggregated=true` and
+  custom themes on, that weblog's templates can read the whole site through
+  `$site` and `$planet`, so the security model trusts its Admins for what
+  those templates read. While aggregation is on, only a global admin can
+  grant, invite, change or remove Admin there. Review that weblog's Admins
+  and pending invitations whenever you turn aggregation on or change the
+  front-page weblog (`docs/security-model.md`).
 
 - **The front-page weblog's other Admins can't resign, and an invitation
   offers one role.** While aggregation is on, only a global admin can remove
