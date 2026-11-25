@@ -215,8 +215,13 @@ public final class WeblogEntryWrapper {
     }
     
     
+    /**
+     * The entry's approved comments, the same as {@link #getComments()}.
+     * Templates never see pending or spam comments, so the arguments are kept
+     * only for compatibility.
+     */
     public List<WeblogEntryCommentWrapper> getComments(boolean ignoreSpam, boolean approvedOnly) {
-        return this.pojo.getComments(ignoreSpam, approvedOnly).stream()
+        return this.pojo.getComments(true, true).stream()
                 .map(comment -> WeblogEntryCommentWrapper.wrap(comment, urlStrategy))
                 .collect(Collectors.toList());
     }
