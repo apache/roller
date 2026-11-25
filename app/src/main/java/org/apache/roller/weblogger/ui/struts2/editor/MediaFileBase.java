@@ -18,6 +18,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.roller.weblogger.business.ThemeMediaFiles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +56,21 @@ public class MediaFileBase extends UIAction {
     }
 
     /**
+     * Whether the current user may replace, rename, move or delete the file.
+     * A custom theme's scripts and stylesheets can be changed only by the
+     * weblog's Admins.
+     */
+    protected boolean mayChange(MediaFile mediaFile) {
+        return ThemeMediaFiles.mayChange(getActionWeblog(), getAuthenticatedUser(), mediaFile);
+    }
+
+    /** Whether the current user may change a file's original path to the given value. */
+    protected boolean mayChangeOriginalPath(MediaFile mediaFile, String newPath) {
+        return ThemeMediaFiles.mayChangeOriginalPath(getActionWeblog(), getAuthenticatedUser(),
+                mediaFile.getOriginalPath(), newPath);
+    }
+
+    /**
      * Deletes media file
      */
     protected void doDeleteMediaFile() {
@@ -66,6 +82,10 @@ public class MediaFileBase extends UIAction {
             MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), this.mediaFileId);
             if (mediaFile == null) {
                 addError("mediaFile.delete.error", this.mediaFileId);
+                return;
+            }
+            if (!mayChange(mediaFile)) {
+                addError("mediaFile.themeFileAdminOnly", mediaFile.getName());
                 return;
             }
             manager.removeMediaFile(getActionWeblog(), mediaFile);
@@ -119,6 +139,13 @@ public class MediaFileBase extends UIAction {
                 log.debug("Processing delete of " + fileIds.length
                         + " media files.");
                 for (String fileId : fileIds) {
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
+                    if (mediaFile != null && !mayChange(mediaFile)) {
+                        addError("mediaFile.themeFileAdminOnly", mediaFile.getName());
+                        return;
+                    }
+                }
+                for (String fileId : fileIds) {
                     log.debug("Deleting media file - " + fileId);
                     MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
                     if (mediaFile != null) {
@@ -168,6 +195,10 @@ public class MediaFileBase extends UIAction {
                     MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
                     if (mediaFile == null) {
                         addError("mediaFile.move.errors");
+                        return;
+                    }
+                    if (!mayChange(mediaFile)) {
+                        addError("mediaFile.themeFileAdminOnly", mediaFile.getName());
                         return;
                     }
                     filesToMove.add(mediaFile);

@@ -119,6 +119,18 @@ public class Members extends UIAction implements ParametersAware {
                 addError("memberPermissions.oneAdminRequired");
                 error = true;
             }
+            if (!error && isAdminMembershipLocked()) {
+                for (WeblogPermission perms : permsList) {
+                    String sval = getParameter("perm-" + perms.getUser().getId());
+                    if (sval != null && !perms.hasAction(sval)
+                            && (perms.hasAction(WeblogPermission.ADMIN)
+                                || Utilities.stringToStringList(sval, ",").contains(WeblogPermission.ADMIN))) {
+                        addError("memberPermissions.frontPageAdminsGlobalOnly");
+                        error = true;
+                        break;
+                    }
+                }
+            }
             // one iteration for each line (user) in the members table
             for (WeblogPermission perms : permsList) {
 

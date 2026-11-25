@@ -17,6 +17,7 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
+import org.apache.roller.weblogger.business.ThemeMediaFiles;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -427,6 +428,9 @@ public class MediaCollection {
             MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
             Weblog website = wmgr.getWeblogByHandle(handle);
+            if (website == null) {
+                throw new AtomNotFoundException("Cannot find weblog: " + handle);
+            }
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
@@ -440,6 +444,9 @@ public class MediaCollection {
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
                     if (mf == null) {
                         throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+                    if (!ThemeMediaFiles.mayChange(website, user, mf)) {
+                        throw new AtomNotAuthorizedException("Not authorized to change theme file: " + path);
                     }
 
                     tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
@@ -509,6 +516,9 @@ public class MediaCollection {
                     MediaFile mf = fmgr.getMediaFileByPath(website, fileName);
                     if (mf == null) {
                         throw new AtomNotFoundException("Cannot find media file: " + fileName);
+                    }
+                    if (!ThemeMediaFiles.mayChange(website, user, mf)) {
+                        throw new AtomNotAuthorizedException("Not authorized to change theme file: " + fileName);
                     }
                     fmgr.removeMediaFile(website, mf);
                     log.debug("Deleted media entry: " + fileName);
