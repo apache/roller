@@ -17,512 +17,317 @@
  * under the License.
  */
 
-/**
- Copyright (c) 2009 Open Lab, http://www.open-lab.com/
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
-
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package org.apache.roller.weblogger.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.regex.Matcher;
+import java.util.Locale;
 import java.util.regex.Pattern;
-import org.apache.commons.validator.routines.UrlValidator;
+
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Safelist;
 
-public class HTMLSanitizer {
-    public static Boolean xssEnabled = WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
+/**
+ * Cleans HTML written by weblog users when weblog admins aren't trusted
+ * (weblogAdminsUntrusted=true), using jsoup's Cleaner. Formatting, list,
+ * heading, table and image markup is kept; scripts, style sheets, forms,
+ * frames, plugins, event handlers and other attributes are removed, keeping
+ * the text inside removed tags. Quotes in text are encoded, so that cleaned
+ * text is also safe inside an attribute value.
+ */
+public final class HTMLSanitizer {
 
-    public static Pattern forbiddenTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
-    public static Pattern allowedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"
-            + "sub|sup|pre|del|code|blockquote|kbd|br|hr|area|map|object|embed|param|link|form|small|big)$");
-    // <!--.........>
-    private static final Pattern commentPattern = Pattern.compile("<!--.*");
-    // <tag ....props.....>
-    private static final Pattern tagStartPattern = Pattern.compile("<(?i)(\\w+\\b)\\s*(.*)/?>$");
-    // </tag .........>
-    private static final Pattern tagClosePattern = Pattern.compile("</(?i)(\\w+\\b)\\s*>$");
-    private static final Pattern standAloneTags = Pattern.compile("^(img|br|hr)$");
-    private static final Pattern selfClosed = Pattern.compile("<.+/>");
-    // prop="...."
-    private static final Pattern attributesPattern = Pattern.compile("(\\w*)\\s*=\\s*\"([^\"]*)\"");
-    // color:red;
-    private static final Pattern stylePattern = Pattern.compile("([^\\s^:]+)\\s*:\\s*([^;]+);?");
-    // url('....')"
-    private static final Pattern urlStylePattern = Pattern.compile("(?i).*\\b\\s*url\\s*\\(['\"]([^)]*)['\"]\\)");
-    // expression(....)"   thanks to Ben Summer
-    private static final Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");
+    public static final Boolean xssEnabled =
+            WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
 
-    /**
-     * This method should be used to test input.
-     *
-     * @param html
-     * @return true if the input is "valid"
-     */
-    public static boolean isSanitized(String html) {
-        return sanitizer(html).isValid;
+    private static final Cleaner CLEANER = new Cleaner(new WeblogSafelist());
+
+    // script in a style value
+    private static final Pattern FORBIDDEN_STYLE =
+            Pattern.compile("(?:expression|eval|javascript)\\s*\\(");
+
+    private HTMLSanitizer() {
     }
 
     /**
-     * Used to clean every html before to output it in any html page
+     * Cleans HTML before it's shown on a page.
      *
-     * @param html
-     * @return sanitized html
+     * @param html the HTML to clean
+     * @return the cleaned HTML, or null if html is null
      */
     public static String sanitize(String html) {
-        return sanitizer(html).html;
+        return sanitize(html, false);
     }
 
-    public static String conditionallySanitize(String ret) {
-        // if XSS is enabled then sanitize HTML
-        if (xssEnabled && ret != null) {
-            ret = HTMLSanitizer.sanitize(ret);
+    /**
+     * Cleans a value that's stored as plain text, such as a name or an e-mail
+     * address. Tags and quotes are treated as in {@link #sanitize(String)},
+     * but an ampersand in the text stays an ampersand and isn't read as the
+     * start of an entity.
+     *
+     * @param text the text to clean
+     * @return the cleaned text, or null if text is null
+     */
+    public static String sanitizeText(String text) {
+        return sanitize(text, true);
+    }
+
+    /** Cleans the HTML if weblog admins aren't trusted, and returns it as is otherwise. */
+    public static String conditionallySanitize(String html) {
+        if (xssEnabled && html != null) {
+            return sanitize(html);
         }
-        return ret;
+        return html;
     }
 
     /**
-     * Used to get the text, tags removed or encoded
-     *
-     * @param html
-     * @return sanitized text
+     * Cleans the plain text if weblog admins aren't trusted, and returns it as
+     * is otherwise.
      */
-    public static String getText(String html) {
-        return sanitizer(html).text;
+    public static String conditionallySanitizeText(String text) {
+        if (xssEnabled && text != null) {
+            return sanitizeText(text);
+        }
+        return text;
+    }
+
+    private static String sanitize(String html, boolean plainText) {
+        if (html == null) {
+            return null;
+        }
+        String text = encodeUnclosedTags(html);
+        Document clean = CLEANER.clean(
+                Jsoup.parseBodyFragment(plainText ? encodeAmpersands(text) : text, ""));
+        for (Element el : clean.select("[style]")) {
+            String style = safeStyle(el.attr("style"));
+            if (style.isEmpty()) {
+                el.removeAttr("style");
+            } else {
+                el.attr("style", style);
+            }
+        }
+        clean.outputSettings().prettyPrint(false);
+        return encodeText(clean.body().html(), plainText);
     }
 
     /**
-     * This is the main method of sanitizing. It will be used both for validation and cleaning
-     *
-     * @param html
-     * @return a SanitizeResult object
+     * Encodes each "&lt;" after the last "&gt;", since no tag it starts can
+     * end, so that the parser reads the rest as text, such as "x&lt;y", and
+     * doesn't drop it as an unfinished tag.
      */
-    public static SanitizeResult sanitizer(String html) {
-        return sanitizer(html, allowedTags, forbiddenTags);
+    private static String encodeUnclosedTags(String html) {
+        int lt = html.indexOf('<', html.lastIndexOf('>') + 1);
+        if (lt < 0) {
+            return html;
+        }
+        return html.substring(0, lt) + html.substring(lt).replace("<", "&lt;");
     }
 
-    public static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags) {
-        SanitizeResult ret = new SanitizeResult();
-        Stack<String> openTags = new Stack<>();
-
-
-        List<String> tokens = tokenize(html);
-
-        // -------------------   LOOP for every token --------------------------
-        for (String token : tokens) {
-            boolean isAcceptedToken = false;
-
-            Matcher startMatcher = tagStartPattern.matcher(token);
-            Matcher endMatcher = tagClosePattern.matcher(token);
-
-
-            //--------------------------------------------------------------------------------  COMMENT    <!-- ......... -->
-            if (commentPattern.matcher(token).find()) {
-                ret.val = ret.val + token + (token.endsWith("-->") ? "" : "-->");
-                ret.invalidTags.add(token + (token.endsWith("-->") ? "" : "-->"));
+    /**
+     * Encodes the ampersands outside of tags, so that the parser reads text
+     * such as "&amp;region" as it was typed and not as an entity.
+     */
+    private static String encodeAmpersands(String html) {
+        if (html.indexOf('&') < 0) {
+            return html;
+        }
+        StringBuilder sb = new StringBuilder(html.length() + 16);
+        boolean inTag = false;
+        for (int i = 0; i < html.length(); i++) {
+            char c = html.charAt(i);
+            if (inTag) {
+                inTag = c != '>';
+            } else if (c == '<' && i + 1 < html.length()
+                    && (Character.isLetter(html.charAt(i + 1)) || "/!?".indexOf(html.charAt(i + 1)) >= 0)) {
+                inTag = true;
+            } else if (c == '&') {
+                sb.append("&amp;");
                 continue;
-
-
-                //--------------------------------------------------------------------------------  OPEN TAG    <tag .........>
-            } else if (startMatcher.find()) {
-
-                //tag name extraction
-                String tag = startMatcher.group(1).toLowerCase();
-
-
-                //-----------------------------------------------------  FORBIDDEN TAG   <script .........>
-                if (forbiddenTags.matcher(tag).find()) {
-                    ret.invalidTags.add("<" + tag + ">");
-                    continue;
-
-
-                    // --------------------------------------------------  WELL KNOWN TAG
-                } else if (allowedTags.matcher(tag).find()) {
-
-
-                    String cleanToken = "<" + tag;
-                    String tokenBody = startMatcher.group(2);
-
-
-                    //first test table consistency
-                    //table tbody tfoot thead th tr td
-                    if ("thead".equals(tag) || "tbody".equals(tag) || "tfoot".equals(tag) || "tr".equals(tag)) {
-                        if (openTags.search("table") < 1) {
-                            ret.invalidTags.add("<" + tag + ">");
-                            continue;
-                        }
-                    } else if (("td".equals(tag) || "th".equals(tag)) && openTags.search("tr") < 1) {
-                        ret.invalidTags.add("<" + tag + ">");
-                        continue;
-                    }
-
-
-                    // then test properties
-                    Matcher attributes = attributesPattern.matcher(tokenBody);
-
-                    // URL flag
-                    boolean foundURL = false;
-                    while (attributes.find()) {
-
-                        String attr = attributes.group(1).toLowerCase();
-                        String val = attributes.group(2);
-
-                        // we will accept href in case of <A>
-                        // <a href="......">
-                        if ("a".equals(tag) && "href".equals(attr)) {
-                            String[] customSchemes = {"http", "https"};
-                            if (new UrlValidator(customSchemes).isValid(val)) {
-                                foundURL = true;
-                            } else {
-                                // may be it is a mailto?
-                                // case <a href="mailto:pippo@pippo.com?subject=...."
-                                if (val.toLowerCase().startsWith("mailto:") && val.indexOf('@') >= 0) {
-                                    String val1 = "http://www." + val.substring(val.indexOf('@') + 1);
-                                    if (new UrlValidator(customSchemes).isValid(val1)) {
-                                        foundURL = true;
-                                    } else {
-                                        ret.invalidTags.add(attr + " " + val);
-                                        val = "";
-                                    }
-                                } else {
-                                    ret.invalidTags.add(attr + " " + val);
-                                    val = "";
-                                }
-                            }
-
-                        } else if (tag.matches("img|embed") && "src".equals(attr)) {
-                            // <img src="......">
-                            String[] customSchemes = {"http", "https"};
-                            if (new UrlValidator(customSchemes).isValid(val)
-                                    || ("img".equals(tag) && InlineImageData.parse(val) != null)) {
-                                foundURL = true;
-                            } else {
-                                ret.invalidTags.add(attr + " " + val);
-                                val = "";
-                            }
-                        } else if ("href".equals(attr) || "src".equals(attr)) {
-                            // <tag src/href="......">   skipped
-                            ret.invalidTags.add(tag + " " + attr + " " + val);
-                            continue;
-                        } else if (attr.matches("width|height")) {
-                            // <tag width/height="......">
-                            if (!val.toLowerCase().matches("\\d+%|\\d+$")) {
-                                // test numeric values
-                                ret.invalidTags.add(tag + " " + attr + " " + val);
-                                continue;
-                            }
-
-                        } else if ("style".equals(attr)) {
-                            // <tag style="......">
-                            // then test properties
-                            Matcher styles = stylePattern.matcher(val);
-                            String cleanStyle = "";
-
-                            while (styles.find()) {
-                                String styleName = styles.group(1).toLowerCase();
-                                String styleValue = styles.group(2);
-
-                                // suppress invalid styles values
-                                if (forbiddenStylePattern.matcher(styleValue).find()) {
-                                    ret.invalidTags.add(tag + " " + attr + " " + styleValue);
-                                    continue;
-                                }
-
-                                // check if valid url
-                                Matcher urlStyleMatcher = urlStylePattern.matcher(styleValue);
-                                if (urlStyleMatcher.find()) {
-                                    String[] customSchemes = {"http", "https"};
-                                    String url = urlStyleMatcher.group(1);
-                                    if (!new UrlValidator(customSchemes).isValid(url)) {
-                                        ret.invalidTags.add(tag + " " + attr + " " + styleValue);
-                                        continue;
-                                    }
-                                }
-
-                                cleanStyle = cleanStyle + styleName + ":" + encode(styleValue) + ";";
-
-                            }
-                            val = cleanStyle;
-
-                        } else if (attr.startsWith("on")) {
-                            // skip all javascript events
-                            ret.invalidTags.add(tag + " " + attr + " " + val);
-                            continue;
-
-                        } else {
-                            // by default encode all properties
-                            val = encode(val);
-                        }
-
-                        cleanToken = cleanToken + " " + attr + "=\"" + val + "\"";
-                    }
-                    cleanToken = cleanToken + ">";
-
-                    isAcceptedToken = true;
-
-                    // for <img> and <a>
-                    if (tag.matches("a|img|embed") && !foundURL) {
-                        isAcceptedToken = false;
-                        cleanToken = "";
-                    }
-
-                    token = cleanToken;
-
-
-                    // push the tag if require closure and it is accepted (otherwise is encoded)
-                    if (isAcceptedToken && !(standAloneTags.matcher(tag).find() || selfClosed.matcher(tag).find())) {
-                        openTags.push(tag);
-                    }
-
-                    // --------------------------------------------------------------------------------  UNKNOWN TAG
-                } else {
-                    ret.invalidTags.add(token);
-                    ret.val = ret.val + token;
-                    continue;
-
-
-                }
-
-                // --------------------------------------------------------------------------------  CLOSE TAG </tag>
-            } else if (endMatcher.find()) {
-                String tag = endMatcher.group(1).toLowerCase();
-
-                //is self closing
-                if (selfClosed.matcher(tag).find()) {
-                    ret.invalidTags.add(token);
-                    continue;
-                }
-                if (forbiddenTags.matcher(tag).find()) {
-                    ret.invalidTags.add("/" + tag);
-                    continue;
-                }
-                if (!allowedTags.matcher(tag).find()) {
-                    ret.invalidTags.add(token);
-                    ret.val = ret.val + token;
-                    continue;
-                } else {
-
-
-                    String cleanToken = "";
-
-                    // check tag position in the stack
-                    int pos = openTags.search(tag);
-                    // if found on top ok
-                    for (int i = 1; i <= pos; i++) {
-                        //pop all elements before tag and close it
-                        String poppedTag = openTags.pop();
-                        cleanToken = cleanToken + "</" + poppedTag + ">";
-                        isAcceptedToken = true;
-                    }
-
-                    token = cleanToken;
-                }
-
             }
-
-            ret.val = ret.val + token;
-
-            if (isAcceptedToken) {
-                ret.html = ret.html + token;
-                //ret.text = ret.text + " ";
-            } else {
-                String sanToken = htmlEncodeApexesAndTags(token);
-                ret.html = ret.html + sanToken;
-                ret.text = ret.text + htmlEncodeApexesAndTags(removeLineFeed(token));
-            }
-
-
+            sb.append(c);
         }
-
-        // must close remaining tags
-        while (!openTags.isEmpty()) {
-            //pop all elements before tag and close it
-            String poppedTag = openTags.pop();
-            ret.html = ret.html + "</" + poppedTag + ">";
-            ret.val = ret.val + "</" + poppedTag + ">";
-        }
-
-        //set boolean value
-        ret.isValid = ret.invalidTags.isEmpty();
-
-        return ret;
+        return sb.toString();
     }
 
     /**
-     * Splits html tag and tag content <......>.
-     *
-     * @param html
-     * @return a list of token
+     * Encodes the quotes in the text of HTML written by jsoup, which always
+     * puts attribute values in double quotes and encodes angle brackets in
+     * text. For plain text, also turns encoded ampersands in the text back
+     * into ampersands. Tags and attribute values are left as they are.
      */
-    private static List<String> tokenize(String html) {
-        List<String> tokens = new ArrayList<>();
-        int pos = 0;
-        StringBuilder token = new StringBuilder();
-        int len = html.length();
-        while (pos < len) {
-            char c = html.charAt(pos);
-
-            String ahead = html.substring(pos, pos > len - 4 ? len : pos + 4);
-
-            //a comment is starting
-            if ("<!--".equals(ahead)) {
-                //store the current token
-                if (token.length() > 0) {
-                    tokens.add(token.toString());
-                }
-
-                //clear the token
-                token.setLength(0);
-
-                // search the end of <......>
-                int end = moveToMarkerEnd(pos, "-->", html);
-                tokens.add(html.substring(pos, end));
-                pos = end;
-
-
-                // a new "<" token is starting
-            } else if ('<' == c) {
-
-                //store the current token
-                if (token.length() > 0) {
-                    tokens.add(token.toString());
-                }
-
-                //clear the token
-                token.setLength(0);
-
-                // serch the end of <......>
-                int end = moveToMarkerEnd(pos, ">", html);
-                tokens.add(html.substring(pos, end));
-                pos = end;
-
-            } else {
-                token.append(c);
-                pos++;
+    private static String encodeText(String html, boolean plainText) {
+        StringBuilder sb = new StringBuilder(html.length() + 16);
+        boolean inTag = false;
+        boolean inValue = false;
+        for (int i = 0; i < html.length(); i++) {
+            char c = html.charAt(i);
+            if (inValue) {
+                inValue = c != '"';
+            } else if (inTag) {
+                inValue = c == '"';
+                inTag = c != '>';
+            } else if (c == '<') {
+                inTag = true;
+            } else if (c == '"') {
+                sb.append("&quot;");
+                continue;
+            } else if (c == '\'') {
+                sb.append("&#39;");
+                continue;
+            } else if (plainText && html.startsWith("&amp;", i)) {
+                sb.append('&');
+                i += "&amp;".length() - 1;
+                continue;
             }
-
+            sb.append(c);
         }
-
-        //store the last token
-        if (token.length() > 0) {
-            tokens.add(token.toString());
-        }
-
-        return tokens;
+        return sb.toString();
     }
 
-    private static int moveToMarkerEnd(int pos, String marker, String s) {
-        int i = s.indexOf(marker, pos);
-        if (i > -1) {
-            pos = i + marker.length();
-        } else {
-            pos = s.length();
+    /** The declarations of a style that can't run script, joined again. */
+    private static String safeStyle(String style) {
+        StringBuilder sb = new StringBuilder();
+        for (String declaration : style.split(";")) {
+            String d = declaration.trim();
+            if (isSafeDeclaration(d)) {
+                if (sb.length() > 0) {
+                    sb.append("; ");
+                }
+                sb.append(d);
+            }
         }
-        return pos;
+        return sb.toString();
     }
 
     /**
-     * Contains the sanitizing results.
-     * html is the sanitized html encoded  ready to be printed. Unaccepted tag are encode, text inside tag is always encoded    MUST BE USED WHEN PRINTING HTML
-     * text is the text inside valid tags. Contains invalid tags encoded                                                        SHOULD BE USED TO PRINT EXCERPTS
-     * val  is the html source cleaned from unaccepted tags. It is not encoded:                                                 SHOULD BE USED IN SAVE ACTIONS
-     * isValid is true when every tag is accepted without forcing encoding
-     * invalidTags is the list of encoded-killed tags
+     * A "name: value" style declaration that can't run script: no
+     * expression(), eval() or javascript, no behaviors or bindings, no url()
+     * other than an http or https one, no image-set(), and no escapes or
+     * comments that could hide any of those.
      */
-    static class SanitizeResult {
-
-        public String html = "";
-        public String text = "";
-        public String val = "";
-        public boolean isValid = true;
-        public List<String> invalidTags = new ArrayList<>();
-    }
-
-    public static String encode(String s) {
-        return convertLineFeedToBR(htmlEncodeApexesAndTags(s == null ? "" : s));
-    }
-
-    public static final String htmlEncodeApexesAndTags(String source) {
-        return htmlEncodeTag(htmlEncodeApexes(source));
-    }
-
-    public static final String htmlEncodeApexes(String source) {
-        if (source != null) {
-            return replaceAllNoRegex(source, new String[]{"\"", "'"}, new String[]{"&quot;", "&#39;"});
-        } else {
-            return null;
+    private static boolean isSafeDeclaration(String declaration) {
+        String d = declaration.toLowerCase(Locale.ROOT);
+        int colon = d.indexOf(':');
+        if (colon < 1 || d.contains("\\") || d.contains("/*")) {
+            return false;
         }
-    }
-
-    public static final String htmlEncodeTag(String source) {
-        if (source != null) {
-            return replaceAllNoRegex(source, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
-        } else {
-            return null;
-        }
-    }
-
-    public static String convertLineFeedToBR(String text) {
-        if (text != null) {
-            return replaceAllNoRegex(text, new String[]{"\n", "\f", "\r"}, new String[]{"<br>", "<br>", " "});
-        } else {
-            return null;
-        }
-    }
-
-    public static String removeLineFeed(String text) {
-
-        if (text != null) {
-            return replaceAllNoRegex(text, new String[]{"\n", "\f", "\r"}, new String[]{" ", " ", " "});
-        } else {
-            return null;
-        }
-    }
-
-    public static final String replaceAllNoRegex(String source, String searches[], String replaces[]) {
-        int k;
-        String tmp = source;
-        for (k = 0; k < searches.length; k++) {
-            tmp = replaceAllNoRegex(tmp, searches[k], replaces[k]);
-        }
-        return tmp;
-    }
-
-    public static final String replaceAllNoRegex(String source, String search, String replace) {
-        StringBuilder buffer = new StringBuilder();
-        if (source != null) {
-            if (search.length() == 0) {
-                return source;
-            }
-            int oldPos, pos;
-            for (oldPos = 0, pos = source.indexOf(search, oldPos); pos != -1; oldPos = pos + search.length(),
-                    pos = source.indexOf(search, oldPos)) {
-                buffer.append(source.substring(oldPos, pos));
-                buffer.append(replace);
-            }
-            if (oldPos < source.length()) {
-                buffer.append(source.substring(oldPos));
+        String name = d.substring(0, colon).trim();
+        String value = d.substring(colon + 1).trim();
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '-' || c == '_')) {
+                return false;
             }
         }
-        return new String(buffer);
+        if (name.isEmpty() || value.isEmpty() || name.equals("behavior")
+                || name.equals("-ms-behavior") || name.equals("-moz-binding")
+                || value.contains("javascript:") || value.contains("image-set(")
+                || FORBIDDEN_STYLE.matcher(value).find()) {
+            return false;
+        }
+        for (int i = value.indexOf("url"); i >= 0; i = value.indexOf("url", i + 1)) {
+            int open = skipSpaces(value, i + "url".length());
+            if (open < value.length() && value.charAt(open) == '(' && !isHttpUrl(value, open + 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Whether the url( that was opened just before start holds an http or
+     * https URL, in quotes or not, and is closed after it.
+     */
+    private static boolean isHttpUrl(String value, int start) {
+        int i = skipSpaces(value, start);
+        char quote = 0;
+        if (i < value.length() && (value.charAt(i) == '"' || value.charAt(i) == '\'')) {
+            quote = value.charAt(i++);
+        }
+        if (!value.startsWith("http://", i) && !value.startsWith("https://", i)) {
+            return false;
+        }
+        while (i < value.length() && " \t\n\r\f\"'()<>".indexOf(value.charAt(i)) < 0) {
+            i++;
+        }
+        if (quote != 0) {
+            if (i >= value.length() || value.charAt(i) != quote) {
+                return false;
+            }
+            i++;
+        }
+        i = skipSpaces(value, i);
+        return i < value.length() && value.charAt(i) == ')';
+    }
+
+    private static int skipSpaces(String value, int start) {
+        int i = start;
+        while (i < value.length() && Character.isWhitespace(value.charAt(i))) {
+            i++;
+        }
+        return i;
+    }
+
+    /** The markup weblog users may write when weblog admins aren't trusted. */
+    private static final class WeblogSafelist extends Safelist {
+
+        WeblogSafelist() {
+            addTags("a", "area", "b", "big", "blockquote", "br", "code", "dd", "del", "div",
+                    "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img",
+                    "kbd", "li", "map", "ol", "p", "param", "pre", "s", "small", "span",
+                    "strike", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th",
+                    "thead", "tr", "ul");
+            addAttributes(":all", "align", "class", "dir", "id", "lang", "style", "title");
+            addAttributes("a", "href", "name", "rel", "target");
+            addAttributes("area", "alt", "coords", "shape");
+            addAttributes("img", "alt", "border", "height", "src", "usemap", "width");
+            addAttributes("li", "type", "value");
+            addAttributes("map", "name");
+            addAttributes("ol", "start", "type");
+            addAttributes("param", "name", "value");
+            addAttributes("table", "border", "cellpadding", "cellspacing", "summary", "width");
+            addAttributes("td", "colspan", "height", "nowrap", "rowspan", "scope", "valign",
+                    "width");
+            addAttributes("th", "colspan", "height", "nowrap", "rowspan", "scope", "valign",
+                    "width");
+            addAttributes("ul", "type");
+            addProtocols("a", "href", "http", "https", "mailto");
+            addProtocols("img", "src", "http", "https");
+        }
+
+        @Override
+        public boolean isSafeAttribute(String tagName, Element el, Attribute attr) {
+            String name = attr.getKey().toLowerCase(Locale.ROOT);
+            String value = attr.getValue();
+            // an image may also carry image data that InlineImageData accepts
+            if ("img".equals(tagName) && "src".equals(name)
+                    && InlineImageData.parse(value) != null) {
+                return true;
+            }
+            if (!super.isSafeAttribute(tagName, el, attr)) {
+                return false;
+            }
+            if ("width".equals(name) || "height".equals(name)) {
+                return isDimension(value);
+            }
+            return true;
+        }
+
+        /** A number of pixels or a percentage, in ASCII digits. */
+        private static boolean isDimension(String value) {
+            String v = value.endsWith("%") ? value.substring(0, value.length() - 1) : value;
+            if (v.isEmpty() || v.length() > 6) {
+                return false;
+            }
+            for (int i = 0; i < v.length(); i++) {
+                if (v.charAt(i) < '0' || v.charAt(i) > '9') {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

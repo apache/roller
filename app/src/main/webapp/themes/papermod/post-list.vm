@@ -27,7 +27,7 @@
   </div>
   #end
   <footer class="entry-footer">#includeTemplate($model.weblog "_post_meta")</footer>
-  <a class="entry-link" aria-label="post link to $utils.escapeHTML($utils.removeHTML($entry.title))" href="$url.entry($entry.anchor)"></a>
+  <a class="entry-link" aria-label="post link to $utils.escapeHTML($utils.unescapeHTML($utils.removeHTML($entry.title)))" href="$url.entry($entry.anchor)"></a>
 </article>
 #end
 #end

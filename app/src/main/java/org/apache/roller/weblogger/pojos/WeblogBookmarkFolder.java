@@ -134,7 +134,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }
     
     public void setName(String name) {
-        this.name = HTMLSanitizer.conditionallySanitize(name);
+        this.name = HTMLSanitizer.conditionallySanitizeText(name);
     }
     
     /**

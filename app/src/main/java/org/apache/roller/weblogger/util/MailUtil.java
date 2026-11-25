@@ -366,7 +366,7 @@ public class MailUtil {
 
         // Don't escape the content if email will be sent as plain text
         msg.append((isPlainText) ? commentObject.getContent()
-        : Utilities.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
+        : Utilities.sanitizeToHTMLSubset(commentObject.getContent()));
         
         // links are left out while the site's absolute URL is unset
         boolean linkToSite = canLinkToSite();

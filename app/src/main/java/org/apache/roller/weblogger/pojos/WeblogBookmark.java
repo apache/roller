@@ -96,7 +96,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setName(String name) {
-        this.name =  HTMLSanitizer.conditionallySanitize(name);
+        this.name =  HTMLSanitizer.conditionallySanitizeText(name);
     }
     
     /**
@@ -107,7 +107,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setDescription(String description) {
-        this.description =  HTMLSanitizer.conditionallySanitize(description);
+        this.description =  HTMLSanitizer.conditionallySanitizeText(description);
     }
     
     /**

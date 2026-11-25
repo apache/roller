@@ -40,20 +40,61 @@ class UserWrapperTest {
         return user;
     }
 
+    /** Runs the check with weblogAdminsUntrusted set to the given value. */
+    private static void withUntrustedAdmins(boolean untrusted, Runnable check) {
+        try (MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+            config.when(() -> WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted")).thenReturn(untrusted);
+            check.run();
+        }
+    }
+
+    private static void assertNames(String expected, String stored) {
+        UserWrapper wrapper = UserWrapper.wrap(user(stored));
+        assertEquals(expected, wrapper.getScreenName());
+        assertEquals(expected, wrapper.getFullName());
+    }
+
     /** Themes print screen and full names straight into HTML. */
     @Test
     void namesAreHtmlEscaped() {
         // stored as typed (trusted admins)
-        UserWrapper wrapper = UserWrapper.wrap(user("<script>alert(1)</script> & \"Tom\""));
-        String expected = "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot;";
-        assertEquals(expected, wrapper.getScreenName());
-        assertEquals(expected, wrapper.getFullName());
+        withUntrustedAdmins(false, () -> assertNames(
+                "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot; O&#39;Brien",
+                "<script>alert(1)</script> & \"Tom\" O'Brien"));
 
-        // already encoded by the sanitizer (untrusted admins): encoded once, not twice
-        wrapper = UserWrapper.wrap(user("Tom &amp; &quot;Jerry&quot; &lt;b&gt;"));
-        expected = "Tom &amp; &quot;Jerry&quot; &lt;b&gt;";
-        assertEquals(expected, wrapper.getScreenName());
-        assertEquals(expected, wrapper.getFullName());
+        // stored with the angle brackets and quotes the sanitizer encodes
+        // (untrusted admins): encoded once, not twice
+        withUntrustedAdmins(true, () -> assertNames(
+                "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O&#39;Brien",
+                "Tom & &quot;Jerry&quot; &lt;b&gt; O&#39;Brien"));
+
+        // a non-breaking space, which jsoup writes as &nbsp;: escaped once
+        withUntrustedAdmins(true, () -> assertNames("Tom&nbsp;Jerry", "Tom&nbsp;Jerry"));
+    }
+
+    /**
+     * Neither setting stores an ampersand encoded, so an entity in a stored
+     * name was typed that way and is shown as typed.
+     */
+    @Test
+    void typedEntitiesAreShownAsTyped() {
+        for (boolean untrusted : new boolean[] {false, true}) {
+            withUntrustedAdmins(untrusted, () -> {
+                assertNames("Tom &amp;amp; Jerry", "Tom &amp; Jerry");
+                assertNames("&amp;eacute; &amp;#169;", "&eacute; &#169;");
+            });
+        }
+    }
+
+    /**
+     * A name saved while weblog admins were untrusted keeps its encoded
+     * quotes and angle brackets after the setting is turned off, and is
+     * still shown as it was typed.
+     */
+    @Test
+    void namesSavedWhileUntrustedAreShownAsTyped() {
+        withUntrustedAdmins(false, () -> assertNames(
+                "O&#39;Brien &quot;Tom&quot; &lt;3", "O&#39;Brien &quot;Tom&quot; &lt;3"));
     }
 
     @Test
