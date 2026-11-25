@@ -10,12 +10,6 @@
   scheduled entries. A category's `retrieveWeblogEntries(...)` returns only
   published entries, and an entry's `getComments(...)` only approved comments,
   whatever arguments the template passes.
-- **Only global admins manage Admin on the aggregated front-page weblog.**
-  With `site.frontpage.weblog.aggregated=true`, that weblog's templates can
-  read the whole site, so granting, removing or inviting an Admin there now
-  needs a global admin. Before turning aggregation on, review who is Admin
-  on the front-page weblog.
-  scheduled entries.
 - **The Admins of an aggregated front-page weblog are trusted, and only global
   admins manage them.** With `site.frontpage.weblog.aggregated=true` and
   custom themes on, that weblog's templates can read the whole site through
