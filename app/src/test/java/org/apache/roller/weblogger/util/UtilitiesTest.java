@@ -53,7 +53,7 @@ public class UtilitiesTest  {
     @Test
     public void testHtmlSubsetLinkSubset() {
         assertEquals("<a>file</a>", htmlSubset("<a href=\"ftp://example.com/file\">file</a>"));
-        assertEquals("<a>local</a>", htmlSubset("<a href=\"../page\">local</a>"));
+        assertEquals("<a href=\"../page\">local</a>", htmlSubset("<a href=\"../page\">local</a>"));
         // other attributes are removed, and the link stays
         assertEquals("<a href=\"https://example.com/\">site</a>",
                 htmlSubset("<a href=\"https://example.com/\" title=\"site\">site</a>"));
@@ -124,9 +124,10 @@ public class UtilitiesTest  {
 
     @Test
     public void testHtmlSubsetNeutralizesActiveContent() {
-        // tags outside the subset are shown as text
-        assertEquals("<b>Hi</b>&lt;img src=x onerror=alert(1)&gt;",
-                htmlSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
+        // common inline tags are removed, with their attributes
+        assertEquals("<b>Hi</b>", htmlSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
+        assertEquals("x", htmlSubset("<span style=\"x\" onclick=\"alert(1)\">x</span>"));
+        // other tags outside the subset are shown as text
         assertEquals("&lt;script&gt;alert(1)&lt;/script&gt;", htmlSubset("<script>alert(1)</script>"));
         assertEquals("&lt;SCRIPT src=//example.com/x.js&gt;&lt;/SCRIPT&gt;",
                 htmlSubset("<SCRIPT src=//example.com/x.js></SCRIPT>"));
@@ -156,10 +157,18 @@ public class UtilitiesTest  {
         assertEquals("<a href=\"https://example.com/&quot; onclick=&quot;alert(1)\">x</a>",
                 htmlSubset("<a href='https://example.com/\" onclick=\"alert(1)'>x</a>"));
 
-        // the other tags take no attributes, so with one they are text
-        assertEquals("&lt;b onmouseover=\"alert(1)\"&gt;x", htmlSubset("<b onmouseover=\"alert(1)\">x</b>"));
-        assertEquals("&lt;p style=\"background:url(javascript:alert(1))\"&gt;x",
-                htmlSubset("<p style=\"background:url(javascript:alert(1))\">x"));
+        // the other tags keep no attributes
+        assertEquals("<b>x</b>", htmlSubset("<b onmouseover=\"alert(1)\">x</b>"));
+        assertEquals("<p>x</p>", htmlSubset("<p style=\"background:url(javascript:alert(1))\">x"));
+
+        // a relative link keeps its address only when no scheme can be read
+        // from it, as a browser would
+        assertEquals("<a>x</a>", htmlSubset("<a href=\" javascript:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"&#1;javascript:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"java&#10;script:alert(1)\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"//example.com/x\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"/\\example.com/x\">x</a>"));
+        assertEquals("<a>x</a>", htmlSubset("<a href=\"vbscript:x\">x</a>"));
 
         // a tag inside an attribute value makes the outer tag text
         assertEquals("&lt;a href=\"data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;\"&gt;x",
@@ -173,8 +182,8 @@ public class UtilitiesTest  {
         // encoded tags outside the subset stay text
         assertEquals("&lt;script&gt;how to&lt;/script&gt;",
                 Utilities.transformToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
-        assertEquals("&lt;img src=x onerror=alert(1)&gt; <b>bold</b>",
-                Utilities.transformToHTMLSubset("&lt;img src=x onerror=alert(1)&gt; &lt;b&gt;bold&lt;/b&gt;"));
+        assertEquals("&lt;svg onload=alert(1)&gt; <b>bold</b>",
+                Utilities.transformToHTMLSubset("&lt;svg onload=alert(1)&gt; &lt;b&gt;bold&lt;/b&gt;"));
         assertEquals("&lt;script&gt;alert(1)&lt;/script&gt;",
                 Utilities.transformToHTMLSubset("&#60;script&#62;alert(1)&#60;/script&#62;"));
         // encoded quotes can't add attributes to a link
@@ -191,7 +200,7 @@ public class UtilitiesTest  {
     public void testSanitizeToHtmlSubsetTakesRawHtml() {
         assertNull(Utilities.sanitizeToHTMLSubset(null));
         assertEquals("<b>Hi</b> &amp; bye", Utilities.sanitizeToHTMLSubset("<b>Hi</b> &amp; bye"));
-        assertEquals("<b>Hi</b>&lt;img src=x onerror=alert(1)&gt;",
+        assertEquals("<b>Hi</b>",
                 Utilities.sanitizeToHTMLSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
         assertEquals("&lt;script&gt;how to&lt;/script&gt;",
                 Utilities.sanitizeToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
@@ -206,13 +215,45 @@ public class UtilitiesTest  {
         assertEquals(encoded, Utilities.sanitizeToHTMLSubset(url));
         assertEquals("<a href=\"" + encoded + "\">x</a>",
                 Utilities.sanitizeToHTMLSubset("<a href=\"" + url + "\">x</a>"));
-        assertEquals("AT&amp;T &amp; &amp;# &amp;#x; &amp;;",
-                Utilities.sanitizeToHTMLSubset("AT&T & &# &#x; &;"));
+        assertEquals("AT&amp;T &amp; &amp;# &amp;#x; &amp;; &amp;#xg",
+                Utilities.sanitizeToHTMLSubset("AT&T & &# &#x; &; &#xg"));
         assertEquals(encoded, htmlSubset(url));
 
-        // complete references are still read
+        // complete references are still read, and numbers without their
+        // ";", as browsers read them
         assertEquals("© ~ ~ &amp; &amp;bogus;",
                 Utilities.sanitizeToHTMLSubset("&copy; &#126; &#x7e; &amp; &bogus;"));
+        assertEquals("&lt;link href=x&gt; and ~",
+                Utilities.sanitizeToHTMLSubset("&#60link href=x&#62 and &#x7e"));
+    }
+
+    @Test
+    public void testHtmlSubsetKeepsOldCommentsReadable() {
+        // relative links keep their address
+        assertEquals("<a href=\"/downloads\">AppFuse</a>",
+                Utilities.sanitizeToHTMLSubset("<a href=\"/downloads\">AppFuse</a>"));
+        assertEquals("<a href=\"/page/rd?anchor=x&amp;y=1\">x</a> <a href=\"page.html\">p</a>"
+                + " <a href=\"#comments\">c</a> <a href=\"../wiki\">w</a>",
+                Utilities.sanitizeToHTMLSubset("<a href=\"/page/rd?anchor=x&y=1\">x</a>"
+                        + " <a href=\"page.html\">p</a> <a href=\"#comments\">c</a>"
+                        + " <a href=../wiki>w</a>"));
+        assertEquals("<a href=\"/a:b\">x</a>", Utilities.sanitizeToHTMLSubset("<a href=\"/a:b\">x</a>"));
+
+        // a tag of the subset keeps the tag and loses its attributes
+        assertEquals("<pre>int x;</pre>",
+                Utilities.sanitizeToHTMLSubset("<pre class=\"brush: java\">int x;</pre>"));
+
+        // code, em and strong are in the subset, and common inline tags keep
+        // their text
+        assertEquals("<code>x</code> <em>y</em> <strong>z</strong>",
+                Utilities.sanitizeToHTMLSubset("<code>x</code> <em>y</em> <strong>z</strong>"));
+        assertEquals("HTML and a picture: .",
+                Utilities.sanitizeToHTMLSubset("<abbr title=\"HyperText\">HTML</abbr> and a picture:"
+                        + " <img src=\"/repository/images/x.jpg\" alt=\"x\">."));
+
+        // text that only looks like a tag is still shown as typed
+        assertEquals("List&lt;String&gt; and a&lt;b", Utilities.sanitizeToHTMLSubset("List<String> and a<b"));
+        assertEquals("&lt;i am here&gt;", Utilities.sanitizeToHTMLSubset("<i am here>"));
     }
 
     private String htmlSubset(String text) {

@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.RollerConstants;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Safelist;
@@ -64,13 +65,28 @@ public class Utilities {
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
     // Comment HTML that survives sanitizeToHTMLSubset: a few formatting tags,
-    // and links to http, https and mailto addresses
+    // and links to http, https and mailto addresses or to the same site
     private static final String HTML_SUBSET_LINK_TAG = "a";
     private static final Set<String> HTML_SUBSET_TAGS = Set.of(
-            HTML_SUBSET_LINK_TAG, "b", "blockquote", "br", "i", "li", "ol",
-            "p", "pre", "ul");
+            HTML_SUBSET_LINK_TAG, "b", "blockquote", "br", "code", "em", "i",
+            "li", "ol", "p", "pre", "strong", "ul");
+    // Common inline tags outside the subset: the tag is removed and its text
+    // kept. Any other tag, such as <script> or <List>, is shown as text.
+    private static final Set<String> HTML_SUBSET_DROPPED_TAGS = Set.of(
+            "abbr", "acronym", "big", "cite", "del", "dfn", "font", "img",
+            "ins", "kbd", "mark", "q", "s", "samp", "small", "span", "strike",
+            "sub", "sup", "tt", "u", "var");
     private static final int HTML_SUBSET_TAG_MAX_LENGTH = 10;
-    private static final Safelist HTML_SUBSET = new Safelist()
+    private static final Safelist HTML_SUBSET = new Safelist() {
+                @Override
+                public boolean isSafeAttribute(String tagName, Element el,
+                        Attribute attr) {
+                    return super.isSafeAttribute(tagName, el, attr)
+                            || (HTML_SUBSET_LINK_TAG.equals(tagName)
+                                && "href".equals(attr.getKey())
+                                && isRelativeLink(attr.getValue()));
+                }
+            }
             .addTags(HTML_SUBSET_TAGS.toArray(new String[0]))
             .addAttributes(HTML_SUBSET_LINK_TAG, "href")
             .addProtocols(HTML_SUBSET_LINK_TAG, "href", "http", "https",
@@ -1009,13 +1025,15 @@ public class Utilities {
 
     /**
      * Reduces HTML, such as a comment, to the subset of HTML a weblog page
-     * shows: &lt;b&gt;, &lt;i&gt;, &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;,
-     * &lt;pre&gt;, lists, and links to http, https and mailto addresses.
-     * Everything else is shown as text: other tags, tags that never end,
-     * the formatting tags when they have attributes, any other "&lt;", and
-     * any "&amp;" that doesn't start a complete character reference. jsoup's
-     * Cleaner then removes the attributes a link may not have and
-     * HTML-encodes the text.
+     * shows: &lt;b&gt;, &lt;i&gt;, &lt;em&gt;, &lt;strong&gt;, &lt;code&gt;,
+     * &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;, &lt;pre&gt;, lists, and links
+     * to http, https and mailto addresses or to a relative address such as
+     * "/downloads". Common inline tags outside the subset, such as
+     * &lt;abbr&gt;, &lt;span&gt; and &lt;img&gt;, are removed and their text
+     * kept. Everything else is shown as text: other tags, tags that never
+     * end, any other "&lt;", and any "&amp;" that doesn't start a character
+     * reference. jsoup's Cleaner then removes every attribute but a link's
+     * href and HTML-encodes the text.
      *
      * @param html the HTML to reduce
      * @return the HTML subset, or null if html is null
@@ -1044,8 +1062,9 @@ public class Utilities {
     }
 
     /**
-     * HTML-encodes every "&lt;" that doesn't start a tag of the HTML subset,
-     * so that an HTML parser reads it as text instead of dropping it.
+     * HTML-encodes every "&lt;" that doesn't start a tag of the HTML subset
+     * or one of the inline tags it removes, so that an HTML parser reads it
+     * as text instead of dropping it.
      */
     private static String encodeNonSubsetTags(String html) {
         int lt = html.indexOf('<');
@@ -1070,8 +1089,8 @@ public class Utilities {
     }
 
     /**
-     * HTML-encodes every "&amp;" that doesn't start a complete character
-     * reference, such as "&amp;amp;" or "&amp;#126;", so that an HTML parser
+     * HTML-encodes every "&amp;" that doesn't start a character reference,
+     * such as "&amp;amp;", "&amp;#126;" or "&amp;#60", so that an HTML parser
      * reads text such as "?a=1&amp;copy=2" as typed instead of decoding the
      * entity names it allows without a semicolon.
      */
@@ -1092,9 +1111,10 @@ public class Utilities {
     }
 
     /**
-     * Whether the "&amp;" at the given index starts a name, a decimal number
-     * or a hexadecimal number that ends with ";". The scan stops after a few
-     * dozen characters, longer than any entity name.
+     * Whether the "&amp;" at the given index starts a name that ends with
+     * ";", or a decimal or hexadecimal number, which browsers read with or
+     * without its ";". The scan stops after a few dozen characters, longer
+     * than any entity name.
      */
     private static boolean isCharacterReference(String html, int amp) {
         int length = html.length();
@@ -1119,16 +1139,46 @@ public class Utilities {
             }
             i++;
         }
+        if (numeric) {
+            return i > start;
+        }
         return i > start && i < length && html.charAt(i) == ';'
-                && (numeric || isAsciiLetter(html.charAt(start)));
+                && isAsciiLetter(html.charAt(start));
     }
 
     /**
-     * Finds the end of the HTML subset tag that starts with the "&lt;" at
-     * the given index. A formatting tag or an end tag is its name, then
-     * optional whitespace or "/", then "&gt;". A link's start tag may also
-     * have attributes, each with a value, and ends at the first "&gt;"
-     * outside a quoted value. The scan never goes past the next "&lt;", so
+     * Whether a link's address is relative, such as "/downloads", "page.html",
+     * "?id=1" or "#comments", and so stays on the same site. A scheme before
+     * the first "/", "?" or "#" makes it absolute, and an address that starts
+     * with "//" names another host. Whitespace, control characters and "\"
+     * are refused, since browsers drop or reinterpret them before reading the
+     * scheme.
+     */
+    private static boolean isRelativeLink(String href) {
+        if (href == null || href.isEmpty() || href.startsWith("//")) {
+            return false;
+        }
+        boolean beforePath = true;
+        for (int i = 0; i < href.length(); i++) {
+            char c = href.charAt(i);
+            if (c <= ' ' || c == 0x7f || c == '\\') {
+                return false;
+            }
+            if (c == '/' || c == '?' || c == '#') {
+                beforePath = false;
+            } else if (c == ':' && beforePath) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Finds the end of the tag that starts with the "&lt;" at the given index,
+     * when it is a tag of the HTML subset or one of the inline tags it
+     * removes. An end tag is its name, then optional whitespace or "/", then
+     * "&gt;". A start tag may also have attributes, each with a value, and
+     * ends at the first "&gt;" outside a quoted value. The scan never goes past the next "&lt;", so
      * scanning from every "&lt;" in a text takes linear time.
      *
      * @return the index after the tag's "&gt;", or -1 if this isn't a tag of
@@ -1147,12 +1197,13 @@ public class Utilities {
             i++;
         }
         String name = html.substring(nameStart, i).toLowerCase(Locale.ROOT);
-        if (!HTML_SUBSET_TAGS.contains(name) || i == length
+        if (!(HTML_SUBSET_TAGS.contains(name) || HTML_SUBSET_DROPPED_TAGS.contains(name))
+                || i == length
                 || !(isHtmlSpace(html.charAt(i)) || html.charAt(i) == '/'
                         || html.charAt(i) == '>')) {
             return -1;
         }
-        boolean attributes = !endTag && HTML_SUBSET_LINK_TAG.equals(name);
+        boolean attributes = !endTag;
 
         // where the scan is, as an HTML parser sees it: between attributes,
         // in an attribute's name, after the name, after its "=", or in a

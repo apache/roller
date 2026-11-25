@@ -143,13 +143,21 @@
   - The Emoticons plugin no longer changes text inside HTML tags or
     comments, so the `:x` in an attribute such as `xmlns:xlink` stays as it
     is; in an embedded SVG it used to become an emoji.
-- **Links in HTML comments keep their address when they have other
-  attributes.** The HTML subset that comments may use is now built with
-  jsoup's Cleaner. A link such as `<a href="https://example.com/" title="x">`
-  keeps its `href` and loses only the other attributes; it used to lose the
-  `href` as well. A tag a comment leaves open is closed at the end of the
-  comment, so it no longer changes the rest of the page. Other markup, and
-  text such as `a<b` or `AT&T`, is shown as typed, as before.
+- **HTML comments keep more of what their authors wrote.** The HTML subset
+  that comments may use is now built with jsoup's Cleaner:
+  - A link such as `<a href="https://example.com/" title="x">` keeps its
+    `href` and loses only the other attributes; it used to lose the `href` as
+    well. A relative link, such as `<a href="/downloads">`, keeps its address.
+  - `<code>`, `<em>` and `<strong>` are now in the subset. A tag of the subset
+    with attributes, such as `<pre class="brush: java">`, keeps the tag and
+    loses the attributes, instead of being shown as text.
+  - Common inline tags outside the subset, such as `<abbr>`, `<span>` and
+    `<img>`, are removed and their text kept. Other markup, and text such as
+    `a<b` or `AT&T`, is shown as typed, as before.
+  - A numeric character reference without its `;`, such as `&#60`, is read
+    as browsers read it.
+  - A tag a comment leaves open is closed at the end of the comment, so it no
+    longer changes the rest of the page.
 
 ### Behaviour changes worth reading before upgrading
 
