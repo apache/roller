@@ -239,10 +239,11 @@
   and addresses are escaped in HTML notification emails; HTML comments are
   escaped unless the HTMLSubset plugin applies to them (#318).
 - **Limits on uploads and fetched feeds.** Images with more pixels than
-  `uploads.thumbnail.maxPixels` (50 million) are stored without a thumbnail
-  (#315). Planet stops reading a feed past `planet.aggregator.fetch.maxBytes`
-  (5 MB) or `planet.aggregator.fetch.maxSeconds` (30 seconds), and fetches
-  only http and https URLs (#314).
+  `uploads.thumbnail.maxPixels` (50 million) are stored without a thumbnail,
+  and so are TIFF images (#315). Planet stops reading a feed past
+  `planet.aggregator.fetch.maxBytes` (5 MB) or
+  `planet.aggregator.fetch.maxSeconds` (30 seconds), and fetches only http
+  and https URLs (#314).
 - **AtomPub checks.** Publishing an entry through an AtomPub update needs the
   permission to publish, media uploads over `uploads.file.maxsize` are
   refused with 413 before they're stored, and entries show the creator's

@@ -24,6 +24,8 @@
      back to this library page. In the chooser (#chooserMode set) the preview and name insert
      the file into the entry, with its description as the alt text. --%>
 
+<%-- an image too large for a thumbnail shows its file type icon --%>
+<s:set var="thumbnailSkipped" value="#mediaFile.thumbnailSkipped"/>
 <s:if test="#chooserMode">
     <s:set var="altText" value="(#mediaFile.description != null && !#mediaFile.description.trim().isEmpty()) ? #mediaFile.description.trim() : #mediaFile.name"/>
 <li class="media-card">
@@ -31,8 +33,9 @@
             data-mediafile-name="<s:property value='#mediaFile.name'/>"
             data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
             data-mediafile-alt="<s:property value='#altText'/>"
-            data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>">
-        <s:if test="#mediaFile.imageFile">
+            data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
+            data-mediafile-has-thumbnail="<s:property value='!#thumbnailSkipped'/>">
+        <s:if test="#mediaFile.imageFile && !#thumbnailSkipped">
             <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
                  data-fallback-icon="<s:property value='typeIcon(#mediaFile.contentType)'/>"/>
         </s:if>
@@ -47,6 +50,7 @@
                     data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
                     data-mediafile-alt="<s:property value='#altText'/>"
                     data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
+                    data-mediafile-has-thumbnail="<s:property value='!#thumbnailSkipped'/>"
                     aria-label="<s:text name='%{#chooserLabelKey}' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"
                     title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></button>
             <span class="media-card-meta">
@@ -73,7 +77,7 @@
            aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"/>
 
     <a class="media-card-preview" href="<s:property value='%{detailsURL}'/>" tabindex="-1" aria-hidden="true">
-        <s:if test="#mediaFile.imageFile">
+        <s:if test="#mediaFile.imageFile && !#thumbnailSkipped">
             <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
                  data-fallback-icon="<s:property value='typeIcon(#mediaFile.contentType)'/>"/>
         </s:if>

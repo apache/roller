@@ -88,6 +88,7 @@
             <transient name="path"/>
             <transient name="creator"/>
             <transient name="imageFile"/>
+            <transient name="thumbnailSkipped"/>
             <transient name="addedTags"/>
             <transient name="removedTags"/>
             <transient name="tagsAsString"/>

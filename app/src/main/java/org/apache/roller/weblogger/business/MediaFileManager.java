@@ -38,6 +38,13 @@ public interface MediaFileManager {
     int MAX_HEIGHT = 120;
 
     /**
+     * Images with more pixels than this get no thumbnail, so that an upload
+     * can't make the server decode an arbitrarily large image.
+     */
+    String THUMBNAIL_MAX_PIXELS_PROPERTY = "uploads.thumbnail.maxPixels";
+    int DEFAULT_THUMBNAIL_MAX_PIXELS = 50_000_000;
+
+    /**
      * Initialization; deal with upgrade migrations, etc.
      */
     void initialize();

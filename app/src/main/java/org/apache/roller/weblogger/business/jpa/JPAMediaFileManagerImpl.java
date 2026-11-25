@@ -39,6 +39,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -48,6 +51,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileIOException;
+import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -67,6 +71,14 @@ import org.apache.roller.weblogger.util.Utilities;
 
 @com.google.inject.Singleton
 public class JPAMediaFileManagerImpl implements MediaFileManager {
+
+    /**
+     * Image formats that get thumbnails. Their readers decode a subsampled
+     * image without holding the whole image in memory; the TIFF reader, for
+     * one, reads a whole strip or tile at a time.
+     */
+    private static final Set<String> THUMBNAIL_FORMATS =
+            Set.of("jpeg", "png", "gif", "bmp");
 
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
@@ -252,20 +264,116 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
+    /**
+     * Record the image's size and save a thumbnail of it. The size is read
+     * from the image header first; images with more pixels than
+     * uploads.thumbnail.maxPixels are left without a thumbnail rather than
+     * decoded, and the rest are decoded subsampled to near thumbnail size.
+     * Only JPEG, PNG, GIF and BMP content gets a thumbnail, whatever content
+     * type the client sent. When no thumbnail is made, any thumbnail
+     * left from the file's previous content is removed.
+     */
     private void updateThumbnail(MediaFile mediaFile) {
+        if (!createThumbnail(mediaFile)) {
+            removeThumbnail(mediaFile);
+        }
+    }
+
+    private void removeThumbnail(MediaFile mediaFile) {
+        mediaFile.setThumbnailContent(null);
+        try {
+            WebloggerFactory.getWeblogger().getFileContentManager()
+                    .deleteFile(mediaFile.getWeblog(), mediaFile.getId() + "_sm");
+        } catch (FileNotFoundException e) {
+            // there was no thumbnail
+            log.debug("No thumbnail to remove for media file " + mediaFile.getId());
+        } catch (Exception e) {
+            log.warn("ERROR removing the thumbnail of media file "
+                    + mediaFile.getId(), e);
+        }
+    }
+
+    /** @return true if a thumbnail was saved */
+    private boolean createThumbnail(MediaFile mediaFile) {
+        boolean sizeRead = false;
+        boolean thumbnailSaved = false;
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
             FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
                     mediaFile.getId());
+            int maxPixels = MediaFile.thumbnailMaxPixels();
             BufferedImage img;
 
-            img = ImageIO.read(fc.getInputStream());
+            try (InputStream in = fc.getInputStream();
+                 ImageInputStream iis = ImageIO.createImageInputStream(in)) {
+                Iterator<ImageReader> readers = iis == null
+                        ? null : ImageIO.getImageReaders(iis);
+                if (readers == null || !readers.hasNext()) {
+                    log.debug("No image reader for media file "
+                            + mediaFile.getId() + ", not creating a thumbnail");
+                    return false;
+                }
+                ImageReader reader = readers.next();
+                try {
+                    reader.setInput(iis, true, true);
+                    int width = reader.getWidth(0);
+                    int height = reader.getHeight(0);
+                    if (width <= 0 || height <= 0) {
+                        return false;
+                    }
 
-            // determine and save width and height
-            mediaFile.setWidth(img.getWidth());
-            mediaFile.setHeight(img.getHeight());
-            strategy.store(mediaFile);
+                    // save width and height, also for an image too large
+                    // for a thumbnail
+                    mediaFile.setWidth(width);
+                    mediaFile.setHeight(height);
+                    strategy.store(mediaFile);
+                    sizeRead = true;
+
+                    if ((long) width * height > maxPixels) {
+                        log.info("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + " (" + width + "x"
+                                + height + "), it is larger than "
+                                + MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY + "="
+                                + maxPixels + " pixels");
+                        return false;
+                    }
+
+                    String format = reader.getFormatName().toLowerCase(Locale.ROOT);
+                    if (!THUMBNAIL_FORMATS.contains(format)) {
+                        log.debug("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + ", " + format
+                                + " images get none");
+                        return false;
+                    }
+
+                    int step = thumbnailSubsampling(width, height,
+                            mediaFile.getThumbnailWidth(),
+                            mediaFile.getThumbnailHeight());
+                    if (step < 1) {
+                        log.debug("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + " (" + width + "x" + height
+                                + "), it is too narrow to scale down");
+                        return false;
+                    }
+                    ImageReadParam param = reader.getDefaultReadParam();
+                    param.setSourceSubsampling(step, step, 0, 0);
+                    try {
+                        img = reader.read(0, param);
+                    } catch (OutOfMemoryError e) {
+                        log.warn("Not enough memory to create a thumbnail for"
+                                + " media file " + mediaFile.getId() + " ("
+                                + width + "x" + height + ")");
+                        return false;
+                    } catch (IOException | RuntimeException e) {
+                        // the header's size isn't that of a readable image
+                        sizeRead = false;
+                        throw e;
+                    }
+                } finally {
+                    reader.dispose();
+                }
+            }
 
             int newWidth = mediaFile.getThumbnailWidth();
             int newHeight = mediaFile.getThumbnailHeight();
@@ -284,13 +392,55 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
+            thumbnailSaved = true;
 
             roller.flush();
             // Refresh associated parent for changes
             strategy.refresh(mediaFile.getDirectory());
+            return true;
 
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
+            return thumbnailSaved;
+        } finally {
+            if (!sizeRead) {
+                forgetSize(mediaFile);
+            }
+        }
+    }
+
+    /**
+     * The subsampling step for decoding an image for its thumbnail: only
+     * every n-th pixel is decoded, keeping about twice the thumbnail size in
+     * each direction so the smooth scaling has detail. Returns 0 when the
+     * image is so much wider than tall, or taller than wide, that its
+     * thumbnail would be less than a pixel across; no thumbnail is made then.
+     */
+    static int thumbnailSubsampling(int width, int height,
+            int thumbnailWidth, int thumbnailHeight) {
+        if (thumbnailWidth < 1 || thumbnailHeight < 1) {
+            return 0;
+        }
+        return Math.max(1, Math.max(width / (2 * thumbnailWidth),
+                height / (2 * thumbnailHeight)));
+    }
+
+    /**
+     * Mark the image's size as unknown, so that the size of the file's
+     * previous content isn't taken for the size of content that could not
+     * be read.
+     */
+    private void forgetSize(MediaFile mediaFile) {
+        if (mediaFile.getWidth() == -1 && mediaFile.getHeight() == -1) {
+            return;
+        }
+        try {
+            mediaFile.setWidth(-1);
+            mediaFile.setHeight(-1);
+            strategy.store(mediaFile);
+        } catch (Exception e) {
+            log.debug("ERROR clearing the size of media file "
+                    + mediaFile.getId(), e);
         }
     }
 
@@ -338,6 +488,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         if (mediaFile.isImageFile()) {
             updateThumbnail(mediaFile);
+        } else {
+            // content that isn't an image keeps no thumbnail or size from
+            // the image it replaced
+            removeThumbnail(mediaFile);
+            forgetSize(mediaFile);
         }
     }
 
