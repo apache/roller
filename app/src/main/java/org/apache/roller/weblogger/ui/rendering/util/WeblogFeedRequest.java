@@ -145,7 +145,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         this.page = parsePageNum(request.getParameter("page"));
         
         if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
-            this.term = URLUtilities.decode(request.getParameter("q"));
+            this.term = WeblogSearchRequest.capQuery(URLUtilities.decode(request.getParameter("q")));
         }        
         
         if(this.tags != null && !this.tags.isEmpty() && this.weblogCategoryName != null) {

@@ -49,11 +49,6 @@ public class MemberResign extends UIAction {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
 
-    @Override
-    public boolean isWeblogRequired() {
-        return false;
-    }
-
     /**
      * Show member resign confirmation
      */
@@ -76,7 +71,13 @@ public class MemberResign extends UIAction {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             // TODO: notify website members that user has resigned
             // TODO EXCEPTIONS: better exception handling
-            umgr.revokeWeblogPermission(getActionWeblog(), getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
+            // the check and the removal run as one operation, so concurrent
+            // membership changes can't leave the weblog without an admin
+            if (!umgr.updateWeblogMembership(getActionWeblog(),
+                    Collections.singletonMap(getAuthenticatedUser().getUserName(), null))) {
+                addError("yourWebsites.resign.lastAdmin", getWeblog());
+                return SUCCESS;
+            }
             WebloggerFactory.getWeblogger().flush();
             addMessage("yourWebsites.resigned", getWeblog());
         } catch (WebloggerException ex) {

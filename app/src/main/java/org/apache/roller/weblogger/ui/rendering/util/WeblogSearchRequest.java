@@ -37,6 +37,9 @@ public class WeblogSearchRequest extends WeblogRequest {
     private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
     
     public static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
+
+    /** Longest search query kept, plenty for a person to type. */
+    public static final int MAX_QUERY_LENGTH = 256;
     
     // lightweight attributes
     private String query = null;
@@ -83,7 +86,7 @@ public class WeblogSearchRequest extends WeblogRequest {
          *   cat - limit results to a certain weblogCategoryName
          */
         if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
-            this.query = request.getParameter("q");
+            this.query = capQuery(request.getParameter("q"));
         }
         
         this.pageNum = parsePageNum(request.getParameter("page"));
@@ -92,6 +95,48 @@ public class WeblogSearchRequest extends WeblogRequest {
             this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
         }
+    }
+
+    /**
+     * Keeps the first MAX_QUERY_LENGTH characters of a search query, so one
+     * request cannot hand the query parser unbounded work, such as thousands
+     * of nested parentheses. Leading and trailing whitespace doesn't count.
+     * Does not split a surrogate pair, and drops the opening quote of a
+     * phrase, or an escape character, that the cap cuts off.
+     */
+    public static String capQuery(String query) {
+        if (query == null) {
+            return null;
+        }
+        query = query.strip();
+        if (query.length() <= MAX_QUERY_LENGTH) {
+            return query;
+        }
+        int end = MAX_QUERY_LENGTH;
+        if (Character.isHighSurrogate(query.charAt(end - 1))) {
+            end--;
+        }
+        String capped = query.substring(0, end);
+        // find a quote whose phrase the cap cut off; an escaped quote doesn't
+        // start or end a phrase
+        int openQuote = -1;
+        for (int i = 0; i < capped.length(); i++) {
+            char c = capped.charAt(i);
+            if (c == '\\') {
+                if (i == capped.length() - 1) {
+                    // the cap cut off the escaped character
+                    capped = capped.substring(0, i);
+                }
+                i++;
+            } else if (c == '"') {
+                openQuote = openQuote < 0 ? i : -1;
+            }
+        }
+        // drop it, so the rest still parses
+        if (openQuote >= 0) {
+            capped = capped.substring(0, openQuote) + capped.substring(openQuote + 1);
+        }
+        return capped;
     }
 
     public String getQuery() {

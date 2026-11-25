@@ -198,6 +198,11 @@ public class Register extends UIAction {
             return DISABLED_RETURN_CODE;
         }
                 
+        // The federated identity (issuer#subject) decides which account an
+        // OIDC login opens, so only the OIDC login code sets it, never the
+        // registration form.
+        getBean().setOpenIdUrl(null);
+
         myValidate();
         
         if (!hasActionErrors()) {
@@ -250,14 +255,6 @@ public class Register extends UIAction {
 
                     inActivationCode = retryActivationCode(mgr, inActivationCode);
                     ud.setActivationCode(inActivationCode);
-                }
-
-                String openidurl = getBean().getOpenIdUrl();
-                if (openidurl != null) {
-                    if (openidurl.endsWith("/")) {
-                        openidurl = openidurl.substring(0, openidurl.length() - 1);
-                    }
-                    ud.setOpenIdUrl(openidurl);
                 }
 
                 // save new user

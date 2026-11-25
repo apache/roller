@@ -148,13 +148,13 @@ public class ProfileBean {
     
     
     public void copyTo(User dataHolder) {
-        // avoiding password, that is handled separately in class Profile
+        // avoiding password, that is handled separately in class Profile, and
+        // the federated identity, which only the OIDC login code sets
         dataHolder.setScreenName(this.screenName);
         dataHolder.setFullName(this.fullName);
         dataHolder.setEmailAddress(this.emailAddress);
         dataHolder.setLocale(this.locale);
         dataHolder.setTimeZone(this.timeZone);
-        dataHolder.setOpenIdUrl(this.openIdUrl);
     }
     
     

@@ -17,11 +17,14 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.Locale;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -68,6 +71,30 @@ class LdapCommentAuthenticatorTest {
     @Test
     void preservesLiteralEntityText() {
         assertFields(renderReturningVisit("&quot;", "&#34;"), "&amp;quot;");
+    }
+
+    @Test
+    void userNameStaysOneValueOfTheBindName() throws Exception {
+        LdapCommentAuthenticator authenticator = new LdapCommentAuthenticator();
+        String[] names = {
+            "reader", "reader,ou=admins", "reader+cn=admin", "a=b", "back\\slash",
+            "\"quoted\"", "#hash", " leading", "trailing ", "semi;colon", "<angle>",
+        };
+        for (String name : names) {
+            String dn = authenticator.getQualifedDc("example,com", "people", name);
+            LdapName parsed = new LdapName(dn);
+            assertEquals(4, parsed.size(), () -> "bind name for [" + name + "]: " + dn);
+            Rdn uid = parsed.getRdn(parsed.size() - 1);
+            assertEquals("uid", uid.getType(), dn);
+            assertEquals(name, uid.getValue(), dn);
+            assertEquals("ou=people", parsed.getRdn(parsed.size() - 2).toString(), dn);
+        }
+    }
+
+    @Test
+    void ordinaryUserNameIsUnchanged() {
+        assertEquals("uid=reader, ou=people,dc=example,dc=com",
+                new LdapCommentAuthenticator().getQualifedDc("example,com", "people", "reader"));
     }
 
     private String renderReturningVisit(String user, String password) {

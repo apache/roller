@@ -254,7 +254,7 @@ class FrontPageAdminMembershipTest {
         doAnswer(call -> null).when(action).getParameter(anyString());
         for (Map.Entry<String, String> choice : choices.entrySet()) {
             doAnswer(call -> choice.getValue()).when(action)
-                    .getParameter("perm-" + user(choice.getKey()).getId());
+                    .getParameter("perm-" + permission(choice.getKey()).getId());
         }
         action.save();
         TestUtils.endSession(true);

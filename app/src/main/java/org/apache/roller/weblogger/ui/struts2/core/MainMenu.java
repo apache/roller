@@ -90,6 +90,12 @@ public class MainMenu extends UIAction {
             WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
             Weblog weblog = wmgr.getWeblog(getInviteId());
             String handle = weblog.getHandle();                       
+            // a page loaded before the invitation was accepted still offers
+            // to decline it
+            if (umgr.getWeblogPermission(weblog, getAuthenticatedUser()) != null) {
+                addError("yourWebsites.declineMember", handle);
+                return DONE;
+            }
             // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
             // TODO EXCEPTIONS: better exception handling here
             umgr.declineWeblogPermission(weblog, getAuthenticatedUser());
