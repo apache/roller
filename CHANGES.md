@@ -4,10 +4,11 @@
 
 ### Behaviour changes worth reading before upgrading
 
-- **Only weblog Admins can replace, move or delete a custom theme's files.**
-  The scripts, stylesheets and images a custom theme keeps in the media
-  library are part of the weblog's design. Authors still manage their own
-  media files.
+- **Only weblog Admins can change a custom theme's scripts and stylesheets.**
+  Replacing, renaming, moving or deleting a media file that a custom theme
+  serves as a script or stylesheet now needs weblog Admin, as does changing
+  any file's original path. Authors still manage their own media files,
+  including uploads migrated from older versions.
 
 - **Only global admins manage Admin on the aggregated front-page weblog.**
   With `site.frontpage.weblog.aggregated=true`, that weblog's templates can

@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.business;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.User;
@@ -25,23 +27,54 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 /**
- * A media file with an original path is what a custom theme serves at that
- * path, such as the theme's scripts and stylesheets. Changing one changes the
- * weblog's design, so only the weblog's Admins may replace, move or delete it.
+ * A custom theme serves the media files it keeps in the media library at their
+ * original path, and serves its scripts and stylesheets inline so that the
+ * weblog's pages can load them. Changing one of those changes what every
+ * visitor's browser runs, so only the weblog's Admins may replace, rename, move
+ * or delete it, or change any file's original path.
  */
 public final class ThemeMediaFiles {
+
+    private static final String[] THEME_ASSET_EXTENSIONS = {".css", ".js", ".mjs"};
 
     private ThemeMediaFiles() {
     }
 
-    /** Whether the file is served as one of the weblog's theme resources. */
+    /** Whether the file is a script or stylesheet a custom theme serves. */
     public static boolean isThemeFile(MediaFile file) {
-        return file != null && StringUtils.isNotBlank(file.getOriginalPath());
+        return file != null && isThemeAssetPath(file.getOriginalPath());
     }
 
-    /** Whether the user may replace, move or delete the file. */
+    /** Whether a custom theme would serve the path as a script or stylesheet. */
+    public static boolean isThemeAssetPath(String path) {
+        if (StringUtils.isBlank(path)) {
+            return false;
+        }
+        String lower = path.trim().toLowerCase(Locale.ENGLISH);
+        for (String extension : THEME_ASSET_EXTENSIONS) {
+            if (lower.endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether the user is one of the weblog's Admins. */
+    public static boolean isWeblogAdmin(Weblog weblog, User user) {
+        return weblog != null && user != null
+                && weblog.hasUserPermission(user, WeblogPermission.ADMIN);
+    }
+
+    /** Whether the user may replace, rename, move or delete the file. */
     public static boolean mayChange(Weblog weblog, User user, MediaFile file) {
-        return !isThemeFile(file)
-                || (user != null && weblog.hasUserPermission(user, WeblogPermission.ADMIN));
+        return !isThemeFile(file) || isWeblogAdmin(weblog, user);
+    }
+
+    /** Whether the user may change a file's original path from one value to another. */
+    public static boolean mayChangeOriginalPath(Weblog weblog, User user,
+                                                String currentPath, String newPath) {
+        return StringUtils.equals(StringUtils.trimToNull(currentPath),
+                StringUtils.trimToNull(newPath))
+                || isWeblogAdmin(weblog, user);
     }
 }
