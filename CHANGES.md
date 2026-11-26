@@ -187,6 +187,8 @@
 - **Only the site's first account becomes an administrator.** With
   `users.firstUserAdmin` on, a new account was made an administrator whenever
   no enabled account existed. Disabled accounts now count too.
+- **Saving Weblog Settings does not validate email address.** Makes sure the 
+  field "Email address of weblog owner" has a correct value.
 
 ## 6.1.7
 
