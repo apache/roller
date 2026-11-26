@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -115,6 +116,18 @@ class EntryWritePermissionTest {
         memberHas(WeblogPermission.EDIT_DRAFT);
 
         assertEquals(EntryRemove.SUCCESS_EDITOR, removeAction(entry(PubStatus.DRAFT)).remove());
+    }
+
+    @Test
+    void failedRoleLookupAfterRemovingFallsBackToTheEditor() throws Exception {
+        memberHas(WeblogPermission.POST);
+        WeblogEntry entry = entry(PubStatus.DRAFT);
+        EntryRemove action = removeAction(entry);
+        when(users.checkPermission(any(WeblogPermission.class), any(User.class)))
+                .thenThrow(new WebloggerException("lookup failed"));
+
+        assertEquals(EntryRemove.SUCCESS_EDITOR, action.remove());
+        verify(entries).removeWeblogEntry(entry);
     }
 
     @Test

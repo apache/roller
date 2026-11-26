@@ -59,6 +59,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);
+
+    private static final Object INITIAL_ADMIN_LOCK = new Object();
     private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
@@ -175,6 +177,17 @@ public class Register extends UIAction implements ServletRequestAware {
     
     
     public String save() {
+        if (BootstrapSecurity.isCompleted()) {
+            return register();
+        }
+        // Two submissions of the first administrator's form would both see
+        // setup as not done. One at a time, the second sees it finished.
+        synchronized (INITIAL_ADMIN_LOCK) {
+            return register();
+        }
+    }
+
+    private String register() {
         if (!BootstrapSecurity.isCompleted() && !BootstrapSecurity.isValid(getServletRequest())) {
             return DISABLED_RETURN_CODE;
         }

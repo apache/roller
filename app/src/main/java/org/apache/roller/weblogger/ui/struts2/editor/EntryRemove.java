@@ -125,13 +125,19 @@ public class EntryRemove extends UIAction {
 
     /**
      * The entries list needs the Author role, so a Limited member returns to
-     * the editor after a removal instead.
+     * the editor after a removal instead. The entry is already gone when this
+     * runs, so a failed lookup falls back to the editor rather than an error.
      */
-    private boolean canListEntries() throws WebloggerException {
+    private boolean canListEntries() {
         WeblogPermission listPerm = new WeblogPermission(getActionWeblog(),
                 Collections.singletonList(WeblogPermission.POST));
-        return WebloggerFactory.getWeblogger().getUserManager()
-                .checkPermission(listPerm, getAuthenticatedUser());
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager()
+                    .checkPermission(listPerm, getAuthenticatedUser());
+        } catch (WebloggerException ex) {
+            log.warn("Error checking permissions after removing entry " + getRemoveId(), ex);
+            return false;
+        }
     }
 
     private boolean canRemoveEntry() {
