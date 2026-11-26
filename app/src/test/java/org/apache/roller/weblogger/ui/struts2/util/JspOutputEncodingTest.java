@@ -55,6 +55,7 @@ class JspOutputEncodingTest {
             Pattern.compile("[\\w:.-]+\\s*=\\s*'[^']*<s:property", Pattern.DOTALL);
     private static final Pattern URL_WITH_BODY =
             Pattern.compile("<s:url\\b((?:[^>/]|/(?!>))*)>(.*?)</s:url>", Pattern.DOTALL);
+    private static final Pattern URL_VAR = Pattern.compile("\\bvar=\"([^\"]+)\"");
     private static final Pattern INLINE_HANDLER_PROPERTY =
             Pattern.compile("(?<![\\w:.-])on[a-z]+\\s*=\\s*\"[^\"]*<s:property",
                     Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
@@ -149,16 +150,25 @@ class JspOutputEncodingTest {
             String text = read(jsp);
             Matcher url = URL_WITH_BODY.matcher(text);
             while (url.find()) {
-                Matcher var = Pattern.compile("\\bvar=\"([^\"]+)\"").matcher(url.group(1));
+                Matcher var = URL_VAR.matcher(url.group(1));
                 if (!var.find() || url.group(1).contains("escapeAmp=\"false\"")
                         || url.group(2).split("<s:param\\b", -1).length < 3) {
                     continue;
                 }
-                Pattern use = Pattern.compile("<s:(property|param)\\b[^>]*value=[\"'](%\\{)?"
-                        + Pattern.quote(var.group(1)) + "\\}?[\"'][^>]*>");
-                Matcher written = use.matcher(text);
+                String name = Pattern.quote(var.group(1));
+                // Uses of this URL run until the next <s:url> that sets the
+                // same var. <s:a href="%{name}"> isn't checked: its template
+                // writes href without escaping it again.
+                Matcher redefined = Pattern.compile("<s:url\\b[^>]*\\bvar=\"" + name + "\"")
+                        .matcher(text);
+                int end = redefined.find(url.end()) ? redefined.start() : text.length();
+                Matcher written = Pattern.compile("<s:(property|param)\\b[^>]*value=[\"'](%\\{)?#?"
+                        + name + "\\}?[\"'][^>]*>").matcher(text).region(url.end(), end);
                 while (written.find()) {
-                    if (!written.group().contains("escapeHtml=\"false\"")) {
+                    // Unescaped is right in HTML, but escaping for JavaScript
+                    // leaves &amp; in the string.
+                    if (!written.group().contains("escapeHtml=\"false\"")
+                            || written.group().contains("escapeJavaScript=\"true\"")) {
                         problems.add(name(jsp) + ": " + var.group(1));
                         break;
                     }
