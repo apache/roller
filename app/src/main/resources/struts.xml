@@ -431,6 +431,7 @@
                 <param name="namespace">/roller-ui</param>
             </result>
             <result name="success" type="chain">entryAdd</result>
+            <result name="success-editor" type="chain">entryAdd</result>
             <allowed-methods>execute,remove</allowed-methods>
         </action>
 
@@ -453,6 +454,7 @@
                 <param name="namespace">/roller-ui</param>
             </result>
           <result name="success" type="chain">entries</result>
+          <result name="success-editor" type="chain">entryAdd</result>
             <allowed-methods>execute,remove</allowed-methods>
         </action>
 

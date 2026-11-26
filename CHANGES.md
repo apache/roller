@@ -135,6 +135,9 @@
 - **New users can register after the first.** Since 6.1.6, every
   registration after the first administrator's failed with a database error
   on the setup-completed setting, so no account was created.
+- **Limited members no longer see an access denied page after deleting a
+  draft.** Deleting from the entry editor removed the draft, then opened the
+  entries list, which needs the Author role. They now return to the editor.
 - **The comment filter works after editing a comment.** Saving a comment
   on the Comments page left the filter form with a used-up form token, so
   filtering then failed with an error.

@@ -104,9 +104,24 @@ class EntryWritePermissionTest {
     void limitedMemberCanRemoveADraftOrPendingEntry() throws Exception {
         memberHas(WeblogPermission.EDIT_DRAFT);
         for (PubStatus status : new PubStatus[]{PubStatus.DRAFT, PubStatus.PENDING}) {
-            assertEquals(UIAction.SUCCESS, removeAction(entry(status)).remove());
+            assertEquals(EntryRemove.SUCCESS_EDITOR, removeAction(entry(status)).remove());
         }
         verify(entries, times(2)).removeWeblogEntry(any());
+    }
+
+    @Test
+    void limitedMemberReturnsToTheEditorAfterRemoving() throws Exception {
+        // The entries list needs the Author role.
+        memberHas(WeblogPermission.EDIT_DRAFT);
+
+        assertEquals(EntryRemove.SUCCESS_EDITOR, removeAction(entry(PubStatus.DRAFT)).remove());
+    }
+
+    @Test
+    void authorReturnsToTheEntriesListAfterRemoving() throws Exception {
+        memberHas(WeblogPermission.POST);
+
+        assertEquals(UIAction.SUCCESS, removeAction(entry(PubStatus.DRAFT)).remove());
     }
 
     @Test
@@ -172,6 +187,8 @@ class EntryWritePermissionTest {
         WeblogPermission permission = new WeblogPermission(
                 weblog, user, Collections.singletonList(action));
         when(users.getWeblogPermission(weblog, user)).thenReturn(permission);
+        when(users.checkPermission(any(WeblogPermission.class), any(User.class)))
+                .thenAnswer(call -> permission.implies(call.getArgument(0)));
     }
 
     private WeblogEntry entry(PubStatus status) throws Exception {

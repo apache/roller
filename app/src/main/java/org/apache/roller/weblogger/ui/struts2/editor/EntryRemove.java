@@ -41,6 +41,9 @@ public class EntryRemove extends UIAction {
 
     private static Log log = LogFactory.getLog(EntryRemove.class);
 
+    /** Result for a member who cannot see the entries list. */
+    static final String SUCCESS_EDITOR = "success-editor";
+
     // id of entry to remove
     private String removeId = null;
 
@@ -106,7 +109,7 @@ public class EntryRemove extends UIAction {
                 // note to user
                 addMessage("weblogEdit.entryRemoved", entry.getTitle());
 
-                return SUCCESS;
+                return canListEntries() ? SUCCESS : SUCCESS_EDITOR;
 
             } catch (Exception e) {
                 log.error("Error removing entry " + getRemoveId(), e);
@@ -118,6 +121,17 @@ public class EntryRemove extends UIAction {
         }
 
         return INPUT;
+    }
+
+    /**
+     * The entries list needs the Author role, so a Limited member returns to
+     * the editor after a removal instead.
+     */
+    private boolean canListEntries() throws WebloggerException {
+        WeblogPermission listPerm = new WeblogPermission(getActionWeblog(),
+                Collections.singletonList(WeblogPermission.POST));
+        return WebloggerFactory.getWeblogger().getUserManager()
+                .checkPermission(listPerm, getAuthenticatedUser());
     }
 
     private boolean canRemoveEntry() {
