@@ -20,7 +20,7 @@
             <message key="WeblogConfig.error.descriptionSize">unspecified key</message>
         </field-validator>
     </field>
-
+    
     <field name="bean.emailAddress">
         <field-validator type="requiredstring">
             <message key="CreateWeblog.error.emailAddressNull">unspecified key</message>
@@ -35,7 +35,7 @@
             <message key="CreateWeblog.error.emailAddressBad">unspecified key</message>
         </field-validator>
     </field>
-
+    
     <field name="bean.analyticsCode">
         <field-validator type="stringlength">
             <param name="maxLength">1200</param>
