@@ -36,3 +36,9 @@ docker/postgresql-18-data
 
 # runtime logs from mvn jetty:run
 logs/
+
+# Python virtual environments & bytecode (skill/tool runners)
+.venv/
+__pycache__/
+*.pyc
+uv.lock
