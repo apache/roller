@@ -2,6 +2,50 @@
 
 The `/roller-security` skill guides you through Apache Roller's private vulnerability response workflow—from initial report intake to CVE publication—using a local SQLite database (`triage-<year>/cases.db`) and plain Markdown views (`CASE.md`, `SUMMARY_BOARD.md`). No Obsidian or external note app is required.
 
+```mermaid
+graph TD
+    __start__([__start__])
+    guard_workspace["guard_workspace (Tier 0)"]
+    ingest_and_ack["ingest_and_ack (Tier 0 + Tier 1)"]
+    gate_acknowledge{"Gate 1: gate_acknowledge"}
+    investigate_codebase["investigate_codebase (Tier 2)"]
+    gate_pmc_decision{"Gate 2: gate_pmc_decision"}
+    handle_rejection["handle_rejection (Tier 1 + Tier 0)"]
+    assess_severity_and_cve["assess_severity_and_cve (Tier 2 + Tier 1)"]
+    gate_cve_request{"Gate 3: gate_cve_request"}
+    verify_fix_and_audit["verify_fix_and_audit (Tier 0 + Tier 2)"]
+    draft_pr_and_reporter_review["draft_pr_and_reporter_review (Tier 1 air-gapped)"]
+    gate_reporter_review_and_merge{"Gate 4: gate_reporter_review_and_merge"}
+    verify_merge_and_pr["verify_merge_and_pr (Tier 0)"]
+    gate_release_handoff{"Gate 5: gate_release_handoff"}
+    verify_release_and_prepare_disclosure["verify_release_and_prepare_disclosure (Tier 0 + Tier 1)"]
+    gate_disclosure_and_close{"Gate 6: gate_disclosure_and_close"}
+    __end__([__end__])
+
+    __start__ --> guard_workspace
+    guard_workspace -. unsafe .-> __end__
+    guard_workspace -. safe .-> ingest_and_ack
+    ingest_and_ack --> gate_acknowledge
+    gate_acknowledge --> investigate_codebase
+    investigate_codebase --> gate_pmc_decision
+    gate_pmc_decision -. close_rejected .-> handle_rejection
+    handle_rejection --> __end__
+    gate_pmc_decision -. accept .-> assess_severity_and_cve
+    assess_severity_and_cve --> gate_cve_request
+    gate_cve_request --> verify_fix_and_audit
+    verify_fix_and_audit -. needs_work .-> gate_cve_request
+    verify_fix_and_audit -. clean .-> draft_pr_and_reporter_review
+    draft_pr_and_reporter_review --> gate_reporter_review_and_merge
+    gate_reporter_review_and_merge --> verify_merge_and_pr
+    verify_merge_and_pr -. retry .-> gate_reporter_review_and_merge
+    verify_merge_and_pr -. ok .-> gate_release_handoff
+    gate_release_handoff --> verify_release_and_prepare_disclosure
+    verify_release_and_prepare_disclosure -. retry .-> gate_release_handoff
+    verify_release_and_prepare_disclosure -. ok .-> gate_disclosure_and_close
+    gate_disclosure_and_close -. retry .-> gate_disclosure_and_close
+    gate_disclosure_and_close -. done .-> __end__
+```
+
 ---
 
 ## 1. One-Time Setup
