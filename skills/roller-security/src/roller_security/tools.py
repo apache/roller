@@ -22,6 +22,9 @@ outside Git tracking) and honor ``dry_run=True`` safely.
 
 from __future__ import annotations
 
+import json
+import os
+import re
 import shutil
 import subprocess
 import urllib.error
@@ -209,27 +212,82 @@ def verify_fix_commit_ancestor(
     return False, f"git merge-base error (exit {proc.returncode}): {_format_output(proc)}"
 
 
+def current_branch(repo_dir: str) -> str:
+    """Return the checked-out branch name of ``repo_dir`` (empty when detached)."""
+    proc = _run_cmd(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=Path(repo_dir).resolve())
+    name = proc.stdout.strip() if proc.returncode == 0 else ""
+    return "" if name == "HEAD" else name
+
+
 def run_maven_tests(
     repo_dir: str,
     test_classes: list[str],
     *,
+    branch: str = "",
+    java_home: str = "",
     dry_run: bool = False,
 ) -> tuple[bool, str]:
-    """Run ``mvn -V -ntp test`` (optionally scoped to ``test_classes``)."""
-    cmd = ["mvn", "-V", "-ntp", "test"]
+    """Run the documented build (``mvn -V -ntp clean install``) on ``branch``.
+
+    ``test_classes`` narrows the run with ``-Dtest``; surefire is told not to
+    fail the modules, such as ``db-utils``, that have no matching test.
+    ``java_home`` selects the target branch's JDK through ``JAVA_HOME``.
+    """
+    cmd = ["mvn", "-V", "-ntp", "clean", "install"]
     cleaned = [c.strip() for c in test_classes if c.strip()]
     if cleaned:
         cmd.append(f"-Dtest={','.join(cleaned)}")
+        cmd.append("-Dsurefire.failIfNoSpecifiedTests=false")
 
     if dry_run:
-        return True, f"[dry-run] Would run: {' '.join(cmd)}"
+        return True, f"[dry-run] Would run on {branch or 'the current branch'}: {' '.join(cmd)}"
 
+    if branch:
+        checked_out = current_branch(repo_dir)
+        if checked_out != branch:
+            return False, (
+                f"{repo_dir} is on {checked_out or 'a detached HEAD'}, not {branch}. "
+                f"Check out {branch} (or a worktree of it) and resume again."
+            )
+
+    env = None
+    if java_home:
+        env = dict(os.environ, JAVA_HOME=java_home)
     repo_path = Path(repo_dir).resolve()
     try:
-        proc = _run_cmd(cmd, cwd=repo_path)
+        proc = subprocess.run(
+            cmd, cwd=str(repo_path), capture_output=True, text=True, check=False, env=env
+        )
     except FileNotFoundError:
         return False, "mvn executable not found on PATH."
     return proc.returncode == 0, _format_output(proc)
+
+
+def git_range_summary(repo_dir: str, rev_range: str, *, max_chars: int = 20000) -> str:
+    """Return the commit messages and diff for ``rev_range``, truncated for an audit prompt."""
+    if not rev_range:
+        return ""
+    repo_path = Path(repo_dir).resolve()
+    log = _run_cmd(["git", "log", "--format=commit %h%n%B", rev_range], cwd=repo_path)
+    diff = _run_cmd(["git", "diff", rev_range.replace("..", "...", 1)], cwd=repo_path)
+    text = f"Commit messages:\n{_format_output(log)}\n\nDiff:\n{_format_output(diff)}"
+    if len(text) > max_chars:
+        text = text[:max_chars] + f"\n[truncated at {max_chars} characters]"
+    return text
+
+
+_LISTS_THREAD = re.compile(r"^https://lists\.apache\.org/thread/([A-Za-z0-9]+)")
+
+
+def _http_status(url: str, headers: dict[str, str]) -> tuple[int | None, str, bytes]:
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return resp.status, "", resp.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, str(exc.reason), b""
+    except urllib.error.URLError as exc:
+        return None, str(exc.reason), b""
 
 
 def verify_archive_urls(
@@ -237,7 +295,12 @@ def verify_archive_urls(
     *,
     dry_run: bool = False,
 ) -> tuple[bool, str]:
-    """Verify each ASF mailing list archive URL returns HTTP 200 (following redirects)."""
+    """Verify that each advisory is really in its list archive.
+
+    ``lists.apache.org/thread/<id>`` pages return 200 for any id, so those are
+    checked through the archive API, which answers 404 for an unknown thread.
+    Other URLs must answer 200.
+    """
     cleaned = [u.strip() for u in urls if u.strip()]
     if not cleaned:
         return False, "No archive URLs provided to verify."
@@ -245,8 +308,7 @@ def verify_archive_urls(
     if dry_run:
         return (
             True,
-            f"[dry-run] Would verify HTTP 200 on {len(cleaned)} archive URL(s): "
-            + ", ".join(cleaned),
+            f"[dry-run] Would verify {len(cleaned)} archive URL(s): " + ", ".join(cleaned),
         )
 
     lines: list[str] = []
@@ -254,32 +316,33 @@ def verify_archive_urls(
     headers = {"User-Agent": "roller-security-graph/0.1"}
 
     for url in cleaned:
-        status: int | None = None
-        err_msg = ""
-        for method in ("HEAD", "GET"):
-            req = urllib.request.Request(url, headers=headers, method=method)
-            try:
-                with urllib.request.urlopen(req, timeout=15) as resp:
-                    status = resp.status
-                break
-            except urllib.error.HTTPError as exc:
-                if method == "HEAD" and exc.code in (405, 501):
-                    continue
-                status = exc.code
-                err_msg = str(exc.reason)
-                break
-            except urllib.error.URLError as exc:
-                err_msg = str(exc.reason)
-                break
+        thread = _LISTS_THREAD.match(url)
+        if thread:
+            mid = thread.group(1)
+            status, err, body = _http_status(
+                f"https://lists.apache.org/api/thread.lua?id={mid}", headers
+            )
+            found = False
+            if status == 200:
+                try:
+                    found = json.loads(body.decode("utf-8")).get("thread", {}).get("mid") == mid
+                except (ValueError, AttributeError):
+                    found = False
+            if found:
+                lines.append(f"ok (archived): {url}")
+                continue
+            all_ok = False
+            detail = f"HTTP {status}" if status is not None else "connection error"
+            lines.append(f"FAIL (thread not in archive, {detail}{' ' + err if err else ''}): {url}")
+            continue
 
+        status, err, _ = _http_status(url, headers)
         if status == 200:
             lines.append(f"ok (200): {url}")
         else:
             all_ok = False
             detail = f"HTTP {status}" if status is not None else "connection error"
-            if err_msg:
-                detail = f"{detail} ({err_msg})"
-            lines.append(f"FAIL ({detail}): {url}")
+            lines.append(f"FAIL ({detail}{' ' + err if err else ''}): {url}")
 
     return all_ok, "\n".join(lines)
 
@@ -320,7 +383,7 @@ def scaffold_case_dir(
 
     created: list[str] = []
     if not dry_run:
-        target_dir.mkdir(parents=True, exist_ok=True)
+        target_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     for name in _SCAFFOLD_TEMPLATES:
         src = template_dir / name
@@ -330,6 +393,30 @@ def scaffold_case_dir(
         if not dest.exists():
             if not dry_run:
                 shutil.copyfile(src, dest)
+                dest.chmod(0o600)
             created.append(str(dest))
 
     return created
+
+
+def append_case_section(
+    case_dir: str | Path,
+    filename: str,
+    heading: str,
+    body: str,
+    *,
+    dry_run: bool = False,
+) -> str:
+    """Append a dated, generated section to a scaffolded case file.
+
+    The PMC edits these files by hand, so generated text is added below the
+    template rather than replacing it.
+    """
+    if not case_dir or not body.strip():
+        return ""
+    path = Path(case_dir) / filename
+    if dry_run or not path.is_file():
+        return str(path)
+    with path.open("a", encoding="utf-8") as out:
+        out.write(f"\n\n## {heading}\n\n{body.strip()}\n")
+    return str(path)

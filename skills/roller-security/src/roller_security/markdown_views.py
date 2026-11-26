@@ -175,6 +175,7 @@ def write_case_markdown(case: dict[str, Any]) -> Path | None:
         return None
     out_path = case_dir / "CASE.md"
     out_path.write_text(render_case_markdown(case), encoding="utf-8")
+    out_path.chmod(0o600)
     return out_path
 
 
@@ -354,4 +355,5 @@ def write_summary_board(
     root.mkdir(parents=True, exist_ok=True)
     out_path = root / "SUMMARY_BOARD.md"
     out_path.write_text(render_board_markdown(cases, warnings), encoding="utf-8")
+    out_path.chmod(0o600)
     return out_path

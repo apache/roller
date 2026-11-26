@@ -84,7 +84,7 @@ def _print_result(graph, thread_id: str) -> None:
 
 def cmd_start(args: argparse.Namespace) -> None:
     db = _resolve_db(args)
-    CaseStore(db)  # Ensure case tables are initialized.
+    store = CaseStore(db)  # Ensure case tables are initialized.
 
     repo_dir = str(Path(args.repo).resolve())
     triage_dir = str(Path(args.triage_dir).resolve())
@@ -121,6 +121,14 @@ def cmd_start(args: argparse.Namespace) -> None:
     with SqliteSaver.from_conn_string(str(db)) as checkpointer:
         graph = build_security_case_graph(checkpointer=checkpointer)
         cfg = {"configurable": {"thread_id": thread_id}}
+        # Starting again on a saved thread would run the case from the top
+        # and overwrite its record.
+        if store.get_case(case_key) or graph.get_state(cfg).values:
+            raise SystemExit(
+                f"Case {case_key} (thread {thread_id}) already exists. Use "
+                f"`roller-security status {thread_id}` or `resume`, or start a new "
+                "case with a different --case-id or --slug."
+            )
         graph.invoke(initial_state, config=cfg)
         _print_result(graph, thread_id)
 
@@ -198,6 +206,8 @@ def cmd_list(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    # Case files, the database and its WAL/SHM files hold private case details.
+    os.umask(0o077)
     p = argparse.ArgumentParser(
         description="Apache Roller Security Triage Runner (LangGraph, Obsidian-free)"
     )
@@ -214,7 +224,7 @@ def main() -> None:
     st_start.add_argument("--case-id", default="01", help="Two-digit case sequence ID (default: 01)")
     st_start.add_argument("--owner", default="", help="PMC owner handle")
     st_start.add_argument("--report", default="", help="Path to raw vulnerability report file")
-    st_start.add_argument("--dry-run", action="store_true", help="Do not modify repo, triage dir, or hit network")
+    st_start.add_argument("--dry-run", action="store_true", help="Do not modify the repo or case files, or hit the network; the case is still recorded in cases.db")
     st_start.add_argument("--mock-llm", action="store_true", help="Use offline mock LLMs (no API keys required)")
     st_start.add_argument("--local-llm", action="store_true", help="Restrict all private LLM calls to local Ollama")
     st_start.add_argument("--thread-id", default="", help="Custom checkpoint thread ID")
@@ -240,7 +250,7 @@ def main() -> None:
 
     exp = sub.add_parser(
         "export-briefs",
-        help="Export leak-safe PublicBrief JSON array for roller-release-graph --security",
+        help="Export leak-safe PublicBrief JSON array for release notes",
     )
     exp.add_argument("--target-release", required=True, help="Target release version (e.g. 7.0.0)")
     exp.add_argument("--triage-dir", default="", help="Use <triage-dir>/cases.db")

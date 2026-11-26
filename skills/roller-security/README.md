@@ -8,7 +8,7 @@ An Obsidian-free LangGraph state machine and SQLite case tracker built directly 
 | :--- | :--- | :--- |
 | **Tier 0 (No LLM)** | Workspace privacy guard, case scaffolding, Maven tests, `check-private`, cross-case overlap checks, git ancestor verification, archive URL checks, SQLite & Markdown views | Pure Python + shell |
 | **Tier 1 (Cheap / Local LLM)** | Provenance extraction, email drafts (ack, accept/reject, reporter review, disclosure), air-gapped neutral PR draft | `ROLLER_SEC_CHEAP_MODEL` (`anthropic:claude-sonnet-5-5`, or Ollama with `--local-llm`) |
-| **Tier 2 (Frontier / ZDR LLM)** | Codebase reachability investigation, ASF severity & CVE portal drafting, semantic disclosure audit | `ROLLER_SEC_FRONTIER_MODEL` (`anthropic:claude-opus-5-5`, or Ollama with `--local-llm`) |
+| **Tier 2 (Frontier LLM)** | Codebase reachability investigation, ASF severity & CVE portal drafting, semantic disclosure audit | `ROLLER_SEC_FRONTIER_MODEL` (`anthropic:claude-opus-5-5`, or Ollama with `--local-llm`) |
 
 **Air-gapped public drafting:** `draft_pr_and_reporter_review` passes **only** the sanitized `PublicBrief` (`neutral_change_summary`, `affected_modules`, `upgrade_guidance`, `branch_name`) with `private_context=False` to draft public PR titles, bodies, and commit messages—never raw reports, CVE IDs, or exploit details.
 
@@ -49,7 +49,7 @@ uv run roller-security resume 2026-01-demo-validation \
 uv run roller-security resume 2026-01-demo-validation \
   --json '{"reporter_approved": true, "fix_commit": "0123456789abcdef0123456789abcdef01234567", "pr_number": 42}'
 
-# 6. Gate 5 — Resume after companion roller-release-graph --security publishes the release
+# 6. Gate 5 — Resume after the release (roller-release skill) is published
 uv run roller-security resume 2026-01-demo-validation \
   --json '{"release_tag": "roller-7.0.0"}'
 
@@ -59,6 +59,10 @@ uv run roller-security resume 2026-01-demo-validation \
 ```
 
 ## Privacy-First Local LLM Mode (Ollama)
+
+Without `--local-llm`, the raw report and every private-context step go to the
+cloud models above. Nothing here checks the provider account's data-retention
+terms; use an account the PMC accepts for undisclosed reports.
 
 To keep all private vulnerability reports 100% on your machine, install the `ollama` extra and pass `--local-llm`:
 
@@ -82,7 +86,7 @@ uv run roller-security board --mine snoopdave --release 7.0.0
 uv run roller-security board --markdown
 ```
 
-Export leak-safe `PublicBrief` JSON for `tools/roller-release-graph --security`:
+Export leak-safe `PublicBrief` JSON for the release notes. Only cases with a committed fix (`fix-committed` or later, with `fix_commit` set) are included:
 
 ```bash
 uv run roller-security export-briefs --target-release 7.0.0

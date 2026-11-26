@@ -42,3 +42,5 @@ logs/
 __pycache__/
 *.pyc
 uv.lock
+# Locked so a new upstream release is never picked up unreviewed.
+!skills/roller-security/uv.lock

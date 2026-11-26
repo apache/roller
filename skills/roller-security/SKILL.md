@@ -68,18 +68,28 @@ uv run roller-security start \
 uv run roller-security status <case-key> --triage-dir ../../triage-<year>
 uv run roller-security resume <case-key> --triage-dir ../../triage-<year> --json '<payload>'
 
-# Export leak-safe PublicBrief JSON for tools/roller-release-graph --security
+# Export leak-safe PublicBrief JSON for release notes (roller-release skill)
 uv run roller-security export-briefs --target-release 7.0.0 --triage-dir ../../triage-<year>
 ```
 
-Pass `--local-llm` to restrict all private-context LLM calls to local Ollama,
-or `--dry-run --mock-llm` to test a workflow offline.
+By default the private-context steps (the raw report, investigation, severity
+and CVE drafting, reporter emails) go to the configured cloud models. Use them
+only under an account whose data-retention terms the PMC accepts for undisclosed
+reports. Pass `--local-llm` to keep every private-context call on local Ollama.
+`--dry-run --mock-llm` tests a workflow offline; it still records the case in
+`cases.db`.
+
+Cases opened before this runner are tracked in their `TRACKING.md` files and
+are not in `cases.db`, so `board` does not show them. Keep running
+`python3 scripts/triage-status.py ../../triage-<year>` for those cases until each
+one is closed or restarted in the runner.
 
 ## Workflow summary
 
 Read [ASF process and routing](references/asf-process.md) for policy sources and
-project-specific decisions. Each stage is enforced by `tools/roller-security-graph`
-with explicit human approval gates:
+project-specific decisions. Each stage is enforced by this skill's
+`roller-security` CLI with explicit human approval gates. A gate asks again when
+an answer is incomplete, and a failed check returns to the gate before it:
 
 1. **Workspace guard & acknowledgement:** Verify Git exclusion, scaffold
    `IMPLEMENTATION.md` and `CVE_FORM.md` from `assets/item-template/`, and
@@ -96,15 +106,29 @@ with explicit human approval gates:
    reconcile `CVE_FORM.md`, and request an ID through the
    [portal workflow](references/cve-portal.md).
 5. **Fix, disclosure lint & reporter review:** Run supported-JDK tests,
-   `scripts/check-private.sh --range master..HEAD` (and `--pr <num>`), semantic
+   `scripts/check-private.sh --range <base>..<branch>` (base `roller-6.1.x` or
+   `master`; and `--pr <num>`), semantic
    disclosure + cross-case overlap review, and send the fix + draft advisory to
    the reporter with a reasonable deadline. Record the landed merge/squash
    commit as `fix_commit` and verify it is an ancestor of the release tag.
-6. **Release & disclosure:** Hand off sanitized `PublicBrief`s to
-   `tools/roller-release-graph` (`--security`). Once the fixed release is live,
+6. **Release & disclosure:** Hand off sanitized `PublicBrief`s
+   (`export-briefs`) to the release work in the companion `roller-release`
+   skill. Once the fixed release is live,
    advance the CVE portal record, verify delivery in every list archive, notify
    reporters separately with their advisory links, and close the case. Never
    rewrite pushed Git commits to add CVE IDs.
+
+## Rules the CLI does not enforce
+
+- Search the correspondence before stating what a reporter said or did not say.
+  Do not infer that a message was sent from a draft, or that none arrived
+  because the case record lacks one.
+- Do not assume that derivability from public source makes an unannounced
+  finding appropriate for publication. Resolve doubt with the PMC and ASF Security.
+- Use the target branch's supported JDK and documented build commands, not a
+  machine-specific SDK path.
+- Reconcile `CVE_FORM.md` (including the generated draft the CLI appends) before
+  using the CVE portal or drafting an advisory.
 
 ## References and helpers
 
@@ -113,5 +137,7 @@ with explicit human approval gates:
 - [Communication templates](references/comms-templates.md): reporter and PMC message drafts.
 - [Severity and CVSS](references/severity-and-cvss.md): ASF severity ratings and CVSS guidance.
 - [CVE portal](references/cve-portal.md): ASF Security portal entry workflow.
+- `scripts/triage-status.py <triage-dir>`: read-only board for cases still tracked in
+  `TRACKING.md`. Remove it when no such cases are open.
 - `scripts/check-private.sh [--range <base..tip>] [--pr <number>]`: disclosure lint for
   private paths, branch names, commit messages, staged diffs, and PR text.

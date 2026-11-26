@@ -81,6 +81,8 @@ class SecurityCaseState(TypedDict, total=False):
     cvss_score: str
     cve_id: str
     branch: str
+    base_branch: str            # branch the fix is based on (roller-6.1.x or master)
+    java_home: str              # JDK home for the base branch's build
     fix_commit: str
     tests: list[str]
     target_release: str
@@ -116,6 +118,8 @@ class SecurityCaseState(TypedDict, total=False):
     reporter_review_email_draft: str
     release_tag: str
     fix_ancestor_ok: bool
+    ancestor_log: str
+    archive_log: str
     advisory_archive_urls: list[str]
     archives_verified: bool
     reporter_notified_email_draft: str
@@ -124,7 +128,7 @@ class SecurityCaseState(TypedDict, total=False):
 
 
 # ---------------------------------------------------------------------------
-# Structured outputs for Tier 1 (Cheap/Local) and Tier 2 (Frontier/ZDR) nodes
+# Structured outputs for Tier 1 (Cheap/Local) and Tier 2 (Frontier) nodes
 # ---------------------------------------------------------------------------
 
 class ProvenanceExtract(BaseModel):

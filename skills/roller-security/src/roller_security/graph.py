@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 from langgraph.graph import END, StateGraph
 from langgraph.types import interrupt
@@ -38,6 +38,8 @@ from roller_security.state import (
 )
 from roller_security.store import CaseStore
 from roller_security.tools import (
+    append_case_section,
+    git_range_summary,
     guard_private_workspace,
     read_skill_ref,
     run_check_private,
@@ -68,6 +70,43 @@ def _append_history(
         }
     )
     return hist
+
+
+def _ask(
+    request: dict[str, Any],
+    validate: Callable[[dict[str, Any]], str | None],
+) -> dict[str, Any]:
+    """Interrupt until the human's answer passes ``validate``.
+
+    ``validate`` returns an error message, or None when the answer is usable.
+    Each rejected answer is shown back with the error and the gate asks again.
+    """
+    prompt = dict(request)
+    while True:
+        response = interrupt(prompt)
+        payload = response if isinstance(response, dict) else {}
+        error = validate(payload)
+        if error is None:
+            return payload
+        prompt = {**request, "error": error, "rejected_answer": payload}
+
+
+def _base_branch(state: SecurityCaseState) -> str:
+    """The branch a fix is based on: ``base_branch`` if set, else from the target release."""
+    if state.get("base_branch"):
+        return str(state["base_branch"])
+    return "roller-6.1.x" if str(state.get("target_release", "")).startswith("6.") else "master"
+
+
+def _with_brief_edits(state: SecurityCaseState, payload: dict[str, Any]) -> PublicBrief:
+    """Apply a human's edits to the public brief, keeping only allowed keys."""
+    brief: PublicBrief = dict(state.get("public_brief") or {})  # type: ignore[assignment]
+    edits = payload.get("public_brief")
+    if isinstance(edits, dict):
+        for key in ("neutral_change_summary", "affected_modules", "upgrade_guidance"):
+            if key in edits:
+                brief[key] = edits[key]  # type: ignore[literal-required]
+    return brief
 
 
 def _format_email(draft: EmailDraft) -> str:
@@ -319,7 +358,7 @@ def ingest_and_ack_node(state: SecurityCaseState) -> dict[str, Any]:
 
 
 def gate_acknowledge_node(state: SecurityCaseState) -> dict[str, Any]:
-    response = interrupt(
+    payload = _ask(
         {
             "gate": "acknowledge",
             "case_key": state.get("case_key"),
@@ -337,9 +376,11 @@ def gate_acknowledge_node(state: SecurityCaseState) -> dict[str, Any]:
                 "owner": "optional PMC owner handle",
                 "credit": "optional reporter credit string",
             },
-        }
+        },
+        lambda answer: None
+        if answer.get("acknowledged") is True
+        else "Resume with \"acknowledged\": true once the acknowledgement has been sent.",
     )
-    payload = response if isinstance(response, dict) else {}
     updates: dict[str, Any] = {
         "thread_url": payload.get("thread_url", state.get("thread_url", "")),
         "forwarded_on": payload.get("forwarded_on", state.get("forwarded_on", "")),
@@ -350,7 +391,7 @@ def gate_acknowledge_node(state: SecurityCaseState) -> dict[str, Any]:
         "history": _append_history(
             state,
             "gate_acknowledge",
-            f"acknowledged={payload.get('acknowledged', True)}",
+            "acknowledged=True",
             stage="acknowledged",
         ),
     }
@@ -433,6 +474,18 @@ def investigate_codebase_node(state: SecurityCaseState) -> dict[str, Any]:
             stage="investigating",
         ),
     }
+    append_case_section(
+        state.get("case_dir", ""),
+        "IMPLEMENTATION.md",
+        f"Generated investigation ({_today_iso()}, {used})",
+        f"### Verified evidence\n\n{report.verified_evidence}\n\n"
+        f"### Inference (unverified)\n\n{report.inference_notes}\n\n"
+        f"- Minimum actor: {report.minimum_actor}\n"
+        f"- Preconditions: {report.preconditions}\n"
+        f"- Affected versions: {report.affected_versions}\n"
+        f"- Recommended decision: {report.recommended_decision}",
+        dry_run=state.get("dry_run", False),
+    )
     _sync_store(
         state,
         overrides=updates,
@@ -449,7 +502,15 @@ def investigate_codebase_node(state: SecurityCaseState) -> dict[str, Any]:
 
 
 def gate_pmc_decision_node(state: SecurityCaseState) -> dict[str, Any]:
-    response = interrupt(
+    def _check_decision(answer: dict[str, Any]) -> str | None:
+        value = str(answer.get("decision", "")).strip().lower()
+        if value not in ("accept", "reject", "duplicate", "wont-fix"):
+            return f"decision must be accept, reject, duplicate or wont-fix, not {answer.get('decision')!r}"
+        if value == "accept" and not str(answer.get("target_release", "")).strip():
+            return "target_release is required when accepting"
+        return None
+
+    payload = _ask(
         {
             "gate": "pmc_decision",
             "case_key": state.get("case_key"),
@@ -458,8 +519,10 @@ def gate_pmc_decision_node(state: SecurityCaseState) -> dict[str, Any]:
             "actor": state.get("actor"),
             "preconditions": state.get("preconditions"),
             "affected": state.get("affected"),
+            "public_brief": state.get("public_brief"),
             "instructions": (
-                "Record the Apache Roller PMC decision on this report. "
+                "Record the Apache Roller PMC decision on this report, and check the "
+                "public_brief: it becomes public PR and release text, so correct it here. "
                 "Use 'accept' to proceed to severity/CVE assessment, or "
                 "'reject' / 'duplicate' / 'wont-fix' to draft a closing response."
             ),
@@ -472,13 +535,13 @@ def gate_pmc_decision_node(state: SecurityCaseState) -> dict[str, Any]:
                 "duplicates": ["optional case_key list"],
                 "shares_code_with": ["optional case_key list"],
                 "blocks": ["optional case_key list"],
+                "public_brief": {"neutral_change_summary": "optional corrected text"},
             },
-        }
+        },
+        _check_decision,
     )
-    payload = response if isinstance(response, dict) else {}
-    raw_decision = str(payload.get("decision", "reject")).strip().lower()
     decision: Literal["accept", "reject", "duplicate", "wont-fix"] = (
-        raw_decision if raw_decision in ("accept", "reject", "duplicate", "wont-fix") else "reject"  # type: ignore[assignment]
+        str(payload["decision"]).strip().lower()  # type: ignore[assignment]
     )
 
     updates: dict[str, Any] = {
@@ -490,6 +553,7 @@ def gate_pmc_decision_node(state: SecurityCaseState) -> dict[str, Any]:
         "duplicates": payload.get("duplicates", state.get("duplicates", [])),
         "shares_code_with": payload.get("shares_code_with", state.get("shares_code_with", [])),
         "blocks": payload.get("blocks", state.get("blocks", [])),
+        "public_brief": _with_brief_edits(state, payload),
         "status": f"pmc_decision_{decision}",
         "history": _append_history(
             state,
@@ -580,7 +644,7 @@ def _render_cve_form_markdown(state: SecurityCaseState, assessment: SeverityAsse
         f"- **Problem Type**: {assessment.cwe_problem_type}\n"
         f"- **Affected Versions**: {state.get('affected', '')}\n"
         f"- **Fixed In**: {state.get('target_release', '')}\n"
-        f"- **Credit**: {state.get('credit') or state.get('reporter', '')}\n\n"
+        f"- **Credit**: {state.get('credit') or 'TBD (ask the reporter how to be credited)'}\n\n"
         f"## Description\n\n"
         f"{assessment.cve_description}\n\n"
         f"## Upgrade / Mitigation Guidance\n\n"
@@ -691,6 +755,13 @@ def assess_severity_and_cve_node(state: SecurityCaseState) -> dict[str, Any]:
             stage="accepted",
         ),
     }
+    append_case_section(
+        state.get("case_dir", ""),
+        "CVE_FORM.md",
+        f"Generated CVE draft ({_today_iso()}, {used_sev}); reconcile before using the portal",
+        cve_form_md,
+        dry_run=state.get("dry_run", False),
+    )
     _sync_store(
         state,
         overrides=updates,
@@ -713,14 +784,21 @@ def gate_cve_request_node(state: SecurityCaseState) -> dict[str, Any]:
         "severity": state.get("severity"),
         "cve_form_markdown": state.get("cve_form_markdown"),
         "decision_email_draft": state.get("decision_email_draft"),
+        "public_brief": state.get("public_brief"),
+        "base_branch": _base_branch(state),
         "instructions": (
             "Submit the CVE request via cveprocess.apache.org, send the acceptance email, "
-            "and prepare a private fix branch with unit tests. Resume with cve_id, branch, and tests."
+            "and prepare a private fix branch with unit tests. Check out the branch in repo_dir "
+            "and resume with cve_id, branch and tests. Set java_home to the base branch's JDK "
+            "(JDK 11 for roller-6.1.x, 21 for master), and correct public_brief if needed."
         ),
         "expected_resume_schema": {
             "cve_id": "CVE-2026-XXXXX",
             "branch": "fix/neutral-branch-name",
             "tests": ["org.apache.roller.weblogger.SomeTest"],
+            "base_branch": "optional; default from target_release",
+            "java_home": "optional JDK home for the base branch",
+            "public_brief": {"neutral_change_summary": "optional corrected text"},
         },
     }
     if state.get("semantic_disclosure_findings"):
@@ -730,8 +808,12 @@ def gate_cve_request_node(state: SecurityCaseState) -> dict[str, Any]:
     if state.get("overlap_warnings"):
         gate_payload["overlap_warnings"] = state["overlap_warnings"]
 
-    response = interrupt(gate_payload)
-    payload = response if isinstance(response, dict) else {}
+    payload = _ask(
+        gate_payload,
+        lambda answer: None
+        if str(answer.get("branch") or state.get("branch") or "").strip()
+        else "branch is required: the fix is tested and audited on it.",
+    )
 
     cve_id = payload.get("cve_id", state.get("cve_id", ""))
     branch = payload.get("branch", state.get("branch", ""))
@@ -739,7 +821,7 @@ def gate_cve_request_node(state: SecurityCaseState) -> dict[str, Any]:
     if isinstance(tests, str):
         tests = [t.strip() for t in tests.split(",") if t.strip()]
 
-    public_brief: PublicBrief = dict(state.get("public_brief") or {})  # type: ignore[assignment]
+    public_brief = _with_brief_edits(state, payload)
     if branch:
         public_brief["branch_name"] = branch
 
@@ -747,6 +829,8 @@ def gate_cve_request_node(state: SecurityCaseState) -> dict[str, Any]:
         "cve_id": cve_id,
         "branch": branch,
         "tests": tests,
+        "base_branch": payload.get("base_branch", state.get("base_branch", "")),
+        "java_home": payload.get("java_home", state.get("java_home", "")),
         "public_brief": public_brief,
         "stage": "cve-requested",
         "status": "cve_requested",
@@ -778,9 +862,16 @@ def verify_fix_and_audit_node(state: SecurityCaseState) -> dict[str, Any]:
     branch = state.get("branch", "")
     tests = state.get("tests") or []
 
-    tests_ok, tests_log = run_maven_tests(repo_dir, tests, dry_run=dry_run)
-    rev_range = f"master..{branch}" if branch else ""
+    tests_ok, tests_log = run_maven_tests(
+        repo_dir,
+        tests,
+        branch=branch,
+        java_home=state.get("java_home", ""),
+        dry_run=dry_run,
+    )
+    rev_range = f"{_base_branch(state)}..{branch}" if branch else ""
     check_ok, check_log = run_check_private(repo_dir, rev_range=rev_range, dry_run=dry_run)
+    change = "" if dry_run else git_range_summary(repo_dir, rev_range)
 
     overlaps: list[str] = []
     if state.get("db_path") and state.get("case_key"):
@@ -788,12 +879,16 @@ def verify_fix_and_audit_node(state: SecurityCaseState) -> dict[str, Any]:
 
     audit_prompt = (
         "Audit this candidate Apache Roller security fix for semantic disclosure leakage.\n"
-        "Verify that branch names, commit messages, test names, and comments do NOT mention "
-        "CVE IDs, 'security', 'vulnerability', 'exploit', or hint at undisclosed issues.\n\n"
-        f"Branch: {branch}\n"
+        "Verify that branch names, commit messages, test names, code comments, the diff "
+        "and the public PR text do NOT mention CVE IDs, 'security', 'vulnerability', "
+        "'exploit', or hint at undisclosed issues. Consider what the whole change "
+        "reveals, including related cases.\n\n"
+        f"Branch: {branch} (base {_base_branch(state)})\n"
         f"Tests: {tests}\n"
+        f"Public brief: {state.get('public_brief') or {}}\n"
         f"check-private output:\n{check_log[:6000]}\n"
-        f"Cross-case overlap warnings: {overlaps}\n"
+        f"Cross-case overlap warnings: {overlaps}\n\n"
+        f"{change}\n"
     )
 
     def _mock_audit() -> DisclosureAudit:
@@ -888,7 +983,9 @@ def draft_pr_and_reporter_review_node(state: SecurityCaseState) -> dict[str, Any
         mock_llm=mock_llm,
         mock_factory=_mock_pr,
         local_llm_only=local_only,
-        private_context=False,
+        # The brief was written by an LLM from the raw report, so --local-llm
+        # must keep this call local too.
+        private_context=True,
     )
 
     comms_ref = read_skill_ref(state["repo_dir"], "comms-templates.md")
@@ -952,28 +1049,46 @@ def draft_pr_and_reporter_review_node(state: SecurityCaseState) -> dict[str, Any
 
 
 def gate_reporter_review_and_merge_node(state: SecurityCaseState) -> dict[str, Any]:
-    response = interrupt(
+    def _check_merge(answer: dict[str, Any]) -> str | None:
+        if not str(answer.get("fix_commit", "")).strip():
+            return "fix_commit is required: the merge or squash commit on the release branch"
+        if answer.get("reporter_approved") is not True and answer.get("deadline_elapsed") is not True:
+            return "set reporter_approved or deadline_elapsed to true before merging"
+        pr = answer.get("pr_number")
+        if pr not in (None, "") and not str(pr).lstrip("#").isdigit():
+            return f"pr_number must be a number, not {pr!r}"
+        return None
+
+    payload = _ask(
         {
             "gate": "reporter_review_and_merge",
             "case_key": state.get("case_key"),
             "pr_draft_title": state.get("pr_draft_title"),
             "pr_draft_body": state.get("pr_draft_body"),
             "reporter_review_email_draft": state.get("reporter_review_email_draft"),
+            **(
+                {"previous_merge_check": state.get("check_private_log")}
+                if state.get("status") == "merge_check_warning"
+                else {}
+            ),
             "instructions": (
                 "Send the fix patch to the reporter for review. Once approved (or deadline elapsed), "
                 "merge the neutral PR/commit to the target branch and resume with fix_commit."
             ),
             "expected_resume_schema": {
                 "reporter_approved": True,
+                "deadline_elapsed": "true instead of reporter_approved when the deadline passed",
                 "fix_commit": "40-char git SHA",
                 "pr_number": 123,
                 "reporter_deadline": "YYYY-MM-DD (optional)",
             },
-        }
+        },
+        _check_merge,
     )
-    payload = response if isinstance(response, dict) else {}
-    fix_commit = payload.get("fix_commit", state.get("fix_commit", ""))
+    fix_commit = str(payload["fix_commit"]).strip()
     pr_number = payload.get("pr_number", state.get("pr_number"))
+    if isinstance(pr_number, str):
+        pr_number = pr_number.lstrip("#") or None
     reporter_deadline = payload.get("reporter_deadline", state.get("reporter_deadline", ""))
 
     updates: dict[str, Any] = {
@@ -985,7 +1100,9 @@ def gate_reporter_review_and_merge_node(state: SecurityCaseState) -> dict[str, A
         "history": _append_history(
             state,
             "gate_reporter_review_and_merge",
-            f"approved={payload.get('reporter_approved', True)}, fix_commit={fix_commit}, pr={pr_number}",
+            f"approved={payload.get('reporter_approved') is True}, "
+            f"deadline_elapsed={payload.get('deadline_elapsed') is True}, "
+            f"fix_commit={fix_commit}, pr={pr_number}",
             stage="fix-committed",
         ),
     }
@@ -1032,13 +1149,13 @@ def verify_merge_and_pr_node(state: SecurityCaseState) -> dict[str, Any]:
 
 
 # ===========================================================================
-# Node 13: Gate 5 — Release handoff (companion roller-release-graph --security)
+# Node 13: Gate 5 — Release handoff (companion roller-release skill)
 # ===========================================================================
 
 
 def gate_release_handoff_node(state: SecurityCaseState) -> dict[str, Any]:
     target = state.get("target_release", "")
-    response = interrupt(
+    payload = _ask(
         {
             "gate": "release_handoff",
             "case_key": state.get("case_key"),
@@ -1047,15 +1164,22 @@ def gate_release_handoff_node(state: SecurityCaseState) -> dict[str, Any]:
             "public_brief": state.get("public_brief"),
             "instructions": (
                 f"Export leak-safe briefs via `roller-security export-briefs --target-release {target or 'X.Y.Z'}` "
-                "and publish the release with `roller-release start --security ...`. "
+                "for the release notes, and release with the roller-release skill. "
                 "Resume once the release is published with the final release_tag."
             ),
             "expected_resume_schema": {
                 "release_tag": f"roller-{target or '7.0.0'}",
             },
-        }
+            **(
+                {"previous_ancestor_check": state.get("ancestor_log")}
+                if state.get("fix_ancestor_ok") is False
+                else {}
+            ),
+        },
+        lambda answer: None
+        if str(answer.get("release_tag", "")).strip()
+        else "release_tag is required",
     )
-    payload = response if isinstance(response, dict) else {}
     release_tag = payload.get("release_tag", state.get("release_tag", ""))
 
     updates: dict[str, Any] = {
@@ -1128,6 +1252,7 @@ def verify_release_and_prepare_disclosure_node(state: SecurityCaseState) -> dict
 
     updates: dict[str, Any] = {
         "fix_ancestor_ok": ok,
+        "ancestor_log": msg,
         "reporter_notified_email_draft": _format_email(notify_draft),
         "status": "disclosure_ready" if ok else "ancestor_check_failed",
         "history": _append_history(
@@ -1146,7 +1271,7 @@ def verify_release_and_prepare_disclosure_node(state: SecurityCaseState) -> dict
 
 
 def gate_disclosure_and_close_node(state: SecurityCaseState) -> dict[str, Any]:
-    response = interrupt(
+    payload = _ask(
         {
             "gate": "disclosure_and_close",
             "case_key": state.get("case_key"),
@@ -1163,9 +1288,16 @@ def gate_disclosure_and_close_node(state: SecurityCaseState) -> dict[str, Any]:
                 "advisory_archive_urls": ["https://lists.apache.org/thread/..."],
                 "closed": True,
             },
-        }
+            **(
+                {"previous_archive_check": state.get("archive_log")}
+                if state.get("archives_verified") is False
+                else {}
+            ),
+        },
+        lambda answer: None
+        if str(answer.get("announcement_url", "")).strip()
+        else "announcement_url is required",
     )
-    payload = response if isinstance(response, dict) else {}
     announcement_url = payload.get("announcement_url", state.get("announcement_url", ""))
     archive_urls = payload.get("advisory_archive_urls", state.get("advisory_archive_urls", []))
     if isinstance(archive_urls, str):
@@ -1177,16 +1309,31 @@ def gate_disclosure_and_close_node(state: SecurityCaseState) -> dict[str, Any]:
 
     urls_ok, urls_msg = verify_archive_urls(urls_to_check, dry_run=state.get("dry_run", False))
 
-    updates: dict[str, Any] = {
+    if not urls_ok:
+        updates: dict[str, Any] = {
+            "announcement_url": announcement_url,
+            "advisory_archive_urls": archive_urls,
+            "archives_verified": False,
+            "archive_log": urls_msg,
+            "status": "archives_unverified",
+            "history": _append_history(
+                state, "gate_disclosure_and_close", f"archives_ok=False ({urls_msg})"
+            ),
+        }
+        _sync_store(state, overrides=updates, note=f"Advisory archive check failed: {urls_msg}")
+        return updates
+
+    updates = {
         "announcement_url": announcement_url,
         "advisory_archive_urls": archive_urls,
-        "archives_verified": urls_ok,
+        "archives_verified": True,
+        "archive_log": urls_msg,
         "stage": "complete",
         "status": "complete",
         "history": _append_history(
             state,
             "gate_disclosure_and_close",
-            f"archives_ok={urls_ok} ({urls_msg}), closed={payload.get('closed', True)}",
+            f"archives_ok=True ({urls_msg}), closed={payload.get('closed', True)}",
             stage="complete",
         ),
     }
@@ -1196,9 +1343,21 @@ def gate_disclosure_and_close_node(state: SecurityCaseState) -> dict[str, Any]:
         milestone="announced",
         milestone_status="done",
         extra_milestones=[("complete", "done")],
-        note=f"Public disclosure complete ({announcement_url}); archives_ok={urls_ok}",
+        note=f"Public disclosure complete ({announcement_url}); archives verified",
     )
     return updates
+
+
+def _route_after_merge_check(state: SecurityCaseState) -> Literal["ok", "retry"]:
+    return "ok" if state.get("check_private_ok") else "retry"
+
+
+def _route_after_ancestor_check(state: SecurityCaseState) -> Literal["ok", "retry"]:
+    return "ok" if state.get("fix_ancestor_ok") else "retry"
+
+
+def _route_after_disclosure(state: SecurityCaseState) -> Literal["done", "retry"]:
+    return "done" if state.get("archives_verified") else "retry"
 
 
 # ===========================================================================
@@ -1260,10 +1419,22 @@ def build_security_case_graph(checkpointer=None):
     )
     builder.add_edge("draft_pr_and_reporter_review", "gate_reporter_review_and_merge")
     builder.add_edge("gate_reporter_review_and_merge", "verify_merge_and_pr")
-    builder.add_edge("verify_merge_and_pr", "gate_release_handoff")
+    builder.add_conditional_edges(
+        "verify_merge_and_pr",
+        _route_after_merge_check,
+        {"ok": "gate_release_handoff", "retry": "gate_reporter_review_and_merge"},
+    )
     builder.add_edge("gate_release_handoff", "verify_release_and_prepare_disclosure")
-    builder.add_edge("verify_release_and_prepare_disclosure", "gate_disclosure_and_close")
-    builder.add_edge("gate_disclosure_and_close", END)
+    builder.add_conditional_edges(
+        "verify_release_and_prepare_disclosure",
+        _route_after_ancestor_check,
+        {"ok": "gate_disclosure_and_close", "retry": "gate_release_handoff"},
+    )
+    builder.add_conditional_edges(
+        "gate_disclosure_and_close",
+        _route_after_disclosure,
+        {"done": END, "retry": "gate_disclosure_and_close"},
+    )
 
     return builder.compile(checkpointer=checkpointer)
 

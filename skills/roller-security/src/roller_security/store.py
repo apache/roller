@@ -688,13 +688,20 @@ class CaseStore:
         return warnings
 
     def export_public_briefs(self, target_release: str) -> list[dict[str, Any]]:
-        """Return ONLY leak-safe PublicBrief dicts for accepted/fix-committed cases."""
+        """Return ONLY leak-safe PublicBrief dicts for cases whose fix is committed.
+
+        A case counts once it reaches ``fix-committed`` (or a later stage) and
+        has ``fix_commit`` set; accepted cases with no fix yet are left out.
+        """
+        committed = PROGRESS_STAGES.index("fix-committed")
         cases = self.list_cases(target_release=target_release)
         briefs: list[dict[str, Any]] = []
         for case in cases:
             stage = _str_val(case.get("stage"), "new")
             decision = _str_val(case.get("decision"))
-            if stage in {"new", "acknowledged", "investigating", "rejected"}:
+            if stage not in PROGRESS_STAGES or PROGRESS_STAGES.index(stage) < committed:
+                continue
+            if not _str_val(case.get("fix_commit")):
                 continue
             if decision in {"reject", "duplicate", "wont-fix"}:
                 continue
