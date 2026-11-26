@@ -87,6 +87,18 @@ class BootstrapSecurityTest {
     }
 
     @Test
+    void existingUnsetMarkerIsUpdatedNotInsertedAgain() throws Exception {
+        RuntimeConfigProperty marker =
+                new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "false");
+        when(properties.getProperty(BootstrapSecurity.COMPLETION_PROPERTY)).thenReturn(marker);
+        when(users.getUserCount()).thenReturn(3L);
+
+        assertTrue(BootstrapSecurity.completeIfInstalled(weblogger));
+        verify(properties).saveProperty(org.mockito.ArgumentMatchers.same(marker));
+        assertEquals("true", marker.getValue());
+    }
+
+    @Test
     void unreadablePropertiesLeaveGateOpen() throws Exception {
         when(properties.getProperty(BootstrapSecurity.COMPLETION_PROPERTY))
                 .thenThrow(new WebloggerException("no database"));

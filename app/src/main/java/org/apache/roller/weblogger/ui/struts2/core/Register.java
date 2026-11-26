@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
@@ -257,12 +258,12 @@ public class Register extends UIAction implements ServletRequestAware {
 
                 // save new user
                 mgr.addUser(ud);
-                WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
-                        new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
 
                 // the first administrator is the one setting up the site, so
-                // take the site's url from this request if none is configured
+                // record that setup is done and take the site's url from this
+                // request if none is configured
                 if (initialAdmin) {
+                    markSetupCompleted();
                     saveSiteUrlIfUnset();
                 }
 
@@ -292,6 +293,21 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         return INPUT;
+    }
+
+    /**
+     * Records that setup is done. The marker is a single row, so an existing
+     * one is updated rather than inserted again.
+     */
+    static void markSetupCompleted() throws WebloggerException {
+        PropertiesManager properties = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty marker = properties.getProperty(BootstrapSecurity.COMPLETION_PROPERTY);
+        if (marker == null) {
+            marker = new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true");
+        } else {
+            marker.setValue("true");
+        }
+        properties.saveProperty(marker);
     }
 
     /**
