@@ -104,7 +104,12 @@ public final class BootstrapSecurity {
                     // first administrator is committed.
                     return false;
                 }
-                properties.saveProperty(new RuntimeConfigProperty(COMPLETION_PROPERTY, "true"));
+                if (marker == null) {
+                    marker = new RuntimeConfigProperty(COMPLETION_PROPERTY, "true");
+                } else {
+                    marker.setValue("true");
+                }
+                properties.saveProperty(marker);
                 weblogger.flush();
             }
             complete();

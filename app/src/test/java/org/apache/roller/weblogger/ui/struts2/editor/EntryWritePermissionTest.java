@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -104,9 +105,36 @@ class EntryWritePermissionTest {
     void limitedMemberCanRemoveADraftOrPendingEntry() throws Exception {
         memberHas(WeblogPermission.EDIT_DRAFT);
         for (PubStatus status : new PubStatus[]{PubStatus.DRAFT, PubStatus.PENDING}) {
-            assertEquals(UIAction.SUCCESS, removeAction(entry(status)).remove());
+            assertEquals(EntryRemove.SUCCESS_EDITOR, removeAction(entry(status)).remove());
         }
         verify(entries, times(2)).removeWeblogEntry(any());
+    }
+
+    @Test
+    void limitedMemberReturnsToTheEditorAfterRemoving() throws Exception {
+        // The entries list needs the Author role.
+        memberHas(WeblogPermission.EDIT_DRAFT);
+
+        assertEquals(EntryRemove.SUCCESS_EDITOR, removeAction(entry(PubStatus.DRAFT)).remove());
+    }
+
+    @Test
+    void failedRoleLookupAfterRemovingFallsBackToTheEditor() throws Exception {
+        memberHas(WeblogPermission.POST);
+        WeblogEntry entry = entry(PubStatus.DRAFT);
+        EntryRemove action = removeAction(entry);
+        when(users.checkPermission(any(WeblogPermission.class), any(User.class)))
+                .thenThrow(new WebloggerException("lookup failed"));
+
+        assertEquals(EntryRemove.SUCCESS_EDITOR, action.remove());
+        verify(entries).removeWeblogEntry(entry);
+    }
+
+    @Test
+    void authorReturnsToTheEntriesListAfterRemoving() throws Exception {
+        memberHas(WeblogPermission.POST);
+
+        assertEquals(UIAction.SUCCESS, removeAction(entry(PubStatus.DRAFT)).remove());
     }
 
     @Test
@@ -172,6 +200,8 @@ class EntryWritePermissionTest {
         WeblogPermission permission = new WeblogPermission(
                 weblog, user, Collections.singletonList(action));
         when(users.getWeblogPermission(weblog, user)).thenReturn(permission);
+        when(users.checkPermission(any(WeblogPermission.class), any(User.class)))
+                .thenAnswer(call -> permission.implies(call.getArgument(0)));
     }
 
     private WeblogEntry entry(PubStatus status) throws Exception {

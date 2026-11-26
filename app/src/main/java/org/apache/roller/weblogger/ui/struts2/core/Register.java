@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
@@ -58,6 +59,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class Register extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(Register.class);
+
+    private static final Object INITIAL_ADMIN_LOCK = new Object();
     private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
@@ -174,6 +177,17 @@ public class Register extends UIAction implements ServletRequestAware {
     
     
     public String save() {
+        if (BootstrapSecurity.isCompleted()) {
+            return register();
+        }
+        // Two submissions of the first administrator's form would both see
+        // setup as not done. One at a time, the second sees it finished.
+        synchronized (INITIAL_ADMIN_LOCK) {
+            return register();
+        }
+    }
+
+    private String register() {
         if (!BootstrapSecurity.isCompleted() && !BootstrapSecurity.isValid(getServletRequest())) {
             return DISABLED_RETURN_CODE;
         }
@@ -257,12 +271,12 @@ public class Register extends UIAction implements ServletRequestAware {
 
                 // save new user
                 mgr.addUser(ud);
-                WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
-                        new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
 
                 // the first administrator is the one setting up the site, so
-                // take the site's url from this request if none is configured
+                // record that setup is done and take the site's url from this
+                // request if none is configured
                 if (initialAdmin) {
+                    markSetupCompleted();
                     saveSiteUrlIfUnset();
                 }
 
@@ -292,6 +306,21 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         return INPUT;
+    }
+
+    /**
+     * Records that setup is done. The marker is a single row, so an existing
+     * one is updated rather than inserted again.
+     */
+    static void markSetupCompleted() throws WebloggerException {
+        PropertiesManager properties = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty marker = properties.getProperty(BootstrapSecurity.COMPLETION_PROPERTY);
+        if (marker == null) {
+            marker = new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true");
+        } else {
+            marker.setValue("true");
+        }
+        properties.saveProperty(marker);
     }
 
     /**

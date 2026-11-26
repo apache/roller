@@ -158,6 +158,27 @@ class RegisterSiteUrlTest {
     }
 
     @Test
+    void firstAdministratorRecordsSetupCompleted() throws Exception {
+        bootstrap.when(BootstrapSecurity::isCompleted).thenReturn(false);
+        bootstrap.when(() -> BootstrapSecurity.isValid(any())).thenReturn(true);
+
+        assertEquals("success", register("https", "blog.example.org", 443).save());
+        verify(properties).saveProperty(org.mockito.ArgumentMatchers.argThat(
+                p -> BootstrapSecurity.COMPLETION_PROPERTY.equals(p.getName())
+                        && "true".equals(p.getValue())));
+    }
+
+    @Test
+    void laterRegistrationsLeaveSetupMarkerAlone() throws Exception {
+        bootstrap.when(BootstrapSecurity::isCompleted).thenReturn(true);
+
+        assertEquals("success", register("http", "other.example.net", 80).save());
+        verify(users).addUser(any());
+        verify(properties, never()).saveProperty(org.mockito.ArgumentMatchers.argThat(
+                p -> BootstrapSecurity.COMPLETION_PROPERTY.equals(p.getName())));
+    }
+
+    @Test
     void firstAdministratorIsRegisteredEvenIfSiteUrlCannotBeSaved() throws Exception {
         bootstrap.when(BootstrapSecurity::isCompleted).thenReturn(false);
         bootstrap.when(() -> BootstrapSecurity.isValid(any())).thenReturn(true);
