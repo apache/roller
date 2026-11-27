@@ -68,9 +68,9 @@
 
     <s:if test="authMethod != 'LDAP'">
 
-        <h2><s:text name="userRegister.heading.authentication" /></h2>
-
         <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OIDC'">
+
+            <h2><s:text name="userRegister.heading.authentication" /></h2>
 
             <s:password label="%{getText('userSettings.password')}"
                          tooltip="%{getText('userRegister.tip.password')}"
