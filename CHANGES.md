@@ -54,6 +54,8 @@
 
 ### Bug fixes
 
+- **Mail subjects stay on one line.** Line breaks in an entry title or
+  weblog name are sent as spaces in notification and invitation subjects.
 - **The comment filter works after editing a comment.** Saving a comment
   on the Comments page left the filter form with a used-up form token, so
   filtering then failed with an error.

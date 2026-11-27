@@ -603,6 +603,16 @@ public class MailUtil {
     }
     
     
+    /**
+     * Subjects include entry titles and weblog names, so keep them to one
+     * line: each run of line breaks or other control characters becomes a
+     * single space.
+     */
+    static String singleLine(String text) {
+        return text.replaceAll("\\p{Cntrl}+", " ").trim();
+    }
+
+
     // agangolli: Incorporated suggested changes from Ken Blackler.
     
     /**
@@ -671,7 +681,7 @@ public class MailUtil {
             }
             message.setRecipients(Message.RecipientType.BCC, copyTo);
         }
-        message.setSubject((subject == null) ? "(no subject)" : subject, "UTF-8");
+        message.setSubject((subject == null) ? "(no subject)" : singleLine(subject), "UTF-8");
         message.setContent(content, mimeType);
         message.setSentDate(new java.util.Date());
         
