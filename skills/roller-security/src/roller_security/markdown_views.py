@@ -26,6 +26,7 @@ from typing import Any
 
 from roller_security.state import ALL_MILESTONES, PROGRESS_STAGES, TERMINAL_STAGES
 from roller_security.store import derive_stage, stage_rank
+from roller_security.tools import make_private
 
 GENERATED_BANNER = "<!-- Generated from SQLite by roller-security; do not edit manually -->"
 DISPLAY_STAGES: list[str] = PROGRESS_STAGES[:-1] + ["rejected", "complete"]
@@ -173,6 +174,7 @@ def write_case_markdown(case: dict[str, Any]) -> Path | None:
     case_dir = Path(case_dir_raw)
     if not case_dir.is_dir():
         return None
+    make_private(case_dir)
     out_path = case_dir / "CASE.md"
     out_path.write_text(render_case_markdown(case), encoding="utf-8")
     out_path.chmod(0o600)
@@ -352,7 +354,8 @@ def write_summary_board(
 ) -> Path:
     """Write <triage_dir>/SUMMARY_BOARD.md and return its path."""
     root = Path(triage_dir)
-    root.mkdir(parents=True, exist_ok=True)
+    root.mkdir(mode=0o700, parents=True, exist_ok=True)
+    make_private(root, recursive=False)
     out_path = root / "SUMMARY_BOARD.md"
     out_path.write_text(render_board_markdown(cases, warnings), encoding="utf-8")
     out_path.chmod(0o600)

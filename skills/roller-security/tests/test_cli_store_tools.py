@@ -130,3 +130,38 @@ def test_maven_refuses_the_wrong_branch(tmp_path):
     subprocess.run(["git", "-C", str(repo), "checkout", "-q", "-b", "main"], check=True)
     ok, log = tools.run_maven_tests(str(repo), [], branch="fix-branch")
     assert not ok and "not fix-branch" in log
+
+
+def test_scaffold_makes_an_existing_case_folder_private(tmp_path):
+    triage = tmp_path / "triage"
+    case = triage / "01-example"
+    case.mkdir(parents=True)
+    triage.chmod(0o755)
+    case.chmod(0o755)
+    (case / "TRACKING.md").write_text("x", encoding="utf-8")
+    (case / "TRACKING.md").chmod(0o644)
+    tools.scaffold_case_dir(str(REPO), case)
+    assert triage.stat().st_mode & 0o777 == 0o700
+    assert case.stat().st_mode & 0o777 == 0o700
+    assert {f.name: f.stat().st_mode & 0o777 for f in case.iterdir()} == {
+        "TRACKING.md": 0o600, "IMPLEMENTATION.md": 0o600, "CVE_FORM.md": 0o600
+    }
+
+
+def test_original_report_is_kept_once_and_private(tmp_path):
+    path = tools.save_original_report(tmp_path, "line one\nline two", source="report.eml")
+    saved = Path(path)
+    assert saved.stat().st_mode & 0o777 == 0o600
+    assert "line two" in saved.read_text(encoding="utf-8")
+    saved.write_text("PMC summary", encoding="utf-8")
+    tools.save_original_report(tmp_path, "different", source="report.eml")
+    assert saved.read_text(encoding="utf-8") == "PMC summary"
+
+
+def test_start_saves_the_report_in_the_case_folder(tmp_path):
+    args = _start_args(tmp_path)
+    args.dry_run = False
+    cli.cmd_start(args)
+    reports = list((tmp_path / "triage").glob("*/original-report.md"))
+    assert len(reports) == 1
+    assert "synthetic report" in reports[0].read_text(encoding="utf-8")

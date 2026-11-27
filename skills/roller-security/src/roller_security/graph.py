@@ -44,6 +44,7 @@ from roller_security.tools import (
     read_skill_ref,
     run_check_private,
     run_maven_tests,
+    save_original_report,
     scaffold_case_dir,
     verify_archive_urls,
     verify_fix_commit_ancestor,
@@ -264,6 +265,8 @@ def ingest_and_ack_node(state: SecurityCaseState) -> dict[str, Any]:
     report_path = state.get("raw_report_path", "")
     if not raw_text and report_path and Path(report_path).is_file():
         raw_text = Path(report_path).read_text(encoding="utf-8")
+    if case_dir:
+        save_original_report(case_dir, raw_text, source=Path(report_path).name, dry_run=dry_run)
 
     extract_prompt = (
         "Extract structured provenance facts from this private Apache Roller security report.\n"

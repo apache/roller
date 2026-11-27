@@ -376,6 +376,7 @@ def scaffold_case_dir(
     """Create ``case_dir`` and copy ``IMPLEMENTATION.md`` and ``CVE_FORM.md`` if absent.
 
     Intentionally omits ``TRACKING.md`` because SQLite + ``CASE.md`` replace it.
+    Existing folders are made private too (see ``make_private``).
     Returns the list of created file paths (or paths that would be created in dry-run).
     """
     template_dir = _resolve_skill_root(repo_dir) / _SKILL_TEMPLATES_REL
@@ -384,6 +385,8 @@ def scaffold_case_dir(
     created: list[str] = []
     if not dry_run:
         target_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+        make_private(target_dir.parent, recursive=False)
+        make_private(target_dir)
 
     for name in _SCAFFOLD_TEMPLATES:
         src = template_dir / name
@@ -397,6 +400,47 @@ def scaffold_case_dir(
             created.append(str(dest))
 
     return created
+
+
+def make_private(path: str | Path, *, recursive: bool = True) -> None:
+    """Make a private workspace folder 0700 and, when ``recursive``, its files 0600.
+
+    ``mkdir(mode=...)`` and the umask only cover new paths, so folders created
+    by hand or by an earlier version stay readable by other users until this runs.
+    """
+    root = Path(path)
+    if not root.is_dir():
+        return
+    root.chmod(0o700)
+    if not recursive:
+        return
+    for item in root.rglob("*"):
+        if item.is_symlink():
+            continue
+        item.chmod(0o700 if item.is_dir() else 0o600)
+
+
+def save_original_report(
+    case_dir: str | Path,
+    raw_text: str,
+    *,
+    source: str = "",
+    dry_run: bool = False,
+) -> str:
+    """Keep the report as received in ``<case_dir>/original-report.md`` (0600).
+
+    Never overwrites: the PMC may have replaced the copy with a summary.
+    """
+    if not case_dir or not raw_text.strip():
+        return ""
+    dest = Path(case_dir) / "original-report.md"
+    if dest.exists() or dry_run:
+        return str(dest)
+    header = "# Original report\n\n> **PRIVATE.** As received"
+    header += f" from `{source}`.\n\n" if source else ".\n\n"
+    dest.write_text(header + "```text\n" + raw_text.rstrip("\n") + "\n```\n", encoding="utf-8")
+    dest.chmod(0o600)
+    return str(dest)
 
 
 def append_case_section(

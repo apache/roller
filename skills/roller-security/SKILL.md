@@ -130,6 +130,14 @@ an answer is incomplete, and a failed check returns to the gate before it:
 - Reconcile `CVE_FORM.md` (including the generated draft the CLI appends) before
   using the CVE portal or drafting an advisory.
 
+- Keep the report in the case folder as `original-report.md`. The runner saves
+  the text it was given; for a case recorded by hand, save the text or a summary
+  with the mail-thread link. Keep the case folder 0700 and its files 0600. The
+  runner tightens the folders it writes to; check folders created by hand.
+- A case folder grows with the workflow: `original-report.md`, `IMPLEMENTATION.md`
+  and the case record at triage; `REPRODUCTION.md` once it is reproduced;
+  `CVE_FORM.md` after acceptance; reporter and advisory drafts when requested.
+
 ## References and helpers
 
 - [ASF process](references/asf-process.md): policy sources and project decisions.
