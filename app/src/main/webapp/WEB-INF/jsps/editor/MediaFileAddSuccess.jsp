@@ -154,12 +154,12 @@
     <%-- buttons for create new weblog, cancel and upload more --%>
 
     <div>
-        <s:url var="mediaFileAddURL" action="mediaFileAdd">
+        <s:url var="mediaFileAddURL" action="mediaFileAdd" escapeAmp="false">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryName" value="%{directoryName}"/>
         </s:url>
 
-        <s:url var="mediaFileViewURL" action="mediaFileView">
+        <s:url var="mediaFileViewURL" action="mediaFileView" escapeAmp="false">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryId" value="%{bean.directoryId}"/>
         </s:url>
@@ -167,11 +167,11 @@
         <s:submit cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
                   action="entryAddWithMediaFile"/>
 
-        <button class="btn btn-default" data-url="<s:property value="%{mediaFileAddURL}"/>" onclick="window.load(this.dataset.url)">
+        <button type="button" class="btn btn-default" data-url="<s:property value="%{mediaFileAddURL}"/>" onclick="window.location = this.dataset.url">
             <s:text name="mediaFileSuccess.uploadMore"/>
         </button>
 
-        <button class="btn" data-url="<s:property value="%{mediaFileViewURL}"/>" onclick="window.load(this.dataset.url)">
+        <button type="button" class="btn" data-url="<s:property value="%{mediaFileViewURL}"/>" onclick="window.location = this.dataset.url">
             <s:text name="generic.cancel"/>
         </button>
     </div>

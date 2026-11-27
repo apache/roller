@@ -26,7 +26,7 @@
 
                 <div style="clear:right">
                     <span class="glyphicon glyphicon-picture"></span>
-                    <s:url var="mediaFileAddURL" action="mediaFileAdd">
+                    <s:url var="mediaFileAddURL" action="mediaFileAdd" escapeAmp="false">
                         <s:param name="weblog" value="%{actionWeblog.handle}"/>
                         <s:param name="directoryName" value="%{directoryName}"/>
                     </s:url>
