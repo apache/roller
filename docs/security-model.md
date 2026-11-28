@@ -230,6 +230,10 @@ flowchart LR
      links and author URLs must be `http` or `https`.
    - Templates run in the sandbox.
    - Uploaded files are never served as active content (see below).
+   - Mail Roller sends (comment notices, moderation notices, invitations)
+     carries member and commenter text only in the subject and the body,
+     escaped when the body is HTML. That text cannot add headers, change the
+     recipients or change the content type.
 4. **Server → network.** Users below global admin cannot make the server fetch
    a URL of their choice. Entry enclosure URLs are stored, not fetched. Global
    admins can point the server at any URL through Planet feeds and ping targets.
@@ -361,6 +365,10 @@ Roller does not protect against:
 - **What the aggregated front-page weblog's templates show.** Its Admins are
   trusted to read across the site (see
   [The aggregated front-page weblog](#the-aggregated-front-page-weblog)).
+- **What notification mail quotes.** Notices quote entry titles, weblog names
+  and comment text, so that text can say anything, including a misleading
+  link. Who receives mail, and whether mail is sent at all, is the operator's
+  and the weblog Admin's setting.
 - **Partial writes** when a multi-step operation fails. That is a bug, not a
   vulnerability.
 
