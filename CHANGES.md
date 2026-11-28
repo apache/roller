@@ -27,6 +27,10 @@
   (`docs/security-model.md`).
 - **An invitation offers one role.** Inviting a member accepts only Admin,
   Author or Limited.
+- **UI forms take plain parameter names.** The Roller UI now accepts only
+  plain request parameter names and `bean.<field>` (plus `group.<field>` and
+  `folder.<field>`) and ignores the rest. If you changed the bundled JSPs to
+  post nested or indexed names, flatten them.
 
 - **OAuth 1.0a needs AtomPub with OAuth authentication.** The OAuth endpoints
   and the OAuth keys page answer only when AtomPub is enabled and its
