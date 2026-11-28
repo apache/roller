@@ -64,7 +64,10 @@
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="staticParams"/>
                 <interceptor-ref name="actionMappingParams"/>
+                <!-- Forms post plain names and one level into a form bean (or
+                     the Planet group, or the Bookmarks folder). -->
                 <interceptor-ref name="params">
+                    <param name="acceptParamNames">^\w+$,^(bean|group|folder)\.\w+$</param>
                     <param name="excludeParams">^action:.*,^method:.*</param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError"/>
