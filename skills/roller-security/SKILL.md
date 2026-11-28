@@ -1,6 +1,6 @@
 ---
 name: roller-security
-description: Triage Apache Roller security reports, maintain private case tracking, prepare CVE records, coordinate fixes and reporter review, and prepare disclosure with a release.
+description: Triage Apache Roller security reports, maintain private SQLite-backed case tracking via this skill's LangGraph CLI, prepare CVE records, coordinate fixes and reporter review, and prepare disclosure with a release.
 ---
 
 <!--
@@ -24,112 +24,128 @@ limitations under the License.
 
 Use this workflow for vulnerability response, not ordinary bug fixes. The PMC
 owns acceptance, severity, release scope, and disclosure decisions. This skill
-supports those decisions; loading it does not authorize messages or publication.
-Parts are designed to work with Obsidian (the triage-<year> directory is a vault),
-but Obsidian is optional.
+supports those decisions; loading it does not authorize sending mail, opening
+PRs, or publishing advisories.
+
+Case tracking and workflow state are managed by this skill's local LangGraph CLI
+(`skills/roller-security/`) backed by SQLite (`<triage-dir>/cases.db`), with
+generated read-only Markdown views (`CASE.md` and `SUMMARY_BOARD.md`). No
+external note app or plugin is required.
 
 ## Confidentiality and project practice
 
-Keep reports, reproductions, CVE reservations, reporter identities, investigation
-notes, and disclosure schedules in a private workspace. If using `triage-<year>/`
-in a checkout, verify its local Git exclusion before adding case material.
-Exclusion prevents accidental additions; it is not access control and does not
-remove material from Git history. Never force-add private records.
+- Keep reports, reproductions, CVE reservations, reporter identities,
+  investigation notes, `cases.db`, and disclosure schedules in a private
+  workspace (`TRIAGE_DIR`, e.g. `triage-<year>/`). Verify its local Git
+  exclusion in `.git/info/exclude` before adding case material. Never
+  force-add private records.
+- Roller uses public code review for fixes. Keep vulnerability characterization
+  out of branch names, commits, PR text, tests, and comments until disclosure.
+  Neutral wording alone does not prove a diff is safe: review what the entire
+  change reveals, including related cases (`shares_code_with`, `related`).
+- When preparing public text (PR bodies, release notes, announcements, website
+  updates) before disclosure, pass only the sanitized `PublicBrief` (permitted
+  facts and tone constraints)—never reveal what is being withheld or why.
+- Keep only generic procedures and synthetic templates in this skill. Do not
+  add live portal screenshots, case-derived examples, or release execution notes.
 
-Roller uses public code review for fixes. Follow the PMC's agreed workflow and
-keep vulnerability characterization out of branch names, commits, PR text, tests,
-and comments until disclosure. Neutral wording alone does not prove that a diff
-is safe: review what the entire change reveals, including related cases. Resolve
-uncertainty with the PMC and ASF Security. Do not assume that derivability from
-public source makes an unannounced finding appropriate for publication.
+## Operating the LangGraph triage runner
 
-When public text such as a release announcement, blog post or website page is
-prepared before disclosure, by a person or another agent, give the author the
-permitted facts and the constraints on scope and tone. Do not tell them what is
-being withheld or why: the instruction itself must be safe to leak. Keep such text
-neutral until the advisories are out.
-
-Keep only generic procedures and synthetic templates in this skill. Do not add
-live portal screenshots, case-derived examples, or release execution notes.
-
-## Read the case before acting
-
-1. Locate the private workspace and read its summary and the item's `TRACKING.md`.
-2. Read the original report, reproduction evidence and `IMPLEMENTATION.md`.
-3. Check the implementation branch, review state and release target against the
-   actual repository. Do not infer that a message was sent from a draft file, or
-   that none was received because the record lacks one; search the correspondence
-   before stating what a reporter said or did not say.
-4. Reconcile `CVE_FORM.md` before using the portal or drafting an advisory.
-
-For new cases, copy `assets/item-template/` into a private item directory.
-`TRACKING.md` frontmatter stores facts; checkboxes store workflow state. The
-terminal board reads those files directly:
+Run commands from `skills/roller-security/` with `uv run roller-security`:
 
 ```sh
-python3 skills/roller-security/scripts/triage-status.py "$TRIAGE_DIR"
+# View the current board, blockers, release gates, and consistency checks
+uv run roller-security board --triage-dir ../../triage-<year>
+
+# Start a new security case (creates <triage-dir>/cases.db if needed)
+uv run roller-security start \
+  --repo ../.. \
+  --triage-dir ../../triage-<year> \
+  --case-id 01 --slug short-neutral-slug --owner <asf-id> \
+  --report ../../triage-<year>/raw-report.eml
+
+# Inspect or resume a paused human gate
+uv run roller-security status <case-key> --triage-dir ../../triage-<year>
+uv run roller-security resume <case-key> --triage-dir ../../triage-<year> --json '<payload>'
+
+# Export leak-safe PublicBrief JSON for release notes (roller-release skill)
+uv run roller-security export-briefs --target-release 7.0.0 --triage-dir ../../triage-<year>
 ```
 
-Set `TRIAGE_DIR` to the actual private workspace. Commands above run from the
-Roller checkout root; when installed elsewhere, resolve scripts relative to this
-skill. Plain Markdown editing works; Obsidian Tasks is optional. Read
-[tracking conventions](references/obsidian-tasks-tracking.md) when creating or
-migrating records. Keep completion dates and mark irrelevant tasks explicitly.
+By default the private-context steps (the raw report, investigation, severity
+and CVE drafting, reporter emails) go to the configured cloud models. Use them
+only under an account whose data-retention terms the PMC accepts for undisclosed
+reports. Pass `--local-llm` to keep every private-context call on local Ollama.
+`--dry-run --mock-llm` tests a workflow offline; it still records the case in
+`cases.db`.
 
-## Workflow
+Cases opened before this runner are tracked in their `TRACKING.md` files and
+are not in `cases.db`, so `board` does not show them. Keep running
+`python3 scripts/triage-status.py ../../triage-<year>` for those cases until each
+one is closed or restarted in the runner.
+
+## Workflow summary
 
 Read [ASF process and routing](references/asf-process.md) for policy sources and
-project-specific decisions. Verify current policy when performing the workflow.
+project-specific decisions. Each stage is enforced by this skill's
+`roller-security` CLI with explicit human approval gates. A gate asks again when
+an answer is incomplete, and a failed check returns to the gate before it:
 
-1. Acknowledge receipt without inventing a verdict or fix commitment.
-2. Investigate reachability, actor privileges, configuration, affected versions,
-   impact and duplicates. Record evidence separately from inference. Use the
-   [codebase orientation](references/roller-codebase-map.md) to find entry points.
-3. Record the PMC's acceptance, rejection or duplicate decision. Explain a
-   rejection with verified reasons; re-evaluate each report independently.
-4. Tell the reporter the accepted remedy and any agreed schedule. Distinguish
-   planned work from completed work. Check existing credit preferences first;
-   ask when unclear. Use [communication templates](references/comms-templates.md).
-5. Assess [severity and CVSS](references/severity-and-cvss.md), reconcile the CVE
-   worksheet, and request an ID from ASF Security through the
+1. **Workspace guard & acknowledgement:** Verify Git exclusion, scaffold
+   `IMPLEMENTATION.md` and `CVE_FORM.md` from `assets/item-template/`, and
+   acknowledge receipt using [communication templates](references/comms-templates.md)
+   without inventing a verdict or fix commitment.
+2. **Investigation:** Assess reachability, minimum actor, preconditions,
+   affected versions, impact, and duplicates using
+   [codebase orientation](references/roller-codebase-map.md). Record verified
+   evidence separately from inference in `IMPLEMENTATION.md`.
+3. **PMC verdict:** Record acceptance, rejection, or duplicate decision. For
+   rejections, explain with verified reasons and close with downstream
+   milestones marked `n/a`.
+4. **Severity & CVE request:** Rate [severity and CVSS](references/severity-and-cvss.md),
+   reconcile `CVE_FORM.md`, and request an ID through the
    [portal workflow](references/cve-portal.md).
-6. Implement and review the fix under the agreed project workflow. Demonstrate
-   that regression tests detect the reported behavior and pass with the fix;
-   keep sensitive reproduction evidence private. Use the target branch's
-   supported JDK and documented test commands, not a machine-specific SDK path.
-   Record as `fix_commit` the commit that landed on the release branch (the merge
-   or squash commit), not the pull request's branch head, and confirm it is an
-   ancestor of the release tag before citing it in a CVE record.
-7. Give the reporter the fix and draft advisory for comment with a reasonable
-   deadline. Coordinate merge timing with the PMC; the ASF default places
-   reporter review before commit. Record any agreed project variation.
-8. Release the approved fix. The companion `roller-release` skill covers the
-   mechanics when available; otherwise use the project's release documentation.
-9. Coordinate disclosure with release availability, verify announcement recipients,
-   update public security information, and add announcement references to the CVE.
-   Confirm each advisory in every list archive rather than assuming delivery,
-   and notify reporters separately with their advisory links, since the list
-   emails do not reach them. Log each reporter reply in the case record when it
-   arrives.
-   Do not rewrite pushed Git commits to add CVE IDs.
+5. **Fix, disclosure lint & reporter review:** Run supported-JDK tests,
+   `scripts/check-private.sh --range <base>..<branch>` (base `roller-6.1.x` or
+   `master`; and `--pr <num>`), semantic
+   disclosure + cross-case overlap review, and send the fix + draft advisory to
+   the reporter with a reasonable deadline. Record the landed merge/squash
+   commit as `fix_commit` and verify it is an ancestor of the release tag.
+6. **Release & disclosure:** Hand off sanitized `PublicBrief`s
+   (`export-briefs`) to the release work in the companion `roller-release`
+   skill. Once the fixed release is live,
+   advance the CVE portal record, verify delivery in every list archive, notify
+   reporters separately with their advisory links, and close the case. Never
+   rewrite pushed Git commits to add CVE IDs.
 
-## Multiple reports
+## Rules the CLI does not enforce
 
-Give each case an owner and next task. Record shared code and duplicate
-relationships in frontmatter. Coordinate merge order when fixes overlap, and
-consider whether publishing one change reveals another case. Set release targets
-explicitly; the board's release gates are reminders, not release authorization.
+- Search the correspondence before stating what a reporter said or did not say.
+  Do not infer that a message was sent from a draft, or that none arrived
+  because the case record lacks one.
+- Do not assume that derivability from public source makes an unannounced
+  finding appropriate for publication. Resolve doubt with the PMC and ASF Security.
+- Use the target branch's supported JDK and documented build commands, not a
+  machine-specific SDK path.
+- Reconcile `CVE_FORM.md` (including the generated draft the CLI appends) before
+  using the CVE portal or drafting an advisory.
 
-## Helpers and limits
+- Keep the report in the case folder as `original-report.md`. The runner saves
+  the text it was given; for a case recorded by hand, save the text or a summary
+  with the mail-thread link. Keep the case folder 0700 and its files 0600. The
+  runner tightens the folders it writes to; check folders created by hand.
+- A case folder grows with the workflow: `original-report.md`, `IMPLEMENTATION.md`
+  and the case record at triage; `REPRODUCTION.md` once it is reproduced;
+  `CVE_FORM.md` after acceptance; reporter and advisory drafts when requested.
 
-- `scripts/triage-status.py <triage-dir> [--mine <name>]` derives stages, next
-  tasks, blockers and consistency warnings without writing case data.
-- `scripts/migrate-status.py <triage-dir> [--write]` previews migration from
-  legacy `status.yml`; writes only when requested and retains legacy originals.
-- `scripts/check-private.sh [--range <revision-range>] [--pr <number>]` checks
-  common private paths and wording. Use explicit commit endpoints such as
-  `master..HEAD` (or `master...HEAD`); a lone revision such as `HEAD` is rejected.
-  Without `--range`, it checks the last 20 commit messages.
-  It is a heuristic, not publication approval:
-  manually inspect the full diff, filenames, screenshots, archives and PR text.
-  Public security documentation can legitimately trigger its vocabulary checks.
+## References and helpers
+
+- [ASF process](references/asf-process.md): policy sources and project decisions.
+- [Codebase map](references/roller-codebase-map.md): Roller entry points and auth boundaries.
+- [Communication templates](references/comms-templates.md): reporter and PMC message drafts.
+- [Severity and CVSS](references/severity-and-cvss.md): ASF severity ratings and CVSS guidance.
+- [CVE portal](references/cve-portal.md): ASF Security portal entry workflow.
+- `scripts/triage-status.py <triage-dir>`: read-only board for cases still tracked in
+  `TRACKING.md`. Remove it when no such cases are open.
+- `scripts/check-private.sh [--range <base..tip>] [--pr <number>]`: disclosure lint for
+  private paths, branch names, commit messages, staged diffs, and PR text.

@@ -36,3 +36,12 @@ docker/postgresql-18-data
 
 # runtime logs from mvn jetty:run
 logs/
+
+# Python virtual environments & bytecode (skill/tool runners)
+.venv/
+__pycache__/
+*.pyc
+uv.lock
+# skills/roller-security/uv.lock is committed anyway, so a new upstream
+# release is never picked up unreviewed, and git keeps tracking it. A "!" rule
+# for it would make Apache RAT check it for a license header.

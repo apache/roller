@@ -1,0 +1,6 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "roller_security_case": "./src/roller_security/graph.py:graph"
+  }
+}
