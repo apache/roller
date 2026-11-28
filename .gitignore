@@ -42,5 +42,6 @@ logs/
 __pycache__/
 *.pyc
 uv.lock
-# Locked so a new upstream release is never picked up unreviewed.
-!skills/roller-security/uv.lock
+# skills/roller-security/uv.lock is committed anyway, so a new upstream
+# release is never picked up unreviewed, and git keeps tracking it. A "!" rule
+# for it would make Apache RAT check it for a license header.
